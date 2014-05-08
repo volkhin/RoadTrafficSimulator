@@ -14,9 +14,9 @@ define(["utils"], function(utils) {
     };
 
     Road.prototype.getLength = function() {
-        return 1;
-        // FIXME
-        // return utils.getDistance(this.source, this.target);
+        var source = app.world.getJunction(this.source),
+            target = app.world.getJunction(this.target);
+        return utils.getDistance(source, target);
     };
 
     return Road;
