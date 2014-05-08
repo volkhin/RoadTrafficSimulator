@@ -60,27 +60,31 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
             var junction = null;
             if (car.position >= 1) {
                 junction = road.getTarget();
+                car.position = 1;
             } else if (car.position <= 0) {
                 junction = road.getSource();
+                car.position = 0;
             }
             if (junction != null) {
-                var possibleRoads = junction.getRoads().filter(function(x) {
-                    return x.id !== road.id;
-                });
-                if (possibleRoads.length == 0) {
-                    // TODO: we can just remove a car out of the map
-                    possibleRoads = junction.getRoads();
-                }
-                var nextRoad = _.sample(possibleRoads);
-                car.road = nextRoad.id;
-                if (nextRoad.source === junction.id) {
-                    car.position = 0;
-                    car.direction = 1;
-                } else if (nextRoad.target === junction.id) {
-                    car.position = 1;
-                    car.direction = -1;
-                } else {
-                    console.error("Error!");
+                if (junction.state) {
+                    var possibleRoads = junction.getRoads().filter(function(x) {
+                        return x.id !== road.id;
+                    });
+                    if (possibleRoads.length == 0) {
+                        // TODO: we can just remove a car out of the map
+                        possibleRoads = junction.getRoads();
+                    }
+                    var nextRoad = _.sample(possibleRoads);
+                    car.road = nextRoad.id;
+                    if (nextRoad.source === junction.id) {
+                        car.position = 0;
+                        car.direction = 1;
+                    } else if (nextRoad.target === junction.id) {
+                        car.position = 1;
+                        car.direction = -1;
+                    } else {
+                        console.error("Error!");
+                    }
                 }
             }
         });

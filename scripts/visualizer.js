@@ -16,7 +16,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             junction: "#666",
             draggedJunction: "blue",
             road: "#666",
-            car: "green",
+            car: "#333",
             hoveredJunction: "black",
             tempLine: "#aaa",
         };
