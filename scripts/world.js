@@ -8,6 +8,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         this.roads = o.roads || {};
         this.cars = o.cars || {};
         this.junctions = o.junctions || {};
+        this.ticks = o.ticks || 0;
         window.__next_id = o.__next_id || 1;
     };
 
@@ -49,6 +50,10 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
 
     World.prototype.onTick = function() {
         var self = this;
+        this.ticks++;
+        $.map(this.junctions, function(junction) {
+            junction.onTick(self.ticks);
+        });
         $.each(this.cars, function(index, car) {
             var road = car.getRoad();
             car.position += 2 * car.direction / road.getLength();
