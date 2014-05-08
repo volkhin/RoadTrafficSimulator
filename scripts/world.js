@@ -1,4 +1,4 @@
-define(["underscore", "car", "utils"], function(_, Car, utils) {
+define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junction, Road, utils) {
     function World(o) {
         this.set(o);
     };
@@ -20,6 +20,15 @@ define(["underscore", "car", "utils"], function(_, Car, utils) {
         var data = utils.readCookie("world");
         if (data) {
             this.set(JSON.parse(data));
+            $.each(this.junctions, function(index, junction) {
+                junction.__proto__ = Junction.prototype;
+            });
+            $.each(this.roads, function(index, road) {
+                road.__proto__ = Road.prototype;
+            });
+            $.each(this.cars, function(index, car) {
+                car.__proto__ = Car.prototype;
+            });
         }
     };
 
