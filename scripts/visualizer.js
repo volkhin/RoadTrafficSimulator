@@ -8,18 +8,20 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
         this.height = this.canvas.height;
         this.mouseDown = false;
         this.tempLine = null;
-        this.startJunction = null;
+        this.dragJunction = null;
         var self = this;
 
         this.canvas.addEventListener("mousedown", function(e) {
+            var nearestJunction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
             if (e.shiftKey) {
                 var junction = new Junction(utils.getPoint(e));
                 self.world.addJunction(junction);
+            } else if (e.altKey) {
+                self.dragJunction = nearestJunction;
             } else {
-                var junction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
-                if (junction) {
+                if (nearestJunction) {
                     self.mouseDown = true;
-                    self.startJunction = junction;
+                    self.tempLine = utils.line(nearestJunction, utils.getPoint(e));
                 }
             }
         });
@@ -29,11 +31,14 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
             if (self.tempLine) {
                 var junction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
                 if (junction) {
-                    var road = new Road(self.startJunction, junction);
+                    var road = new Road(self.tempLine.source, junction);
                     self.world.addRoad(road);
                 }
+                self.tempLine = null;
             }
-            self.tempLine = null;
+            if (self.dragJunction) {
+                self.dragJunction = null;
+            }
         });
 
         this.canvas.addEventListener("mousemove", function(e) {
@@ -44,13 +49,21 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
                 nearestJunction.color = "red";
             }
 
-            if (!self.mouseDown) return;
-            self.tempLine = utils.line(self.startJunction, utils.getPoint(e));
+            if (self.tempLine) {
+                self.tempLine.target = utils.getPoint(e);
+            }
+
+            if (self.dragJunction) {
+                var point = utils.getPoint(e);
+                self.dragJunction.x = point.x;
+                self.dragJunction.y =  point.y;
+            }
         });
 
         this.canvas.addEventListener("mouseout", function(e) {
             self.mouseDown = false;
             self.tempLine = null;
+            self.dragJunction = null;
         });
 
     }

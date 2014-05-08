@@ -21,8 +21,6 @@ define(["underscore", "car", "utils"], function(_, Car, utils) {
         if (data) {
             this.set(JSON.parse(data));
         }
-        var road = _.sample(this.roads);
-        this.addCar(new Car(road.id, 0)); // FIXME
     };
 
     World.prototype.clear = function() {
@@ -99,6 +97,15 @@ define(["underscore", "car", "utils"], function(_, Car, utils) {
 
     World.prototype.getJunction = function(id) {
         return this.junctions[id];
+    }
+
+    World.prototype.addRandomCar = function() {
+        var road = _.sample(this.roads);
+        this.addCar(new Car(road.id, Math.random()));
+    }
+
+    World.prototype.removeALlCars = function() {
+        this.cars = {};
     }
 
     return World;
