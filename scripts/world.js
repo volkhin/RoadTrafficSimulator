@@ -50,9 +50,9 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
     World.prototype.onTick = function() {
         var self = this;
         $.each(this.cars, function(index, car) {
-            car.position += 0.01 * car.direction;
-            var junction = null;
             var road = self.getRoad(car.road);
+            car.position += 0.01 * car.direction / road.getLength();
+            var junction = null;
             if (car.position >= 1) {
                 junction = self.getJunction(road.target);
             } else if (car.position <= 0) {

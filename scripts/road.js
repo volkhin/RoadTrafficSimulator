@@ -1,4 +1,4 @@
-define([], function() {
+define(["utils"], function(utils) {
     function Road(source, target) {
         this.id = window.__next_id++;
         if (source instanceof Object) {
@@ -11,6 +11,12 @@ define([], function() {
         } else {
             this.target = target;
         }
+    };
+
+    Road.prototype.getLength = function() {
+        return 1;
+        // FIXME
+        // return utils.getDistance(this.source, this.target);
     };
 
     return Road;
