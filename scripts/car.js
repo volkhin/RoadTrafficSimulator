@@ -3,7 +3,6 @@ define([], function() {
         this.id = window.__next_id++;
         this.road = road;
         this.position = position;
-        this.direction = 1;
     };
 
     Car.prototype.getRoad = function() {

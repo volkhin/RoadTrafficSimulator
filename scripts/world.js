@@ -56,19 +56,16 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         });
         $.each(this.cars, function(index, car) {
             var road = car.getRoad();
-            car.position += 2 * car.direction / road.getLength();
+            car.position += 2 / road.getLength();
             var junction = null;
             if (car.position >= 1) {
                 junction = road.getTarget();
                 car.position = 1;
-            } else if (car.position <= 0) {
-                junction = road.getSource();
-                car.position = 0;
             }
             if (junction != null) {
                 if (junction.state) {
                     var possibleRoads = junction.getRoads().filter(function(x) {
-                        return x.id !== road.id;
+                        return x.target !== road.source;
                     });
                     if (possibleRoads.length == 0) {
                         // TODO: we can just remove a car out of the map
@@ -76,15 +73,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
                     }
                     var nextRoad = _.sample(possibleRoads);
                     car.road = nextRoad.id;
-                    if (nextRoad.source === junction.id) {
-                        car.position = 0;
-                        car.direction = 1;
-                    } else if (nextRoad.target === junction.id) {
-                        car.position = 1;
-                        car.direction = -1;
-                    } else {
-                        console.error("Error!");
-                    }
+                    car.position = 0;
                 }
             }
         });
@@ -94,7 +83,6 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
     World.prototype.addRoad = function(road) {
         this.roads[road.id] = road;
         this.junctions[road.source].roads.push(road.id);
-        this.junctions[road.target].roads.push(road.id);
     };
 
     World.prototype.getRoad = function(id) {

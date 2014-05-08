@@ -42,8 +42,10 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             if (self.tempLine) {
                 var junction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
                 if (junction) {
-                    var road = new Road(self.tempLine.source, junction);
-                    self.world.addRoad(road);
+                    var road1 = new Road(self.tempLine.source, junction);
+                    self.world.addRoad(road1);
+                    var road2 = new Road(junction, self.tempLine.source);
+                    self.world.addRoad(road2);
                 }
                 self.tempLine = null;
             }
@@ -96,8 +98,15 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
     Visualizer.prototype.drawLine = function(point1, point2, color) {
         this.ctx.beginPath();
         this.ctx.strokeStyle = color;
-        this.ctx.moveTo(point1.x, point1.y);
-        this.ctx.lineTo(point2.x, point2.y);
+        var offset = 0;
+        // FIXME: dirty hack, should be replaced with graph-drawing library
+        if (point1.x < point2.x) {
+            offset = 2;
+        } else {
+            offset = -2;
+        }
+        this.ctx.moveTo(point1.x + offset, point1.y + offset);
+        this.ctx.lineTo(point2.x + offset, point2.y + offset);
         this.ctx.stroke();
     }
 
