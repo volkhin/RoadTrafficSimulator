@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script data-main="scripts/main" src="scripts/lib/require.js"></script>
+    <title>Road traffic simulator</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+    <div>
+        <button type="button" onclick="app.world.save()">save</button>
+        <button type="button" onclick="app.world.load()">load</button>
+        <button type="button" onclick="app.world.clear()">clear</button>
+    </div>
+</body>
+</html>
