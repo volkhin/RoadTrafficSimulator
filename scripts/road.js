@@ -14,9 +14,15 @@ define(["utils"], function(utils) {
     };
 
     Road.prototype.getLength = function() {
-        var source = app.world.getJunction(this.source),
-            target = app.world.getJunction(this.target);
-        return utils.getDistance(source, target);
+        return utils.getDistance(this.getSource(), this.getTarget());
+    };
+
+    Road.prototype.getSource = function() {
+        return app.world.getJunction(this.source);
+    };
+
+    Road.prototype.getTarget = function() {
+        return app.world.getJunction(this.target);
     };
 
     return Road;

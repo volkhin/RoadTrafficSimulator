@@ -6,5 +6,9 @@ define([], function() {
         this.direction = 1;
     };
 
+    Car.prototype.getRoad = function() {
+        return app.world.getRoad(this.road);
+    };
+
     return Car;
 });

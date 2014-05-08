@@ -1,4 +1,4 @@
-define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Road, Junction, utils) {
+define(["jquery", "road", "junction", "utils"], function($, Road, Junction, utils) {
     function Visualizer(world) {
         this.THICKNESS = 15;
         this.world = world;
@@ -44,7 +44,7 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
         this.canvas.addEventListener("mousemove", function(e) {
             var point = utils.getPoint(e);
             var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
-            _.map(self.world.junctions, function(junction) { junction.color = null; });
+            $.map(self.world.junctions, function(junction) { junction.color = null; });
             if (nearestJunction) {
                 nearestJunction.color = "red";
             }
@@ -85,8 +85,7 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
 
     Visualizer.prototype.getCarPositionOnRoad = function(roadId, position) {
         var road = this.world.getRoad(roadId);
-        var source = this.world.getJunction(road.source),
-            target = this.world.getJunction(road.target);
+        var source = road.getSource(), target = road.getTarget();
         var dx = target.x - source.x,
             dy = target.y - source.y;
         return {
@@ -107,8 +106,7 @@ define(["jquery", "underscore", "road", "junction", "utils"], function($, _, Roa
         this.ctx.clearRect(0, 0, this.width, this.height);
         var self = this;
         $.each(this.world.roads, function(index, road) {
-            var source = self.world.getJunction(road.source),
-                target = self.world.getJunction(road.target);
+            var source = road.getSource(), target = road.getTarget();
             self.drawLine(source, target, "666");
         });
         $.each(this.world.junctions, function(index, junction) {

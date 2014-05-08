@@ -6,5 +6,11 @@ define([], function() {
         this.roads = [];
     };
 
+    Junction.prototype.getRoads = function() {
+        return $.map(this.roads, function(road) {
+            return app.world.getRoad(road);
+        });
+    };
+
     return Junction;
 });

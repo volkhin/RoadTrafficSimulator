@@ -3,7 +3,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         this.set(o);
     };
 
-    World.prototype.set = function(o) {
+   World.prototype.set = function(o) {
         (o !== undefined) || (o = {});
         this.roads = o.roads || {};
         this.cars = o.cars || {};
@@ -50,23 +50,24 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
     World.prototype.onTick = function() {
         var self = this;
         $.each(this.cars, function(index, car) {
-            var road = self.getRoad(car.road);
+            var road = car.getRoad();
             car.position += 2 * car.direction / road.getLength();
             var junction = null;
             if (car.position >= 1) {
-                junction = self.getJunction(road.target);
+                junction = road.getTarget();
             } else if (car.position <= 0) {
-                junction = self.getJunction(road.source);
+                junction = road.getSource();
             }
             if (junction != null) {
-                var possibleRoads = junction.roads.filter(function(x) { return x !== road.id; });
+                var possibleRoads = junction.getRoads().filter(function(x) {
+                    return x.id !== road.id;
+                });
                 if (possibleRoads.length == 0) {
                     // TODO: we can just remove a car out of the map
-                    possibleRoads = junction.roads;
+                    possibleRoads = junction.getRoads();
                 }
-                var nextRoadId = _.sample(possibleRoads);
-                var nextRoad = self.getRoad(nextRoadId);
-                car.road = nextRoadId;
+                var nextRoad = _.sample(possibleRoads);
+                car.road = nextRoad.id;
                 if (nextRoad.source === junction.id) {
                     car.position = 0;
                     car.direction = 1;
@@ -74,9 +75,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
                     car.position = 1;
                     car.direction = -1;
                 } else {
-                    console.log(nextRoad);
-                    console.log(junction);
-                    console.log("Error!");
+                    console.error("Error!");
                 }
             }
         });
