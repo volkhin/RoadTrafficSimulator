@@ -56,7 +56,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         });
         $.each(this.cars, function(index, car) {
             var road = car.getRoad();
-            car.position += 2 / road.getLength();
+            car.position += 2 * car.speed / road.getLength();
             var junction = null;
             if (car.position >= 1) {
                 junction = road.getTarget();

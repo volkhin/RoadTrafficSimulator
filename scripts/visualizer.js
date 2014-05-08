@@ -10,7 +10,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.tempLine = null;
         this.dragJunction = null;
         this.colors = {
-            background: "#fdfdfd",
+            background: "#fdfcfb",
             redLight: "#d03030",
             greenLight: "60a040",
             junction: "#666",
