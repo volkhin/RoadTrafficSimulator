@@ -81,6 +81,7 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         });
     };
 
+
     World.prototype.addRoad = function(road) {
         this.roads[road.id] = road;
         this.junctions[road.source].roads.push(road.id);
@@ -107,12 +108,13 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
         return this.junctions[id];
     }
 
+
     World.prototype.addRandomCar = function() {
         var road = _.sample(this.roads);
         this.addCar(new Car(road.id, Math.random()));
     }
 
-    World.prototype.removeALlCars = function() {
+    World.prototype.removeAllCars = function() {
         this.cars = {};
     }
 

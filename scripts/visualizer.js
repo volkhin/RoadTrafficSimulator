@@ -90,7 +90,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             dy = target.y - source.y;
         return {
             x: source.x + position * dx,
-                y: source.y + position * dy,
+            y: source.y + position * dy,
         };
     };
 
