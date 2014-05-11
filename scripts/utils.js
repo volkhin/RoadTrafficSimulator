@@ -33,7 +33,7 @@ define([], function() {
     utils.line = function(point1, point2) {
         return {source: point1, target: point2};
         // return {x1: point1.x, y1: point1.y, x2: point2.x, y2: point2.y};
-    }
+    };
 
     return utils
 });

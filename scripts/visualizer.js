@@ -79,7 +79,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.dragJunction = null;
         });
 
-    }
+    };
 
     Visualizer.prototype.drawJunction = function(c, color) {
         this.ctx.beginPath();
@@ -93,7 +93,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.fillStyle = color;
         this.ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
         this.ctx.fill();
-    }
+    };
 
     Visualizer.prototype.drawLine = function(point1, point2, color) {
         this.ctx.beginPath();
@@ -108,7 +108,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.moveTo(point1.x + offset, point1.y + offset);
         this.ctx.lineTo(point2.x + offset, point2.y + offset);
         this.ctx.stroke();
-    }
+    };
 
     Visualizer.prototype.getCarPositionOnRoad = function(roadId, position) {
         var road = this.world.getRoad(roadId);
@@ -127,7 +127,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.fillStyle = this.colors.car;
         this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
         this.ctx.fill();
-    }
+    };
 
     Visualizer.prototype.draw = function() {
         this.ctx.fillStyle = this.colors.background;
@@ -146,7 +146,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         if (self.tempLine) {
             self.drawLine(self.tempLine.source, self.tempLine.target, self.colors.tempLine);
         }
-    }
+    };
 
     return Visualizer;
 });
