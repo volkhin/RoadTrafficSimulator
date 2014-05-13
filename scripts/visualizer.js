@@ -25,24 +25,27 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         var self = this;
 
         this.canvas.addEventListener("mousedown", function(e) {
-            var nearestJunction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
+            var point = utils.getPoint(e);
+            var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
             if (e.shiftKey) {
-                var junction = new Junction(utils.getPoint(e));
+                var gridPoint = self.getClosestGridPoint(point);
+                var junction = new Junction(gridPoint);
                 self.world.addJunction(junction);
             } else if (e.altKey) {
                 self.dragJunction = nearestJunction;
             } else {
                 if (nearestJunction) {
                     self.mouseDown = true;
-                    self.tempLine = utils.line(nearestJunction, utils.getPoint(e));
+                    self.tempLine = utils.line(nearestJunction, point);
                 }
             }
         });
 
         this.canvas.addEventListener("mouseup", function(e) {
+            var point = utils.getPoint(e);
             self.mouseDown = false;
             if (self.tempLine) {
-                var junction = self.world.getNearestJunction(utils.getPoint(e), self.THICKNESS);
+                var junction = self.world.getNearestJunction(point, self.THICKNESS);
                 if (junction) {
                     var road1 = new Road(self.tempLine.source, junction);
                     self.world.addRoad(road1);
@@ -65,13 +68,13 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             }
 
             if (self.tempLine) {
-                self.tempLine.target = utils.getPoint(e);
+                self.tempLine.target = point;
             }
 
             if (self.dragJunction) {
-                var point = utils.getPoint(e);
-                self.dragJunction.x = point.x;
-                self.dragJunction.y =  point.y;
+                var gridPoint = self.getClosestGridPoint(point);
+                self.dragJunction.x = gridPoint.x;
+                self.dragJunction.y = gridPoint.y;
             }
         });
 
@@ -145,6 +148,14 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
                 this.ctx.fillRect(i, j, 1, 1);
             }
         }
+    };
+
+    Visualizer.prototype.getClosestGridPoint = function(point) {
+        var result = {
+            x: Math.round(point.x / this.gridStep) * this.gridStep,
+            y: Math.round(point.y / this.gridStep) * this.gridStep,
+        };
+        return result;
     };
 
     Visualizer.prototype.draw = function() {
