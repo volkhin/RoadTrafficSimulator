@@ -1,3 +1,16 @@
 #canvas {
     border: 1px solid #333;
 }
+
+#canvas-wrapper {
+    float: left;
+    width: 800px;
+}
+
+#controls {
+    margin-left: 820px;
+}
+
+/* * { background-color: rgba(255, 0, 0, 0.1); } */
+/* * * { background-color: rgba(0, 255, 0, 0.2); } */
+/* * * * { background-color: rgba(0, 0, 255, 0.3); } */
