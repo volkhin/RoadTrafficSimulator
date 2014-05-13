@@ -20,10 +20,6 @@ define([], function() {
         return "";
     };
 
-    utils.getPoint = function(e) {
-        return {x: e.layerX, y: e.layerY};
-    };
-
     utils.getDistance = function(point1, point2) {
         var dx = point1.x - point2.x,
             dy = point1.y - point2.y;

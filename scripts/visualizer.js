@@ -9,7 +9,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.mouseDown = false;
         this.tempLine = null;
         this.dragJunction = null;
-        this.gridStep = 10;
+        this.gridStep = 20;
         this.colors = {
             background: "#fdfcfb",
             redLight: "#d03030",
@@ -20,12 +20,12 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             car: "#333",
             hoveredJunction: "black",
             tempLine: "#aaa",
-            grid: "#333",
+            grid: "#ddd",
         };
         var self = this;
 
-        this.canvas.addEventListener("mousedown", function(e) {
-            var point = utils.getPoint(e);
+        $(this.canvas).mousedown(function(e) {
+            var point = self.getPoint(e);
             var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
             if (e.shiftKey) {
                 var gridPoint = self.getClosestGridPoint(point);
@@ -41,8 +41,8 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             }
         });
 
-        this.canvas.addEventListener("mouseup", function(e) {
-            var point = utils.getPoint(e);
+        $(this.canvas).mouseup(function(e) {
+            var point = self.getPoint(e);
             self.mouseDown = false;
             if (self.tempLine) {
                 var junction = self.world.getNearestJunction(point, self.THICKNESS);
@@ -59,8 +59,8 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             }
         });
 
-        this.canvas.addEventListener("mousemove", function(e) {
-            var point = utils.getPoint(e);
+        $(this.canvas).mousemove(function(e) {
+            var point = self.getPoint(e);
             var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
             self.world.junctions.each(function(index, junction) { junction.color = null; });
             if (nearestJunction) {
@@ -86,6 +86,13 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
 
     };
 
+    Visualizer.prototype.getPoint = function(e) {
+        return {
+            x: e.pageX - this.canvas.offsetLeft,
+            y: e.pageY - this.canvas.offsetTop,
+        };
+    };
+
     Visualizer.prototype.drawJunction = function(c, color) {
         this.ctx.beginPath();
         if (c.color) {
@@ -96,8 +103,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             color = this.colors.greenLight;
         }
         this.ctx.fillStyle = color;
-        this.ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
-        this.ctx.fill();
+        this.ctx.fillRect(c.x, c.y, this.gridStep, this.gridStep);
     };
 
     Visualizer.prototype.drawLine = function(point1, point2, color) {
@@ -143,18 +149,19 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
 
     Visualizer.prototype.drawGrid = function() {
         this.ctx.fillStyle = this.colors.grid;
-        for (var i = this.gridStep; i <= this.width; i += this.gridStep) {
-            for (var j = this.gridStep; j <= this.height; j += this.gridStep) {
-                this.ctx.fillRect(i, j, 1, 1);
+        for (var i = 0; i <= this.width; i += this.gridStep) {
+            for (var j = 0; j <= this.height; j += this.gridStep) {
+                this.ctx.fillRect(i - 1, j - 1, 2, 2);
             }
         }
     };
 
     Visualizer.prototype.getClosestGridPoint = function(point) {
         var result = {
-            x: Math.round(point.x / this.gridStep) * this.gridStep,
-            y: Math.round(point.y / this.gridStep) * this.gridStep,
+            x: Math.floor(point.x / this.gridStep) * this.gridStep,
+            y: Math.floor(point.y / this.gridStep) * this.gridStep,
         };
+        console.log(point.x + " " + point.y + ": " + result.x + " " + result.y);
         return result;
     };
 
