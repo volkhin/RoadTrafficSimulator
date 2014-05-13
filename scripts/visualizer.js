@@ -9,6 +9,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.mouseDown = false;
         this.tempLine = null;
         this.dragJunction = null;
+        this.gridStep = 10;
         this.colors = {
             background: "#fdfcfb",
             redLight: "#d03030",
@@ -19,6 +20,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             car: "#333",
             hoveredJunction: "black",
             tempLine: "#aaa",
+            grid: "#333",
         };
         var self = this;
 
@@ -131,10 +133,24 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.fill();
     };
 
-    Visualizer.prototype.draw = function() {
+    Visualizer.prototype.drawBackground = function() {
         this.ctx.fillStyle = this.colors.background;
         this.ctx.fillRect(0, 0, this.width, this.height);
+    };
+
+    Visualizer.prototype.drawGrid = function() {
+        this.ctx.fillStyle = this.colors.grid;
+        for (var i = this.gridStep; i <= this.width; i += this.gridStep) {
+            for (var j = this.gridStep; j <= this.height; j += this.gridStep) {
+                this.ctx.fillRect(i, j, 1, 1);
+            }
+        }
+    };
+
+    Visualizer.prototype.draw = function() {
         var self = this;
+        this.drawBackground();
+        this.drawGrid();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
             self.drawLine(source, target, self.colors.road);
