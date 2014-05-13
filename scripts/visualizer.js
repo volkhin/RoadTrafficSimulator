@@ -57,7 +57,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.canvas.addEventListener("mousemove", function(e) {
             var point = utils.getPoint(e);
             var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
-            $.map(self.world.junctions, function(junction) { junction.color = null; });
+            self.world.junctions.each(function(index, junction) { junction.color = null; });
             if (nearestJunction) {
                 nearestJunction.color = self.colors.hoveredJunction;
             }
@@ -103,8 +103,8 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         len = utils.getDistance(point1, point2);
         dx = 2 * (point2.x - point1.x) / len;
         dy = 2 * (point2.y - point1.y) / len;
-        this.ctx.moveTo(point1.x + dy, point1.y - dx);
-        this.ctx.lineTo(point2.x + dy, point2.y - dx);
+        this.ctx.moveTo(point1.x - dy, point1.y + dx);
+        this.ctx.lineTo(point2.x - dy, point2.y + dx);
         this.ctx.stroke();
     };
 
@@ -113,9 +113,13 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         var source = road.getSource(), target = road.getTarget();
         var dx = target.x - source.x,
             dy = target.y - source.y;
+        len = utils.getDistance(source, target);
+        off_x = 2 * (target.x - source.x) / len;
+        off_y = 2 * (target.y - source.y) / len;
+        off_x = off_y = 0;
         return {
-            x: source.x + position * dx,
-            y: source.y + position * dy,
+            x: source.x + position * dx + off_y,
+            y: source.y + position * dy + off_x,
         };
     };
 
@@ -131,14 +135,14 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.fillStyle = this.colors.background;
         this.ctx.fillRect(0, 0, this.width, this.height);
         var self = this;
-        $.each(this.world.roads, function(index, road) {
+        this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
             self.drawLine(source, target, self.colors.road);
         });
-        $.each(this.world.junctions, function(index, junction) {
+        this.world.junctions.each(function(index, junction) {
             self.drawJunction(junction, self.colors.junction);
         });
-        $.each(this.world.cars, function(index, car) {
+        this.world.cars.each(function(index, car) {
             self.drawCar(car);
         });
         if (self.tempLine) {

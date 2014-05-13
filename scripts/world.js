@@ -1,23 +1,26 @@
-define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junction, Road, utils) {
+define(["underscore", "car", "junction", "road", "pool", "utils"],
+        function(_, Car, Junction, Road, Pool, utils) {
     function World(o) {
         this.set(o);
     };
 
    World.prototype.set = function(o) {
         (o !== undefined) || (o = {});
-        this.roads = o.roads || {};
-        this.cars = o.cars || {};
-        this.junctions = o.junctions || {};
+        this.roads = o.roads || new Pool();
+        this.cars = o.cars || new Pool();
+        this.junctions = o.junctions || new Pool();
         this.ticks = o.ticks || 0;
         window.__next_id = o.__next_id || 1;
     };
 
     World.prototype.save = function() {
+        return; // FIXME
         this.__next_id = window.__next_id;
         utils.createCookie("world", JSON.stringify(this));
     };
 
     World.prototype.load = function() {
+        return; // FIXME
         var data = utils.readCookie("world");
         if (data) {
             this.set(JSON.parse(data));
@@ -39,9 +42,9 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
 
     World.prototype.getNearestJunction = function(point, maxDistance) {
         maxDistance = maxDistance || Infinity;
-        if (!this.junctions)
+        if (!this.junctions.all())
             return null;
-        var junction = _.min(this.junctions, function(junction) {
+        var junction = _.min(this.junctions.all(), function(junction) {
             return utils.getDistance(point, junction);
         });
         return utils.getDistance(point, junction) < maxDistance ? junction : null;
@@ -51,10 +54,10 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
     World.prototype.onTick = function() {
         var self = this;
         this.ticks++;
-        $.map(this.junctions, function(junction) {
+        this.junctions.each(function(index, junction) {
             junction.onTick(self.ticks);
         });
-        $.each(this.cars, function(index, car) {
+        this.cars.each(function(index, car) {
             var road = car.getRoad();
             car.position += 2 * car.speed / road.getLength();
             var junction = null;
@@ -81,33 +84,32 @@ define(["underscore", "car", "junction", "road", "utils"], function(_, Car, Junc
 
 
     World.prototype.addRoad = function(road) {
-        this.roads[road.id] = road;
-        this.junctions[road.source].roads.push(road.id);
+        this.roads.put(road);
+        this.getJunction(road.source).roads.push(road.id);
     };
 
     World.prototype.getRoad = function(id) {
-        return this.roads[id];
+        return this.roads.get(id);
     };
 
     World.prototype.addCar = function(car) {
-        this.cars[car.id] = car;
+        this.cars.put(car);
     };
 
     World.prototype.getCar = function(id) {
-        return this.cars[id];
+        return this.cars.get(id);
     };
 
     World.prototype.addJunction = function(junction) {
-        this.junctions[junction.id] = junction;
+        this.junctions.put(junction);
     };
 
     World.prototype.getJunction = function(id) {
-        return this.junctions[id];
+        return this.junctions.get(id);
     };
 
-
     World.prototype.addRandomCar = function() {
-        var road = _.sample(this.roads);
+        var road = _.sample(this.roads.all());
         this.addCar(new Car(road.id, Math.random()));
     };
 
