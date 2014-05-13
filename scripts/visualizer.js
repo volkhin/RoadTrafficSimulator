@@ -100,13 +100,11 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.ctx.strokeStyle = color;
         var offset = 0;
         // FIXME: dirty hack, should be replaced with graph-drawing library
-        if (point1.x < point2.x) {
-            offset = 2;
-        } else {
-            offset = -2;
-        }
-        this.ctx.moveTo(point1.x + offset, point1.y + offset);
-        this.ctx.lineTo(point2.x + offset, point2.y + offset);
+        len = utils.getDistance(point1, point2);
+        dx = 2 * (point2.x - point1.x) / len;
+        dy = 2 * (point2.y - point1.y) / len;
+        this.ctx.moveTo(point1.x + dy, point1.y - dx);
+        this.ctx.lineTo(point2.x + dy, point2.y - dx);
         this.ctx.stroke();
     };
 
