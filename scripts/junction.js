@@ -1,8 +1,7 @@
 define(["underscore"], function(_) {
-    function Junction(point) {
+    function Junction(rect) {
         this.id = window.__next_id++;
-        this.x = point.x;
-        this.y = point.y;
+        this.rect = rect;
         this.roads = [];
         this.state = this.STATE.RED;
         this.flipInterval = _.random(10, 50);

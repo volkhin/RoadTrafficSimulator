@@ -41,6 +41,7 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
     };
 
     World.prototype.getNearestJunction = function(point, maxDistance) {
+        // FIXME: it's broken due to rects in junctions
         maxDistance = maxDistance || Infinity;
         if (!this.junctions.all())
             return null;
