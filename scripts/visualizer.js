@@ -8,7 +8,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.height = this.canvas.height;
         this.mouseDownPos = null;
         this.tempLine = null;
-        this.tempRect = false;
+        this.tempJunction = null;
         this.dragJunction = null;
         this.gridStep = 20;
         this.mousePos = null;
@@ -33,11 +33,12 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.mouseDownPos = point;
             var hoveredJunction = self.getHoveredJunction(point);
             if (e.shiftKey) {
-                self.tempRect = true;
+                var rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
+                self.tempJunction = new Junction(rect);
             } else if (e.altKey) {
                 self.dragJunction = hoveredJunction;
-            } else if (nearestJunction) {
-                self.tempLine = utils.line(nearestJunction, point);
+            } else if (hoveredJunction) {
+                self.tempLine = utils.line(hoveredJunction, point);
             }
         });
 
@@ -53,11 +54,9 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
                 }
                 self.tempLine = null;
             }
-            if (self.tempRect) {
-                var rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
-                var junction = new Junction(rect);
-                self.world.addJunction(junction);
-                self.tempRect = false;
+            if (self.tempJunction) {
+                self.world.addJunction(self.tempJunction);
+                self.tempJunction = null;
             }
             self.mouseDownPos = null;
             self.dragJunction = null;
@@ -79,6 +78,9 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
                 self.dragJunction.rect.left = gridPoint.x;
                 self.dragJunction.rect.top = gridPoint.y;
             }
+            if (self.tempJunction) {
+                self.tempJunction.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
+            }
         });
 
         this.canvas.addEventListener("mouseout", function(e) {
@@ -86,7 +88,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.tempLine = null;
             self.dragJunction = null;
             self.mousePos = null;
-            self.tempRect = false;
+            self.tempJunction = null;
         });
 
     };
@@ -98,9 +100,12 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         };
     };
 
-    Visualizer.prototype.drawJunction = function(junction, color) {
+    Visualizer.prototype.drawJunction = function(junction, forcedColor) {
         this.ctx.beginPath();
-        if (junction.color) {
+        var color = this.colors.junction;
+        if (forcedColor) {
+            color = forcedColor;
+        } else if (junction.color) {
             color = junction.color;
         } else if (junction.state == Junction.prototype.STATE.RED) {
             color = this.colors.redLight;
@@ -194,12 +199,6 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         return {left: x1, top: y1, width: x2 - x1, height: y2 - y1};
     };
 
-    Visualizer.prototype.drawTempJunction = function() {
-        var rect = this.getBoundGridRect(this.mouseDownPos, this.mousePos);
-        this.ctx.fillStyle = this.colors.unfinishedJunction;
-        this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
-    };
-
     Visualizer.prototype.getHoveredJunction = function(point) {
         for (var junction_id in this.world.junctions.all()) {
             var junction = this.world.junctions.get(junction_id);
@@ -221,7 +220,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.drawLine(source, target, self.colors.road);
         });
         this.world.junctions.each(function(index, junction) {
-            self.drawJunction(junction, self.colors.junction);
+            self.drawJunction(junction);
         });
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
@@ -229,8 +228,8 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         if (self.tempLine) {
             self.drawLine(self.tempLine.source, self.tempLine.target, self.colors.tempLine);
         }
-        if (self.tempRect) {
-            self.drawTempJunction();
+        if (self.tempJunction) {
+            self.drawJunction(self.tempJunction, self.colors.unfinishedJunction);
         }
     };
 
