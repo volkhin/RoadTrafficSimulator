@@ -40,18 +40,6 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
         this.set({});
     };
 
-    World.prototype.getNearestJunction = function(point, maxDistance) {
-        // FIXME: it's broken due to rects in junctions
-        maxDistance = maxDistance || Infinity;
-        if (!this.junctions.all())
-            return null;
-        var junction = _.min(this.junctions.all(), function(junction) {
-            return utils.getDistance(point, junction);
-        });
-        return utils.getDistance(point, junction) < maxDistance ? junction : null;
-    };
-
-
     World.prototype.onTick = function() {
         var self = this;
         this.ticks++;

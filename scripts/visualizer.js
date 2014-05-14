@@ -31,11 +31,11 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         $(this.canvas).mousedown(function(e) {
             var point = self.getPoint(e);
             self.mouseDownPos = point;
-            var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
+            var hoveredJunction = self.getHoveredJunction(point);
             if (e.shiftKey) {
                 self.tempRect = true;
             } else if (e.altKey) {
-                self.dragJunction = nearestJunction;
+                self.dragJunction = hoveredJunction;
             } else if (nearestJunction) {
                 self.tempLine = utils.line(nearestJunction, point);
             }
@@ -44,17 +44,16 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         $(this.canvas).mouseup(function(e) {
             var point = self.getPoint(e);
             if (self.tempLine) {
-                var junction = self.world.getNearestJunction(point, self.THICKNESS);
-                if (junction) {
-                    var road1 = new Road(self.tempLine.source, junction);
+                var hoveredJunction = self.getHoveredJunction(point);
+                if (hoveredJunction) {
+                    var road1 = new Road(self.tempLine.source, hoveredJunction);
                     self.world.addRoad(road1);
-                    var road2 = new Road(junction, self.tempLine.source);
+                    var road2 = new Road(hoveredJunction, self.tempLine.source);
                     self.world.addRoad(road2);
                 }
                 self.tempLine = null;
             }
             if (self.tempRect) {
-                // var gridPoint = self.getClosestGridPoint(point);
                 var rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
                 var junction = new Junction(rect);
                 self.world.addJunction(junction);
@@ -66,19 +65,19 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
 
         $(this.canvas).mousemove(function(e) {
             var point = self.getPoint(e);
-            var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
+            var hoveredJunction = self.getHoveredJunction(point);
             self.mousePos = point;
             self.world.junctions.each(function(index, junction) { junction.color = null; });
-            if (nearestJunction) {
-                nearestJunction.color = self.colors.hoveredJunction;
+            if (hoveredJunction) {
+                hoveredJunction.color = self.colors.hoveredJunction;
             }
             if (self.tempLine) {
                 self.tempLine.target = point;
             }
             if (self.dragJunction) {
                 var gridPoint = self.getClosestGridPoint(point);
-                self.dragJunction.x = gridPoint.x;
-                self.dragJunction.y = gridPoint.y;
+                self.dragJunction.rect.left = gridPoint.x;
+                self.dragJunction.rect.top = gridPoint.y;
             }
         });
 
@@ -110,7 +109,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         }
         this.ctx.fillStyle = color;
         var rect = junction.rect;
-        this.ctx.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+        this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
     };
 
     Visualizer.prototype.drawLine = function(point1, point2, color) {
@@ -192,13 +191,24 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         }
         x2 += this.gridStep;
         y2 += this.gridStep;
-        return {left: x1, top: y1, right: x2, bottom: y2};
+        return {left: x1, top: y1, width: x2 - x1, height: y2 - y1};
     };
 
     Visualizer.prototype.drawTempJunction = function() {
         var rect = this.getBoundGridRect(this.mouseDownPos, this.mousePos);
         this.ctx.fillStyle = this.colors.unfinishedJunction;
-        this.ctx.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+        this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+    };
+
+    Visualizer.prototype.getHoveredJunction = function(point) {
+        for (var junction_id in this.world.junctions.all()) {
+            var junction = this.world.junctions.get(junction_id);
+            var rect = junction.rect;
+            if (rect.left <= point.x && point.x < rect.left + rect.width &&
+                    rect.top <= point.y && point.y < rect.top + rect.height) {
+                return junction;
+            }
+        }
     };
 
     Visualizer.prototype.draw = function() {
