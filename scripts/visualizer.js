@@ -13,16 +13,15 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.mousePos = null;
         this.colors = {
             background: "#fdfcfb",
-            redLight: "#d03030",
-            greenLight: "60a040",
+            redLight: "#f1433f",
+            greenLight: "#a9cf54",
             junction: "#666",
-            draggedJunction: "blue",
             road: "#666",
             car: "#333",
-            hoveredJunction: "black",
+            hoveredJunction: "#3d4c53",
             tempLine: "#aaa",
-            grid: "#ddd",
-            hoveredGrid: "#f0f0f0",
+            grid: "#70b7ba",
+            hoveredGrid: "#f4e8e1",
             unfinishedJunction: "#eee",
         };
         var self = this;
