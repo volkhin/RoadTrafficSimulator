@@ -99,30 +99,41 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
     };
 
     Visualizer.prototype.drawJunction = function(junction, forcedColor) {
-        this.ctx.beginPath();
         var color = this.colors.junction;
         if (forcedColor) {
             color = forcedColor;
         } else if (junction.color) {
             color = junction.color;
-        } else if (junction.state == Junction.prototype.STATE.RED) {
-            color = this.colors.redLight;
-        } else if (junction.state == Junction.prototype.STATE.GREEN) {
-            color = this.colors.greenLight;
+        // } else if (junction.state == Junction.prototype.STATE.RED) {
+            // color = this.colors.redLight;
+        // } else if (junction.state == Junction.prototype.STATE.GREEN) {
+            // color = this.colors.greenLight;
         }
-        this.ctx.fillStyle = color;
         var rect = junction.rect;
+        this.ctx.beginPath();
+        this.ctx.fillStyle = color;
         this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+        var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = this.colors.background;
+        this.ctx.moveTo(cx - this.gridStep / 3, cy);
+        this.ctx.lineTo(cx + this.gridStep / 3, cy);
+        this.ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = this.colors.background;
+        this.ctx.moveTo(cx, cy - this.gridStep / 3);
+        this.ctx.lineTo(cx, cy + this.gridStep / 3);
+        this.ctx.stroke();
     };
 
     Visualizer.prototype.drawLine = function(point1, point2, color) {
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = color;
         var offset = 0;
         // FIXME: dirty hack, should be replaced with graph-drawing library
         len = utils.getDistance(point1, point2);
         dx = 2 * (point2.x - point1.x) / len;
         dy = 2 * (point2.y - point1.y) / len;
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = color;
         this.ctx.moveTo(point1.x - dy, point1.y + dx);
         this.ctx.lineTo(point2.x - dy, point2.y + dx);
         this.ctx.stroke();
