@@ -10,6 +10,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         this.tempLine = null;
         this.dragJunction = null;
         this.gridStep = 20;
+        this.mousePos = null;
         this.colors = {
             background: "#fdfcfb",
             redLight: "#d03030",
@@ -21,6 +22,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             hoveredJunction: "black",
             tempLine: "#aaa",
             grid: "#ddd",
+            hoveredGrid: "#eee",
         };
         var self = this;
 
@@ -62,6 +64,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         $(this.canvas).mousemove(function(e) {
             var point = self.getPoint(e);
             var nearestJunction = self.world.getNearestJunction(point, self.THICKNESS);
+            self.mousePos = point;
             self.world.junctions.each(function(index, junction) { junction.color = null; });
             if (nearestJunction) {
                 nearestJunction.color = self.colors.hoveredJunction;
@@ -82,6 +85,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.mouseDown = false;
             self.tempLine = null;
             self.dragJunction = null;
+            self.mousePos = null;
         });
 
     };
@@ -161,14 +165,22 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             x: Math.floor(point.x / this.gridStep) * this.gridStep,
             y: Math.floor(point.y / this.gridStep) * this.gridStep,
         };
-        console.log(point.x + " " + point.y + ": " + result.x + " " + result.y);
         return result;
+    };
+
+    Visualizer.prototype.drawHighlightedCell = function() {
+        if (this.mousePos) {
+            this.ctx.fillStyle = this.colors.hoveredGrid;
+            var topLeftCorner = this.getClosestGridPoint(this.mousePos);
+            this.ctx.fillRect(topLeftCorner.x, topLeftCorner.y, this.gridStep, this.gridStep);
+        }
     };
 
     Visualizer.prototype.draw = function() {
         var self = this;
         this.drawBackground();
         this.drawGrid();
+        this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
             self.drawLine(source, target, self.colors.road);
