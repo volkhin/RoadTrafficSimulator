@@ -1,6 +1,5 @@
 define(["jquery", "road", "junction", "utils"], function($, Road, Junction, utils) {
     function Visualizer(world) {
-        this.THICKNESS = 15;
         this.world = world;
         this.canvas = $("#canvas")[0];
         this.ctx = this.canvas.getContext("2d");
