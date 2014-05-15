@@ -1,0 +1,11 @@
+{
+  "name": "trafic-simulator",
+  "version": "0.0.0",
+  "description": "Simulator of road networks with signal-controlled intersections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Artem Volkhin",
+  "license": "ISC"
+}
