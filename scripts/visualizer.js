@@ -89,7 +89,7 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             self.tempJunction = null;
         });
 
-    };
+    }
 
     Visualizer.prototype.getPoint = function(e) {
         return {

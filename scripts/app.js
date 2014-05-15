@@ -1,7 +1,7 @@
 define(["jquery", "visualizer", "world"], function($, Visualizer, World) {
     function App() {
         this.FPS = 30;
-    };
+    }
 
     App.prototype.init = function() {
         this.world = new World();

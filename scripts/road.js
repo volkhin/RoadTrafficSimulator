@@ -11,7 +11,7 @@ define(["utils"], function(utils) {
         } else {
             this.target = target;
         }
-    };
+    }
 
     Road.prototype.getLength = function() {
         return utils.getDistance(this.getSource(), this.getTarget());

@@ -30,5 +30,5 @@ define([], function() {
         return {source: point1, target: point2};
     };
 
-    return utils
+    return utils;
 });

@@ -5,7 +5,7 @@ define(["underscore"], function(_) {
         this.roads = [];
         this.state = this.STATE.RED;
         this.flipInterval = _.random(10, 50);
-    };
+    }
 
     Junction.prototype.STATE = {
         RED: 0,

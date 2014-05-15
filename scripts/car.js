@@ -4,7 +4,7 @@ define([], function() {
         this.road = road;
         this.position = position;
         this.speed = (4 + Math.random()) / 5; // 0.8 - 1.0
-    };
+    }
 
     Car.prototype.getRoad = function() {
         return app.world.getRoad(this.road);
