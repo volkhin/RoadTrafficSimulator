@@ -5,7 +5,7 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
     }
 
    World.prototype.set = function(o) {
-        if (o !== undefined) {
+        if (o === undefined) {
             o = {};
         }
         this.roads = o.roads || new Pool();
