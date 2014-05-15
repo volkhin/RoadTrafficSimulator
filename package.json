@@ -7,5 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Artem Volkhin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "grunt-contrib-jasmine": "^0.6.4",
+    "grunt-contrib-jshint": "^0.10.0"
+    "grunt-contrib-requirejs": "^0.4.4"
+  }
 }
