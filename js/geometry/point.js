@@ -11,5 +11,21 @@ define([], function()  {
         }
     }
 
+    Point.prototype.add = function(o) {
+        return new Point(this.x + o.x, this.y + o.y);
+    };
+
+    Point.prototype.subtract = function(o) {
+        return new Point(this.x - o.x, this.y - o.y);
+    };
+
+    Point.prototype.mult = function(o) {
+        return new Point(this.x * o, this.y * o);
+    };
+
+    Point.prototype.divide = function(o) {
+        return new Point(this.x / o, this.y / o);
+    };
+
     return Point;
 });

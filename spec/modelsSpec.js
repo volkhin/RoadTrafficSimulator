@@ -14,11 +14,20 @@ require(["geometry/point"], function(Point) {
         });
 
         it('raises error on wrong arguments in constructor', function() {
-            var oneArgument = function() { new Point(1); }
+            var oneArgument = function() { new Point(1); };
             expect(oneArgument).toThrow();
 
-            var threeArguments = function() { new Point(1, 2, 3); }
+            var threeArguments = function() { new Point(1, 2, 3); };
             expect(threeArguments).toThrow();
+        });
+
+        it('supports arithmetic operations', function() {
+            var point = new Point(12, 100);
+            var point2 = new Point(111, 1111);
+            expect(point.add(point2)).toEqual(new Point(123, 1211));
+            expect(point.subtract(point2)).toEqual(new Point(-99, -1011));
+            expect(point.mult(5)).toEqual(new Point(60, 500));
+            expect(point.divide(4)).toEqual(new Point(3, 25));
         });
     });
 });
