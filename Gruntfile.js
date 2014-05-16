@@ -29,11 +29,21 @@ module.exports = function(grunt) {
         jasmine: {
             src: "js/**/*.js",
         },
+        watch: {
+            scripts: {
+                files: "js/**/*.js",
+                tasks: ["jshint"],
+                options: {
+                    spawn: false,
+                },
+            },
+        },
     });
 
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-requirejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-contrib-watch");
 
     grunt.registerTask("default", ["jshint", "jasmine", "requirejs"]);
 };

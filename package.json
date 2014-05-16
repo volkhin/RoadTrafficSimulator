@@ -8,11 +8,11 @@
   },
   "author": "Artem Volkhin",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "grunt-contrib-jasmine": "^0.6.4",
-    "grunt-contrib-jshint": "^0.10.0"
-    "grunt-contrib-requirejs": "^0.4.4"
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-watch": "^0.6.1"
   }
 }
