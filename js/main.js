@@ -5,8 +5,6 @@ require.config({
     },
 });
 
-require(["app"]);
-
 require(["jquery", "app"], function($, App) {
     $(document).ready(function () {
         window.app = new App();
