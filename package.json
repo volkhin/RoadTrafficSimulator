@@ -4,15 +4,17 @@
   "description": "Simulator of road networks with signal-controlled intersections",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "author": "Artem Volkhin",
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "grunt-contrib-jasmine": "^0.6.4",
+    "grunt-contrib-jasmine": "<0.6",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-template-jasmine-requirejs": "^0.1.10",
+    "jest-cli": "^0.1.8"
   }
 }

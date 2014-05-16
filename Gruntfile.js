@@ -27,7 +27,17 @@ module.exports = function(grunt) {
             },
         },
         jasmine: {
-            src: "js/**/*.js",
+            requirejsTemplate: {
+                src: "js/**/*.js",
+                options: {
+                    specs: "spec/*Spec.js",
+                    helpers: "spec/*Helper.js",
+                    template: require("grunt-template-jasmine-requirejs"),
+                    templateOptions: {
+                        requireConfigFile: "js/main.js",
+                    },
+                },
+            },
         },
         watch: {
             scripts: {
@@ -44,6 +54,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-requirejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
     grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-contrib-watch");
 
     grunt.registerTask("default", ["jshint", "jasmine", "requirejs"]);
+    grunt.registerTask("test", ["jshint", "jasmine"]);
 };
