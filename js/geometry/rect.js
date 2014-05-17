@@ -1,4 +1,4 @@
-define(["geometry/point"], function(Point) {
+define(["geometry/point", "geometry/segment"], function(Point, Segment) {
     function Rect(arg0, arg1, arg2, arg3) {
         if (arguments.length === 4) {
             this.position = new Point(arg0, arg1);
@@ -69,6 +69,21 @@ define(["geometry/point"], function(Point) {
         }
         return this.getLeft() <= point.x && point.x <= this.getRight() &&
             this.getTop() <= point.y && point.y <= this.getBottom();
+    };
+
+    Rect.prototype.getVertices = function() {
+        var x = this.position.x, y = this.position.y;
+        return [
+            new Point(x, y),
+            new Point(x + this.getWidth(), y),
+            new Point(x + this.getWidth(), y + this.getHeight()),
+            new Point(x, y + this.getHeight()),
+        ];
+    };
+
+    Rect.prototype.getSide = function(i) {
+        var vertices = this.getVertices();
+        return new Segment(vertices[i], vertices[(i + 1) % 4]);
     };
 
     return Rect;

@@ -1,4 +1,5 @@
-require(["geometry/point", "geometry/rect"], function(Point, Rect) {
+require(["geometry/point", "geometry/rect", "geometry/segment"],
+        function(Point, Rect, Segment) {
     describe('Point', function() {
         it('can be constructed by (x;y)', function() {
             var point = new Point(1, 2);
@@ -78,6 +79,35 @@ require(["geometry/point", "geometry/rect"], function(Point, Rect) {
             expect(rect.containsPoint(new Point(4, 7))).not.toBeTruthy();
             expect(rect.containsPoint(new Point(0, 3))).not.toBeTruthy();
             expect(rect.containsPoint(new Point(2, 1))).not.toBeTruthy();
+        });
+
+        it('returns its vertices in clockwise order', function() {
+            var rect = new Rect(1, 2, 3, 4);
+            var expected = [
+                new Point(1, 2),
+                new Point(4, 2),
+                new Point(4, 6),
+                new Point(1, 6),
+            ];
+            expect(rect.getVertices()).toEqual(expected);
+        });
+
+        it('returns its sides in CW', function() {
+            var rect = new Rect(1, 2, 3, 4);
+            expect(rect.getSide(0)).toEqual(
+                new Segment(new Point(1, 2), new Point(4, 2)));
+            expect(rect.getSide(1)).toEqual(
+                new Segment(new Point(4, 2), new Point(4, 6)));
+            expect(rect.getSide(2)).toEqual(
+                new Segment(new Point(4, 6), new Point(1, 6)));
+            expect(rect.getSide(3)).toEqual(
+                new Segment(new Point(1, 6), new Point(1, 2)));
+        });
+    });
+
+    describe('Segment', function() {
+        it('can be constructed from 2 points', function() {
+            var segment = new Segment(new Point(1, 2), new Point(3, 4));
         });
     });
 });
