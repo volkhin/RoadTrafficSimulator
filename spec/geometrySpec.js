@@ -113,7 +113,7 @@ require(["geometry/point", "geometry/rect", "geometry/segment"],
                 new Point(-100, 2),
             ];
             for (var i = 0; i < 4; i++) {
-                expect(rect.getSector(points[i])).toBe(i);
+                expect(rect.getSectorId(points[i])).toBe(i);
             }
         });
     });
@@ -128,9 +128,29 @@ require(["geometry/point", "geometry/rect", "geometry/segment"],
             expect(segment.getCenter()).toEqual(new Point(2, 3));
         });
 
-        it('return k-th part of n-split', function() {
+        it('splits into n parts', function() {
+            var segment = new Segment(new Point(1, 2), new Point(7, 11));
+            var expected = [
+                new Segment(new Point(1, 2), new Point(3, 5)),
+                new Segment(new Point(3, 5), new Point(5, 8)),
+                new Segment(new Point(5, 8), new Point(7, 11)),
+            ];
+            expect(segment.split(3)).toEqual(expected);
+        });
+
+        it('supports reverse split', function() {
+            var segment = new Segment(new Point(1, 2), new Point(7, 11));
+            var expected = [
+                new Segment(new Point(5, 8), new Point(7, 11)),
+                new Segment(new Point(3, 5), new Point(5, 8)),
+                new Segment(new Point(1, 2), new Point(3, 5)),
+            ];
+            expect(segment.split(3, true)).toEqual(expected);
+        });
+
+        it('returns k-th part of n-split', function() {
             var segment = new Segment(new Point(1, 2), new Point(11, 17));
-            expect(segment.split(3, 5)).toEqual(
+            expect(segment.getSplit(3, 5)).toEqual(
                 new Segment(new Point(7, 11), new Point(9, 14)));
         });
     });

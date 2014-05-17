@@ -86,7 +86,7 @@ define(["geometry/point", "geometry/segment"], function(Point, Segment) {
         return new Segment(vertices[i], vertices[(i + 1) % 4]);
     };
 
-    Rect.prototype.getSector = function(point) {
+    Rect.prototype.getSectorId = function(point) {
         // returns the closest side to the point
         var center = this.getCenter();
         var offset = point.subtract(center);
@@ -99,6 +99,10 @@ define(["geometry/point", "geometry/segment"], function(Point, Segment) {
         if (offset.x <= 0 && Math.abs(offset.x) >= Math.abs(offset.y))
             return 3;
         throw Error("Algorithm error");
+    };
+
+    Rect.prototype.getSector = function(point) {
+        return this.getSide(this.getSectorId(point));
     };
 
     return Rect;
