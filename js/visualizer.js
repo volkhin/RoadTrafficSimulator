@@ -1,5 +1,5 @@
-define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"],
-        function($, Road, Junction, Rect, Point, utils) {
+define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geometry/Segment", "utils"],
+        function($, Road, Junction, Rect, Point, Segment, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -164,8 +164,13 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
                 self.ctx.beginPath();
                 self.ctx.strokeStyle = self.colors.roadMarking;
                 // FIXME: better way to find lane splits
-                self.ctx.moveTo(lane.sourceSegment.target.x, lane.sourceSegment.target.y);
-                self.ctx.lineTo(lane.targetSegment.source.x, lane.targetSegment.source.y);
+                var line = new Segment(
+                    lane.sourceSegment.target,
+                    lane.targetSegment.source
+                );
+                line = line.subsegment(0.02, 0.98);
+                self.ctx.moveTo(line.source.x, line.source.y);
+                self.ctx.lineTo(line.target.x, line.target.y);
                 self.ctx.stroke(); 
             }
 
