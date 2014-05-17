@@ -116,19 +116,10 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geomet
         this.ctx.save();
         this.ctx.globalAlpha = alpha;
 
+        // draw intersection
         this.ctx.beginPath();
         this.ctx.fillStyle = color;
         this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = this.colors.roadMarking;
-        this.ctx.moveTo(center.x - this.gridStep / 3, center.y);
-        this.ctx.lineTo(center.x + this.gridStep / 3, center.y);
-        this.ctx.stroke();
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = this.colors.roadMarking;
-        this.ctx.moveTo(center.x, center.y - this.gridStep / 3);
-        this.ctx.lineTo(center.x, center.y + this.gridStep / 3);
-        this.ctx.stroke();
 
         this.ctx.restore();
     };
@@ -161,17 +152,22 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geomet
             this.ctx.fillStyle = this.colors.roadMarking;
             for (var i = 0; i < road.lanes.length - 1; i++) {
                 var lane = road.lanes[i];
-                self.ctx.beginPath();
-                self.ctx.strokeStyle = self.colors.roadMarking;
                 // FIXME: better way to find lane splits
                 var line = new Segment(
                     lane.sourceSegment.target,
                     lane.targetSegment.source
                 );
-                line = line.subsegment(0.02, 0.98);
+                // line = line.subsegment(0.02, 0.98);
+                self.ctx.save();
+                var dashSize = self.gridStep / 2;
+                self.ctx.lineDashOffset = 1.5 * dashSize;
+                self.ctx.setLineDash([dashSize]);
+                self.ctx.strokeStyle = self.colors.roadMarking;
+                self.ctx.beginPath();
                 self.ctx.moveTo(line.source.x, line.source.y);
                 self.ctx.lineTo(line.target.x, line.target.y);
                 self.ctx.stroke(); 
+                self.ctx.restore();
             }
 
             this.ctx.restore();
