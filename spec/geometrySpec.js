@@ -47,18 +47,21 @@ require(["geometry/point", "geometry/rect"], function(Point, Rect) {
 
         it('has getters and setters', function() {
             var rect = new Rect(1, 2, 3, 4);
-            expect(rect.getX()).toBe(1);
-            expect(rect.getY()).toBe(2);
+            expect(rect.getLeft()).toBe(1);
+            expect(rect.getRight()).toBe(4);
+            expect(rect.getTop()).toBe(2);
+            expect(rect.getBottom()).toBe(6);
             expect(rect.getWidth()).toBe(3);
             expect(rect.getHeight()).toBe(4);
+            expect(rect.getCenter()).toEqual(new Point(2.5, 4));
 
-            rect.setX(5);
-            rect.setY(6);
+            rect.setLeft(5);
+            rect.setTop(6);
             rect.setWidth(7);
             rect.setHeight(8);
 
-            expect(rect.getX()).toBe(5);
-            expect(rect.getY()).toBe(6);
+            expect(rect.getLeft()).toBe(5);
+            expect(rect.getTop()).toBe(6);
             expect(rect.getWidth()).toBe(7);
             expect(rect.getHeight()).toBe(8);
 

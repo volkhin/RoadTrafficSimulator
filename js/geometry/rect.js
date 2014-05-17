@@ -19,27 +19,35 @@ define(["geometry/point"], function(Point) {
         return this.position;
     };
 
-    Rect.prototype.setX = function(x) {
+    Rect.prototype.setLeft = function(x) {
         this.position.x = x;
     };
 
-    Rect.prototype.getX = function(x) {
+    Rect.prototype.getLeft = function() {
         return this.position.x;
     };
 
-    Rect.prototype.setY = function(y) {
+    Rect.prototype.getRight = function() {
+        return this.getLeft() + this.getWidth();
+    };
+
+    Rect.prototype.setTop = function(y) {
         this.position.y = y;
     };
 
-    Rect.prototype.getY = function(y) {
+    Rect.prototype.getTop = function() {
         return this.position.y;
+    };
+
+    Rect.prototype.getBottom = function() {
+        return this.getTop() + this.getHeight();
     };
 
     Rect.prototype.setWidth = function(width) {
         this.width = width;
     };
 
-    Rect.prototype.getWidth = function(width) {
+    Rect.prototype.getWidth = function() {
         return this.width;
     };
 
@@ -47,8 +55,12 @@ define(["geometry/point"], function(Point) {
         this.height = height;
     };
 
-    Rect.prototype.getHeight = function(height) {
+    Rect.prototype.getHeight = function() {
         return this.height;
+    };
+
+    Rect.prototype.getCenter = function() {
+        return this.position.add(new Point(this.width / 2, this.height/ 2));
     };
 
     return Rect;

@@ -1,4 +1,5 @@
-define(["jquery", "road", "junction", "utils"], function($, Road, Junction, utils) {
+define(["jquery", "road", "junction", "geometry/rect", "utils"],
+        function($, Road, Junction, Rect, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -73,8 +74,8 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
             }
             if (self.dragJunction) {
                 var gridPoint = self.getClosestGridPoint(point);
-                self.dragJunction.rect.left = gridPoint.x;
-                self.dragJunction.rect.top = gridPoint.y;
+                self.dragJunction.rect.setLeft(gridPoint.x);
+                self.dragJunction.rect.setTop(gridPoint.y);
             }
             if (self.tempJunction) {
                 self.tempJunction.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
@@ -112,17 +113,17 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         var rect = junction.rect;
         this.ctx.beginPath();
         this.ctx.fillStyle = color;
-        this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
-        var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+        var center = rect.getCenter();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colors.background;
-        this.ctx.moveTo(cx - this.gridStep / 3, cy);
-        this.ctx.lineTo(cx + this.gridStep / 3, cy);
+        this.ctx.moveTo(center.x - this.gridStep / 3, center.y);
+        this.ctx.lineTo(center.x + this.gridStep / 3, center.y);
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colors.background;
-        this.ctx.moveTo(cx, cy - this.gridStep / 3);
-        this.ctx.lineTo(cx, cy + this.gridStep / 3);
+        this.ctx.moveTo(center.x, center.y - this.gridStep / 3);
+        this.ctx.lineTo(center.x, center.y + this.gridStep / 3);
         this.ctx.stroke();
     };
 
@@ -205,15 +206,15 @@ define(["jquery", "road", "junction", "utils"], function($, Road, Junction, util
         }
         x2 += this.gridStep;
         y2 += this.gridStep;
-        return {left: x1, top: y1, width: x2 - x1, height: y2 - y1};
+        return new Rect(x1, y1, x2 - x1, y2 - y1);
     };
 
     Visualizer.prototype.getHoveredJunction = function(point) {
         for (var junction_id in this.world.junctions.all()) {
             var junction = this.world.junctions.get(junction_id);
             var rect = junction.rect;
-            if (rect.left <= point.x && point.x < rect.left + rect.width &&
-                    rect.top <= point.y && point.y < rect.top + rect.height) {
+            if (rect.getLeft() <= point.x && point.x < rect.getRight() &&
+                    rect.getTop() <= point.y && point.y < rect.getBottom()) {
                 return junction;
             }
         }

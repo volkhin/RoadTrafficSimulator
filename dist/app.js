@@ -96,7 +96,108 @@ define('junction',["underscore"], function(_) {
     return Junction;
 });
 
-define('visualizer',["jquery", "road", "junction", "utils"], function($, Road, Junction, utils) {
+define('geometry/point',[], function()  {
+    function Point(arg0, arg1) {
+        if (arguments.length === 1 && arg0 instanceof Point) {
+            this.x = arg0.x;
+            this.y = arg0.y;
+        } else if (arguments.length === 2) {
+            this.x = arg0;
+            this.y = arg1;
+        } else {
+            throw new Error("Invalid parammeters passed to Point constructor");
+        }
+    }
+
+    Point.prototype.add = function(o) {
+        return new Point(this.x + o.x, this.y + o.y);
+    };
+
+    Point.prototype.subtract = function(o) {
+        return new Point(this.x - o.x, this.y - o.y);
+    };
+
+    Point.prototype.mult = function(o) {
+        return new Point(this.x * o, this.y * o);
+    };
+
+    Point.prototype.divide = function(o) {
+        return new Point(this.x / o, this.y / o);
+    };
+
+    return Point;
+});
+
+define('geometry/rect',["geometry/point"], function(Point) {
+    function Rect(arg0, arg1, arg2, arg3) {
+        if (arguments.length === 4) {
+            this.position = new Point(arg0, arg1);
+            this.width = arg2;
+            this.height = arg3;
+        } else {
+            throw new Error("Invalid parammeters passed to Rect constructor");
+        }
+    }
+
+    Rect.prototype.setPosition = function() {
+        var position = Object.create(Point.prototype);
+        Point.apply(position, arguments);
+        this.position = position;
+    };
+
+    Rect.prototype.getPosition = function() {
+        return this.position;
+    };
+
+    Rect.prototype.setLeft = function(x) {
+        this.position.x = x;
+    };
+
+    Rect.prototype.getLeft = function() {
+        return this.position.x;
+    };
+
+    Rect.prototype.getRight = function() {
+        return this.getLeft() + this.getWidth();
+    };
+
+    Rect.prototype.setTop = function(y) {
+        this.position.y = y;
+    };
+
+    Rect.prototype.getTop = function() {
+        return this.position.y;
+    };
+
+    Rect.prototype.getBottom = function() {
+        return this.getTop() + this.getHeight();
+    };
+
+    Rect.prototype.setWidth = function(width) {
+        this.width = width;
+    };
+
+    Rect.prototype.getWidth = function() {
+        return this.width;
+    };
+
+    Rect.prototype.setHeight = function(height) {
+        this.height = height;
+    };
+
+    Rect.prototype.getHeight = function() {
+        return this.height;
+    };
+
+    Rect.prototype.getCenter = function() {
+        return this.position.add(new Point(this.width / 2, this.height/ 2));
+    };
+
+    return Rect;
+});
+
+define('visualizer',["jquery", "road", "junction", "geometry/rect", "utils"],
+        function($, Road, Junction, Rect, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -171,8 +272,8 @@ define('visualizer',["jquery", "road", "junction", "utils"], function($, Road, J
             }
             if (self.dragJunction) {
                 var gridPoint = self.getClosestGridPoint(point);
-                self.dragJunction.rect.left = gridPoint.x;
-                self.dragJunction.rect.top = gridPoint.y;
+                self.dragJunction.rect.setLeft(gridPoint.x);
+                self.dragJunction.rect.setTop(gridPoint.y);
             }
             if (self.tempJunction) {
                 self.tempJunction.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
@@ -210,17 +311,17 @@ define('visualizer',["jquery", "road", "junction", "utils"], function($, Road, J
         var rect = junction.rect;
         this.ctx.beginPath();
         this.ctx.fillStyle = color;
-        this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
-        var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+        var center = rect.getCenter();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colors.background;
-        this.ctx.moveTo(cx - this.gridStep / 3, cy);
-        this.ctx.lineTo(cx + this.gridStep / 3, cy);
+        this.ctx.moveTo(center.x - this.gridStep / 3, center.y);
+        this.ctx.lineTo(center.x + this.gridStep / 3, center.y);
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colors.background;
-        this.ctx.moveTo(cx, cy - this.gridStep / 3);
-        this.ctx.lineTo(cx, cy + this.gridStep / 3);
+        this.ctx.moveTo(center.x, center.y - this.gridStep / 3);
+        this.ctx.lineTo(center.x, center.y + this.gridStep / 3);
         this.ctx.stroke();
     };
 
@@ -303,15 +404,15 @@ define('visualizer',["jquery", "road", "junction", "utils"], function($, Road, J
         }
         x2 += this.gridStep;
         y2 += this.gridStep;
-        return {left: x1, top: y1, width: x2 - x1, height: y2 - y1};
+        return new Rect(x1, y1, x2 - x1, y2 - y1);
     };
 
     Visualizer.prototype.getHoveredJunction = function(point) {
         for (var junction_id in this.world.junctions.all()) {
             var junction = this.world.junctions.get(junction_id);
             var rect = junction.rect;
-            if (rect.left <= point.x && point.x < rect.left + rect.width &&
-                    rect.top <= point.y && point.y < rect.top + rect.height) {
+            if (rect.getLeft() <= point.x && point.x < rect.getRight() &&
+                    rect.getTop() <= point.y && point.y < rect.getBottom()) {
                 return junction;
             }
         }
