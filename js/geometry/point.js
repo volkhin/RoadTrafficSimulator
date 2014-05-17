@@ -7,7 +7,7 @@ define([], function()  {
             this.x = arg0;
             this.y = arg1;
         } else {
-            throw Error("Invalid parammeters passed to Point constructor");
+            throw new Error("Invalid parammeters passed to Point constructor");
         }
     }
 
