@@ -63,5 +63,13 @@ define(["geometry/point"], function(Point) {
         return this.position.add(new Point(this.width / 2, this.height/ 2));
     };
 
+    Rect.prototype.containsPoint = function(point) {
+        if (!point instanceof Point) {
+            throw Error("Should be a point!");
+        }
+        return this.getLeft() <= point.x && point.x <= this.getRight() &&
+            this.getTop() <= point.y && point.y <= this.getBottom();
+    };
+
     return Rect;
 });

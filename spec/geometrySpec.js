@@ -68,5 +68,16 @@ require(["geometry/point", "geometry/rect"], function(Point, Rect) {
             rect.setPosition(new Point(9, 10));
             expect(rect.getPosition()).toEqual(new Point(9, 10));
         });
+
+        it('check if it contains the point', function() {
+            var rect = new Rect(1, 2, 3, 4);
+            expect(rect.containsPoint(new Point(2, 3))).toBeTruthy();
+            expect(rect.containsPoint(new Point(1, 2))).toBeTruthy();
+            expect(rect.containsPoint(new Point(4, 6))).toBeTruthy();
+            expect(rect.containsPoint(new Point(5, 6))).not.toBeTruthy();
+            expect(rect.containsPoint(new Point(4, 7))).not.toBeTruthy();
+            expect(rect.containsPoint(new Point(0, 3))).not.toBeTruthy();
+            expect(rect.containsPoint(new Point(2, 1))).not.toBeTruthy();
+        });
     });
 });

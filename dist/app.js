@@ -193,6 +193,14 @@ define('geometry/rect',["geometry/point"], function(Point) {
         return this.position.add(new Point(this.width / 2, this.height/ 2));
     };
 
+    Rect.prototype.containsPoint = function(point) {
+        if (!point instanceof Point) {
+            throw Error("Should be a point!");
+        }
+        return this.getLeft() <= point.x && point.x <= this.getRight() &&
+            this.getTop() <= point.y && point.y <= this.getBottom();
+    };
+
     return Rect;
 });
 
@@ -410,11 +418,8 @@ define('visualizer',["jquery", "road", "junction", "geometry/rect", "utils"],
     Visualizer.prototype.getHoveredJunction = function(point) {
         for (var junction_id in this.world.junctions.all()) {
             var junction = this.world.junctions.get(junction_id);
-            var rect = junction.rect;
-            if (rect.getLeft() <= point.x && point.x < rect.getRight() &&
-                    rect.getTop() <= point.y && point.y < rect.getBottom()) {
+            if (junction.rect.containsPoint(point))
                 return junction;
-            }
         }
     };
 
