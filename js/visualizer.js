@@ -13,7 +13,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geomet
         this.gridStep = 20;
         this.mousePos = null;
         this.colors = {
-            background: "#fdfcfb",
+            background: "#fff",
             redLight: "#f1433f",
             greenLight: "#a9cf54",
             junction: "#666",
@@ -210,10 +210,10 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geomet
     };
 
     Visualizer.prototype.getClosestGridPoint = function(point) {
-        var result = {
-            x: Math.floor(point.x / this.gridStep) * this.gridStep,
-            y: Math.floor(point.y / this.gridStep) * this.gridStep,
-        };
+        var result = new Point(
+            Math.floor(point.x / this.gridStep) * this.gridStep,
+            Math.floor(point.y / this.gridStep) * this.gridStep
+        );
         return result;
     };
 
