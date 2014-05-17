@@ -50,7 +50,7 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
         });
         this.cars.each(function(index, car) {
             var road = car.getRoad();
-            car.position += 2 * car.speed / road.getLength();
+            car.position += 0.01;//2 * car.speed / road.getLength();
             var junction = null;
             if (car.position >= 1) {
                 junction = road.getTarget();
@@ -76,8 +76,9 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
 
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
-        this.getJunction(road.source).roads.push(road.id);
-        this.getJunction(road.target).roads.push(road.id);
+        road.source.roads.push(road);
+        road.target.roads.push(road);
+        road.update();
     };
 
     World.prototype.getRoad = function(id) {
@@ -102,7 +103,9 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
 
     World.prototype.addRandomCar = function() {
         var road = _.sample(this.roads.all());
-        this.addCar(new Car(road.id, Math.random()));
+        if (road) {
+            this.addCar(new Car(road.id, Math.random()));
+        }
     };
 
     World.prototype.removeAllCars = function() {

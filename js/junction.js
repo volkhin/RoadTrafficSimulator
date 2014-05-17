@@ -1,4 +1,4 @@
-define(["underscore"], function(_) {
+define(["jquery", "underscore"], function($, _) {
     function Junction(rect) {
         this.id = window.__next_id++;
         this.rect = rect;
@@ -13,9 +13,7 @@ define(["underscore"], function(_) {
     };
 
     Junction.prototype.getRoads = function() {
-        return $.map(this.roads, function(road) {
-            return app.world.getRoad(road);
-        });
+        return this.roads;
     };
 
     Junction.prototype.flip = function() {
@@ -26,6 +24,12 @@ define(["underscore"], function(_) {
         if (ticks % this.flipInterval === 0) {
             this.flip();
         }
+    };
+
+    Junction.prototype.update = function() {
+        $.each(this.roads, function(index, road) {
+            road.update();
+        });
     };
 
     return Junction;

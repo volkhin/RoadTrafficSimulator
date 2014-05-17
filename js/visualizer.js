@@ -7,7 +7,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.width = this.canvas.width;
         this.height = this.canvas.height;
         this.mouseDownPos = null;
-        this.tempLine = null;
+        this.tempRoad = null;
         this.tempJunction = null;
         this.dragJunction = null;
         this.gridStep = 20;
@@ -21,7 +21,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             roadMarking: "#eee",
             car: "#333",
             hoveredJunction: "#3d4c53",
-            tempLine: "#aaa",
+            tempRoad: "#aaa",
             grid: "#70b7ba",
             hoveredGrid: "#f4e8e1",
         };
@@ -37,21 +37,21 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             } else if (e.altKey) {
                 self.dragJunction = hoveredJunction;
             } else if (hoveredJunction) {
-                self.tempLine = utils.line(hoveredJunction, null);
+                self.tempRoad = new Road(hoveredJunction, null);
             }
         });
 
         $(this.canvas).mouseup(function(e) {
             var point = self.getPoint(e);
-            if (self.tempLine) {
+            if (self.tempRoad) {
                 var hoveredJunction = self.getHoveredJunction(point);
-                if (hoveredJunction) {
-                    var road1 = new Road(self.tempLine.source, hoveredJunction);
+                if (hoveredJunction && self.tempRoad.source.id !== hoveredJunction.id) {
+                    var road1 = new Road(self.tempRoad.source, hoveredJunction);
                     self.world.addRoad(road1);
-                    // var road2 = new Road(hoveredJunction, self.tempLine.source);
+                    // var road2 = new Road(hoveredJunction, self.tempRoad.source);
                     // self.world.addRoad(road2);
                 }
-                self.tempLine = null;
+                self.tempRoad = null;
             }
             if (self.tempJunction) {
                 self.world.addJunction(self.tempJunction);
@@ -69,13 +69,14 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             if (hoveredJunction) {
                 hoveredJunction.color = self.colors.hoveredJunction;
             }
-            if (self.tempLine) {
-                self.tempLine.target = hoveredJunction;
+            if (self.tempRoad) {
+                self.tempRoad.target = hoveredJunction;
             }
             if (self.dragJunction) {
                 var gridPoint = self.getClosestGridPoint(point);
                 self.dragJunction.rect.setLeft(gridPoint.x);
                 self.dragJunction.rect.setTop(gridPoint.y);
+                self.dragJunction.update(); // FIXME: should be done automatically
             }
             if (self.tempJunction) {
                 self.tempJunction.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
@@ -84,7 +85,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
 
         this.canvas.addEventListener("mouseout", function(e) {
             self.mouseDownPos = null;
-            self.tempLine = null;
+            self.tempRoad = null;
             self.dragJunction = null;
             self.mousePos = null;
             self.tempJunction = null;
@@ -132,22 +133,23 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.ctx.restore();
     };
 
-    Visualizer.prototype.drawRoad = function(sourceJunction, targetJunction, alpha) {
+    Visualizer.prototype.drawRoad = function(road, alpha) {
+        var sourceJunction = road.getSource(), targetJunction = road.getTarget();
         if (sourceJunction && targetJunction) {
             var source = sourceJunction.rect.getCenter(),
                 target = targetJunction.rect.getCenter();
 
-            var sourceSide = sourceJunction.rect.getSector(targetJunction.rect.getCenter()),
-                targetSide = targetJunction.rect.getSector(sourceJunction.rect.getCenter());
-            var s1 = sourceJunction.rect.getSide(sourceSide),
-                s2 = targetJunction.rect.getSide(targetSide);
+            var s1 = sourceJunction.rect.getSector(targetJunction.rect.getCenter()),
+                s2 = targetJunction.rect.getSector(sourceJunction.rect.getCenter());
+
+            var self = this;
 
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
 
             // draw the road
-            this.ctx.beginPath();
             this.ctx.fillStyle = this.colors.road;
+            this.ctx.beginPath();
             this.ctx.moveTo(s1.source.x, s1.source.y);
             this.ctx.lineTo(s1.target.x, s1.target.y);
             this.ctx.lineTo(s2.source.x, s2.source.y);
@@ -155,12 +157,17 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             this.ctx.closePath();
             this.ctx.fill();
 
-            // draw line in the middle of the road
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = this.colors.roadMarking;
-            this.ctx.moveTo(s1.getCenter().x, s1.getCenter().y);
-            this.ctx.lineTo(s2.getCenter().x, s2.getCenter().y);
-            this.ctx.stroke();
+            // draw lanes
+            this.ctx.fillStyle = this.colors.roadMarking;
+            for (var i = 0; i < road.lanes.length - 1; i++) {
+                var lane = road.lanes[i];
+                self.ctx.beginPath();
+                self.ctx.strokeStyle = self.colors.roadMarking;
+                // FIXME: better way to find lane splits
+                self.ctx.moveTo(lane.sourceSegment.target.x, lane.sourceSegment.target.y);
+                self.ctx.lineTo(lane.targetSegment.source.x, lane.targetSegment.source.y);
+                self.ctx.stroke(); 
+            }
 
             this.ctx.restore();
         }
@@ -168,7 +175,9 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
 
     Visualizer.prototype.getCarPositionOnRoad = function(roadId, position) {
         var road = this.world.getRoad(roadId);
-        var source = road.getSource(), target = road.getTarget();
+        var line = road.lanes[0].getMiddleline();
+        // var source = road.getSource().rect.getCenter(), target = road.getTarget().rect.getCenter();
+        var source = line.source, target = line.target;
         var offset = target.subtract(source);
         return source.add(offset.mult(position));
     };
@@ -241,8 +250,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.drawGrid();
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
-            var source = road.getSource(), target = road.getTarget();
-            self.drawRoad(source, target, 0.9);
+            self.drawRoad(road, 0.9);
         });
         this.world.junctions.each(function(index, junction) {
             self.drawJunction(junction, 0.9);
@@ -250,8 +258,8 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
         });
-        if (self.tempLine) {
-            self.drawRoad(self.tempLine.source, self.tempLine.target, 0.4);
+        if (self.tempRoad) {
+            self.drawRoad(self.tempRoad, 0.4);
         }
         if (self.tempJunction) {
             self.drawJunction(self.tempJunction, 0.4);
