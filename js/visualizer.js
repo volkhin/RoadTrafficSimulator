@@ -128,7 +128,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.ctx.stroke();
     };
 
-    Visualizer.prototype.drawRoad = function(sourceJunction, targetJunction, color) {
+    Visualizer.prototype.drawRoad = function(sourceJunction, targetJunction, alpha) {
         if (sourceJunction && targetJunction) {
             var source = sourceJunction.rect.getCenter(),
                 target = targetJunction.rect.getCenter();
@@ -138,9 +138,12 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             var s1 = sourceJunction.rect.getSide(sourceSide),
                 s2 = targetJunction.rect.getSide(targetSide);
 
+            this.ctx.save();
+            this.ctx.globalAlpha = alpha;
+
             // draw the road
             this.ctx.beginPath();
-            this.ctx.fillStyle = color;
+            this.ctx.fillStyle = this.colors.road;
             this.ctx.moveTo(s1.source.x, s1.source.y);
             this.ctx.lineTo(s1.target.x, s1.target.y);
             this.ctx.lineTo(s2.source.x, s2.source.y);
@@ -154,6 +157,8 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             this.ctx.moveTo(s1.getCenter().x, s1.getCenter().y);
             this.ctx.lineTo(s2.getCenter().x, s2.getCenter().y);
             this.ctx.stroke();
+
+            this.ctx.restore();
         }
     };
 
@@ -233,7 +238,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
-            self.drawRoad(source, target, self.colors.road);
+            self.drawRoad(source, target, 1);
         });
         this.world.junctions.each(function(index, junction) {
             self.drawJunction(junction);
@@ -242,7 +247,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             self.drawCar(car);
         });
         if (self.tempLine) {
-            self.drawRoad(self.tempLine.source, self.tempLine.target, self.colors.tempLine);
+            self.drawRoad(self.tempLine.source, self.tempLine.target, 0.4);
         }
         if (self.tempJunction) {
             self.drawJunction(self.tempJunction, self.colors.unfinishedJunction);
