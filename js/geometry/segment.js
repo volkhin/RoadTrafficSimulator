@@ -9,13 +9,10 @@ define(["geometry/point"], function(Point) {
     };
 
     Segment.prototype.split = function(n, reverse) {
-        var offset = this.target.subtract(this.source).divide(n);
         var splits = [];
         for (var i = 0; i < n; i++) {
             var k = reverse ? n - i -1 : i;
-            var start = this.source.add(offset.mult(k)),
-                end = this.source.add(offset.mult(k + 1));
-            splits.push(new Segment(start, end));
+            splits.push(this.subsegment(k / n, (k + 1) / n));
         }
         return splits;
     };
@@ -23,6 +20,13 @@ define(["geometry/point"], function(Point) {
     Segment.prototype.getSplit = function(k, n) {
         var splits = this.split(n);
         return splits[k];
+    };
+
+    Segment.prototype.subsegment = function(a, b) {
+        var offset = this.target.subtract(this.source);
+        var start = this.source.add(offset.mult(a)),
+            end = this.source.add(offset.mult(b));
+        return new Segment(start, end);
     };
 
     return Segment;

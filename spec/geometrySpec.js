@@ -153,5 +153,11 @@ require(["geometry/point", "geometry/rect", "geometry/segment"],
             expect(segment.getSplit(3, 5)).toEqual(
                 new Segment(new Point(7, 11), new Point(9, 14)));
         });
+
+        it('supports subsegment', function() {
+            var segment = new Segment(new Point(1, 2), new Point(11, 17));
+            expect(segment.subsegment(0.2, 0.6)).toEqual(
+                new Segment(new Point(3, 5), new Point(7, 11)));
+        });
     });
 });
