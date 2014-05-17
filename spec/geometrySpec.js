@@ -103,11 +103,29 @@ require(["geometry/point", "geometry/rect", "geometry/segment"],
             expect(rect.getSide(3)).toEqual(
                 new Segment(new Point(1, 6), new Point(1, 2)));
         });
+
+        it('returns sector containing point', function() {
+            var rect = new Rect(1, 2, 3, 4);
+            var points = [
+                new Point(3, -100),
+                new Point(100, 2),
+                new Point(0, 100),
+                new Point(-100, 2),
+            ];
+            for (var i = 0; i < 4; i++) {
+                expect(rect.getSector(points[i])).toBe(i);
+            }
+        });
     });
 
     describe('Segment', function() {
         it('can be constructed from 2 points', function() {
             var segment = new Segment(new Point(1, 2), new Point(3, 4));
+        });
+
+        it('return center point', function() {
+            var segment = new Segment(new Point(1, 2), new Point(3, 4));
+            expect(segment.getCenter()).toEqual(new Point(2, 3));
         });
     });
 });

@@ -18,6 +18,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             greenLight: "#a9cf54",
             junction: "#666",
             road: "#666",
+            roadMarking: "#eee",
             car: "#333",
             hoveredJunction: "#3d4c53",
             tempLine: "#aaa",
@@ -116,12 +117,12 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
         var center = rect.getCenter();
         this.ctx.beginPath();
-        this.ctx.strokeStyle = this.colors.background;
+        this.ctx.strokeStyle = this.colors.roadMarking;
         this.ctx.moveTo(center.x - this.gridStep / 3, center.y);
         this.ctx.lineTo(center.x + this.gridStep / 3, center.y);
         this.ctx.stroke();
         this.ctx.beginPath();
-        this.ctx.strokeStyle = this.colors.background;
+        this.ctx.strokeStyle = this.colors.roadMarking;
         this.ctx.moveTo(center.x, center.y - this.gridStep / 3);
         this.ctx.lineTo(center.x, center.y + this.gridStep / 3);
         this.ctx.stroke();
@@ -131,10 +132,27 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         if (sourceJunction && targetJunction) {
             var source = sourceJunction.rect.getCenter(),
                 target = targetJunction.rect.getCenter();
+
+            var sourceSide = sourceJunction.rect.getSector(targetJunction.rect.getCenter()),
+                targetSide = targetJunction.rect.getSector(sourceJunction.rect.getCenter());
+            var s1 = sourceJunction.rect.getSide(sourceSide),
+                s2 = targetJunction.rect.getSide(targetSide);
+
+            // draw the road
             this.ctx.beginPath();
-            this.ctx.strokeStyle = color;
-            this.ctx.moveTo(source.x, source.y);
-            this.ctx.lineTo(target.x, target.y);
+            this.ctx.fillStyle = color;
+            this.ctx.moveTo(s1.source.x, s1.source.y);
+            this.ctx.lineTo(s1.target.x, s1.target.y);
+            this.ctx.lineTo(s2.source.x, s2.source.y);
+            this.ctx.lineTo(s2.target.x, s2.target.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+
+            // draw line in the middle of the road
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = this.colors.roadMarking;
+            this.ctx.moveTo(s1.getCenter().x, s1.getCenter().y);
+            this.ctx.lineTo(s2.getCenter().x, s2.getCenter().y);
             this.ctx.stroke();
         }
     };
@@ -215,7 +233,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
-            // self.drawRoad(road);
+            self.drawRoad(source, target, self.colors.road);
         });
         this.world.junctions.each(function(index, junction) {
             self.drawJunction(junction);
