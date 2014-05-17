@@ -77,6 +77,7 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
         this.getJunction(road.source).roads.push(road.id);
+        this.getJunction(road.target).roads.push(road.id);
     };
 
     World.prototype.getRoad = function(id) {

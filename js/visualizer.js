@@ -24,7 +24,6 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             tempLine: "#aaa",
             grid: "#70b7ba",
             hoveredGrid: "#f4e8e1",
-            unfinishedJunction: "#eee",
         };
         var self = this;
 
@@ -49,8 +48,8 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
                 if (hoveredJunction) {
                     var road1 = new Road(self.tempLine.source, hoveredJunction);
                     self.world.addRoad(road1);
-                    var road2 = new Road(hoveredJunction, self.tempLine.source);
-                    self.world.addRoad(road2);
+                    // var road2 = new Road(hoveredJunction, self.tempLine.source);
+                    // self.world.addRoad(road2);
                 }
                 self.tempLine = null;
             }
@@ -100,7 +99,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         );
     };
 
-    Visualizer.prototype.drawJunction = function(junction, forcedColor) {
+    Visualizer.prototype.drawJunction = function(junction, alpha, forcedColor) {
         var color = this.colors.junction;
         if (forcedColor) {
             color = forcedColor;
@@ -112,10 +111,13 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             // color = this.colors.greenLight;
         }
         var rect = junction.rect;
+        var center = rect.getCenter();
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+
         this.ctx.beginPath();
         this.ctx.fillStyle = color;
         this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
-        var center = rect.getCenter();
         this.ctx.beginPath();
         this.ctx.strokeStyle = this.colors.roadMarking;
         this.ctx.moveTo(center.x - this.gridStep / 3, center.y);
@@ -126,6 +128,8 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.ctx.moveTo(center.x, center.y - this.gridStep / 3);
         this.ctx.lineTo(center.x, center.y + this.gridStep / 3);
         this.ctx.stroke();
+
+        this.ctx.restore();
     };
 
     Visualizer.prototype.drawRoad = function(sourceJunction, targetJunction, alpha) {
@@ -238,10 +242,10 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
-            self.drawRoad(source, target, 1);
+            self.drawRoad(source, target, 0.9);
         });
         this.world.junctions.each(function(index, junction) {
-            self.drawJunction(junction);
+            self.drawJunction(junction, 0.9);
         });
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
@@ -250,7 +254,7 @@ define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"
             self.drawRoad(self.tempLine.source, self.tempLine.target, 0.4);
         }
         if (self.tempJunction) {
-            self.drawJunction(self.tempJunction, self.colors.unfinishedJunction);
+            self.drawJunction(self.tempJunction, 0.4);
         }
     };
 
