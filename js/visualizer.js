@@ -1,5 +1,5 @@
-define(["jquery", "road", "junction", "geometry/rect", "utils"],
-        function($, Road, Junction, Rect, utils) {
+define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "utils"],
+        function($, Road, Junction, Rect, Point, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -37,7 +37,7 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
             } else if (e.altKey) {
                 self.dragJunction = hoveredJunction;
             } else if (hoveredJunction) {
-                self.tempLine = utils.line(hoveredJunction, point);
+                self.tempLine = utils.line(hoveredJunction, null);
             }
         });
 
@@ -70,7 +70,7 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
                 hoveredJunction.color = self.colors.hoveredJunction;
             }
             if (self.tempLine) {
-                self.tempLine.target = point;
+                self.tempLine.target = hoveredJunction;
             }
             if (self.dragJunction) {
                 var gridPoint = self.getClosestGridPoint(point);
@@ -93,10 +93,10 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
     }
 
     Visualizer.prototype.getPoint = function(e) {
-        return {
-            x: e.pageX - this.canvas.offsetLeft,
-            y: e.pageY - this.canvas.offsetTop,
-        };
+        return new Point(
+            e.pageX - this.canvas.offsetLeft,
+            e.pageY - this.canvas.offsetTop
+        );
     };
 
     Visualizer.prototype.drawJunction = function(junction, forcedColor) {
@@ -127,32 +127,23 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
         this.ctx.stroke();
     };
 
-    Visualizer.prototype.drawLine = function(point1, point2, color) {
-        var offset = 0;
-        // FIXME: dirty hack, should be replaced with graph-drawing library
-        len = utils.getDistance(point1, point2);
-        dx = 2 * (point2.x - point1.x) / len;
-        dy = 2 * (point2.y - point1.y) / len;
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = color;
-        this.ctx.moveTo(point1.x - dy, point1.y + dx);
-        this.ctx.lineTo(point2.x - dy, point2.y + dx);
-        this.ctx.stroke();
+    Visualizer.prototype.drawRoad = function(sourceJunction, targetJunction, color) {
+        if (sourceJunction && targetJunction) {
+            var source = sourceJunction.rect.getCenter(),
+                target = targetJunction.rect.getCenter();
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = color;
+            this.ctx.moveTo(source.x, source.y);
+            this.ctx.lineTo(target.x, target.y);
+            this.ctx.stroke();
+        }
     };
 
     Visualizer.prototype.getCarPositionOnRoad = function(roadId, position) {
         var road = this.world.getRoad(roadId);
         var source = road.getSource(), target = road.getTarget();
-        var dx = target.x - source.x,
-            dy = target.y - source.y;
-        len = utils.getDistance(source, target);
-        off_x = 2 * (target.x - source.x) / len;
-        off_y = 2 * (target.y - source.y) / len;
-        off_x = off_y = 0;
-        return {
-            x: source.x + position * dx + off_y,
-            y: source.y + position * dy + off_x,
-        };
+        var offset = target.subtract(source);
+        return source.add(offset.mult(position));
     };
 
     Visualizer.prototype.drawCar = function(car) {
@@ -224,7 +215,7 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
             var source = road.getSource(), target = road.getTarget();
-            self.drawLine(source, target, self.colors.road);
+            // self.drawRoad(road);
         });
         this.world.junctions.each(function(index, junction) {
             self.drawJunction(junction);
@@ -233,7 +224,7 @@ define(["jquery", "road", "junction", "geometry/rect", "utils"],
             self.drawCar(car);
         });
         if (self.tempLine) {
-            self.drawLine(self.tempLine.source, self.tempLine.target, self.colors.tempLine);
+            self.drawRoad(self.tempLine.source, self.tempLine.target, self.colors.tempLine);
         }
         if (self.tempJunction) {
             self.drawJunction(self.tempJunction, self.colors.unfinishedJunction);
