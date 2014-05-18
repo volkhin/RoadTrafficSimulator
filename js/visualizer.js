@@ -1,4 +1,4 @@
-define(["jquery", "road", "junction", "geometry/rect", "geometry/point", "geometry/Segment", "utils"],
+define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         function($, Road, Junction, Rect, Point, Segment, utils) {
     function Visualizer(world) {
         this.world = world;

@@ -1,5 +1,5 @@
-define(["underscore", "car", "junction", "road", "pool", "utils"],
-        function(_, Car, Junction, Road, Pool, utils) {
+define(["underscore", "car", "junction", "road", "pool", "point", "rect", "serializer"],
+        function(_, Car, Junction, Road, Pool, Point, Rect, serializer) {
     function World(o) {
         this.set(o);
     }
@@ -8,34 +8,19 @@ define(["underscore", "car", "junction", "road", "pool", "utils"],
         if (o === undefined) {
             o = {};
         }
-        this.roads = o.roads || new Pool();
-        this.cars = o.cars || new Pool();
-        this.junctions = o.junctions || new Pool();
+        this.roads = new Pool(Road, o.roads);
+        this.cars = new Pool(Car, o.cars);
+        this.junctions = new Pool(Junction, o.junctions);
         this.ticks = o.ticks || 0;
         window.__next_id = o.__next_id || 1;
     };
 
     World.prototype.save = function() {
-        return; // FIXME
-        /* this.__next_id = window.__next_id;
-        utils.createCookie("world", JSON.stringify(this)); */
+        serializer.save(this);
     };
 
     World.prototype.load = function() {
-        return; // FIXME
-        /* var data = utils.readCookie("world");
-        if (data) {
-            this.set(JSON.parse(data));
-            $.each(this.junctions, function(index, junction) {
-                junction.__proto__ = Junction.prototype;
-            });
-            $.each(this.roads, function(index, road) {
-                road.__proto__ = Road.prototype;
-            });
-            $.each(this.cars, function(index, car) {
-                car.__proto__ = Car.prototype;
-            });
-        } */
+        serializer.load(this);
     };
 
     World.prototype.clear = function() {

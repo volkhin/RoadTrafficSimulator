@@ -1,6 +1,12 @@
 define(["jquery"], function($) {
-    function Pool() {
+    function Pool(factory, pool) {
+        this.factory = factory;
         this.objects = {};
+        if (pool && pool.objects) {
+            for (var key in pool.objects) {
+                this.objects[key] = factory.prototype.clone(pool.objects[key]);
+            }
+        }
     }
 
     Pool.prototype.get = function(id) {

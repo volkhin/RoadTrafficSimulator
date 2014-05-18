@@ -1,4 +1,4 @@
-define(["geometry/point", "geometry/segment"], function(Point, Segment) {
+define(["point", "segment"], function(Point, Segment) {
     function Rect(arg0, arg1, arg2, arg3) {
         if (arguments.length === 4) {
             this.position = new Point(arg0, arg1);
@@ -8,6 +8,10 @@ define(["geometry/point", "geometry/segment"], function(Point, Segment) {
             throw new Error("Invalid parammeters passed to Rect constructor");
         }
     }
+
+    Rect.prototype.clone = function(rect) {
+        return new Rect(rect.position.x, rect.position.y, rect.width, rect.height);
+    };
 
     Rect.prototype.setPosition = function() {
         var position = Object.create(Point.prototype);

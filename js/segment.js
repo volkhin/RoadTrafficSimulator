@@ -1,4 +1,4 @@
-define(["geometry/point"], function(Point) {
+define(["point"], function(Point) {
     function Segment(source, target) {
         this.source = source;
         this.target = target;

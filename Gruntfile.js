@@ -18,6 +18,7 @@ module.exports = function(grunt) {
                 maxerr: 30,
                 // undef: true,
                 // unused: true,
+                proto: true,
                 globals: {
                     jQuery: true,
                     console: true,

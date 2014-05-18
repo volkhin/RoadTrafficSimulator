@@ -1,4 +1,4 @@
-define(["geometry/segment"], function(Segment) {
+define(["segment"], function(Segment) {
     function Lane(sourceSegment, targetSegment) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;

@@ -1,5 +1,4 @@
-require(["geometry/point", "geometry/rect", "geometry/segment"],
-        function(Point, Rect, Segment) {
+require(["point", "rect", "segment"], function(Point, Rect, Segment) {
     describe('Point', function() {
         it('can be constructed by (x;y)', function() {
             var point = new Point(1, 2);
