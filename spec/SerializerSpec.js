@@ -15,7 +15,8 @@ require(["serializer"], function(serializer) {
             var obj = {a: 1, b: 2, c: {d: 3, e: 4}};
             serializer.save("name1", obj);
             expect(window.localStorage.name1).not.toBeUndefined();
-            expect(window.localStorage).toEqual({name1: obj});
+            var restored = serializer.load("name1");
+            expect(restored).toEqual(obj);
         });
     });
 });
