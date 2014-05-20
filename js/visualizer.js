@@ -236,10 +236,11 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
     };
 
     Visualizer.prototype.getHoveredJunction = function(point) {
-        this.world.junctions.each(function(index, junction) {
+        for (var junction_id in this.world.junctions.all()) {
+            var junction = this.world.junctions.get(junction_id);
             if (junction.rect.containsPoint(point))
                 return junction;
-        });
+        }
     };
 
     Visualizer.prototype.draw = function() {
