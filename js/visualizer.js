@@ -157,7 +157,6 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
                     lane.sourceSegment.target,
                     lane.targetSegment.source
                 );
-                // line = line.subsegment(0.02, 0.98);
                 self.ctx.save();
                 var dashSize = self.gridStep / 2;
                 self.ctx.lineDashOffset = 1.5 * dashSize;

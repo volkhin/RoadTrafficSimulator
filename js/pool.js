@@ -15,8 +15,7 @@ define(["jquery"], function($) {
 
     Pool.prototype.put = function(obj) {
         if (!obj instanceof Object) {
-            console.error(obj + " is not an object!");
-            return;
+            throw Error(obj + " is not an object!");
         }
         this.objects[obj.id] = obj;
     };

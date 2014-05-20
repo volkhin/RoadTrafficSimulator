@@ -1,6 +1,6 @@
 define(function(require) {
 
-    loader = {};
+    var loader = {};
     function getLoader(name) {
         if (typeof window[name] !== "undefined") {
             return window[name];
@@ -29,7 +29,6 @@ define(function(require) {
             return result;
         }
         data = deepWalk(data);
-        // localStorage.clear();
         localStorage[name] = JSON.stringify(data);
     }
 
@@ -49,9 +48,7 @@ define(function(require) {
         }
         var data = localStorage[name];
         data = data && JSON.parse(data);
-        // console.log(data);
         data = deepWalk(data);
-        // console.log(data);
         return data;
     }
 
