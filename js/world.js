@@ -100,7 +100,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect", "seria
     };
 
     World.prototype.removeAllCars = function() {
-        this.cars = {};
+        this.cars.clear();
     };
 
     return World;

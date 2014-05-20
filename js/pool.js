@@ -29,5 +29,9 @@ define(["jquery"], function($) {
         $.each(this.all(), callback);
     };
 
+    Pool.prototype.clear = function() {
+        this.objects = {};
+    };
+
     return Pool;
 });
