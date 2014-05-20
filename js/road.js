@@ -1,32 +1,38 @@
 define(["lane", "utils"], function(Lane, utils) {
     function Road(source, target) {
         this.id = window.__next_id++;
-        this.source = source;
-        this.target = target;
-        this.update();
+        this._source = source;
+        this._target = target;
         this.lanesNumber = 3; // FIXME: hack
         this.lanes = [];
+        this.update();
     }
 
-    Road.prototype.getLength = function() {
-        return utils.getDistance(this.getSource(), this.getTarget());
-    };
+    Object.defineProperty(Road.prototype, "length", {
+        get: function() {
+            return utils.getDistance(this.source, this.target);
+        },
+    });
 
-    Road.prototype.setSource = function(source) {
-        this.source = source;
-    };
+    Object.defineProperty(Road.prototype, "source", {
+        get: function() {
+            return this._source;
+        },
 
-    Road.prototype.getSource = function() {
-        return this.source;
-    };
+        set: function(source) {
+            this._source = source;
+        },
+    });
 
-    Road.prototype.setTarget = function(target) {
-        this.target = target;
-    };
+    Object.defineProperty(Road.prototype, "target", {
+        get: function() {
+            return this._target;
+        },
 
-    Road.prototype.getTarget = function() {
-        return this.target;
-    };
+        set: function(target) {
+            this._target = target;
+        },
+    });
 
     Road.prototype.update = function() {
         if (this.source && this.target) {

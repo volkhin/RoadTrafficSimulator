@@ -125,7 +125,7 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
-        var sourceJunction = road.getSource(), targetJunction = road.getTarget();
+        var sourceJunction = road.source, targetJunction = road.target;
         if (sourceJunction && targetJunction) {
             var source = sourceJunction.rect.getCenter(),
                 target = targetJunction.rect.getCenter();
@@ -174,10 +174,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         }
     };
 
-    Visualizer.prototype.getCarPositionOnRoad = function(roadId, position) {
-        var road = this.world.getRoad(roadId);
+    Visualizer.prototype.getCarPositionOnRoad = function(road, position) {
         var line = road.lanes[0].getMiddleline();
-        // var source = road.getSource().rect.getCenter(), target = road.getTarget().rect.getCenter();
         var source = line.source, target = line.target;
         var offset = target.subtract(source);
         return source.add(offset.mult(position));
@@ -238,11 +236,10 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
     };
 
     Visualizer.prototype.getHoveredJunction = function(point) {
-        for (var junction_id in this.world.junctions.all()) {
-            var junction = this.world.junctions.get(junction_id);
+        this.world.junctions.each(function(index, junction) {
             if (junction.rect.containsPoint(point))
                 return junction;
-        }
+        });
     };
 
     Visualizer.prototype.draw = function() {

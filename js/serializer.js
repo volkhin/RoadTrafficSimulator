@@ -15,7 +15,7 @@ define(function(require) {
         return loader[name];
     }
 
-    function save(world) {
+    function save(name, data) {
         function deepWalk(obj) {
             if (!(obj instanceof Object))
                 return obj;
@@ -28,17 +28,12 @@ define(function(require) {
             var constr = result.xxx_proto = obj.constructor.name;
             return result;
         }
-        localStorage.clear();
-        var data = {
-            junctions: world.junctions,
-            roads: [],
-            __next_id: __next_id,
-        };
         data = deepWalk(data);
-        localStorage.data = JSON.stringify(data);
+        // localStorage.clear();
+        localStorage[name] = JSON.stringify(data);
     }
 
-    function load(world) {
+    function load(name) {
         function deepWalk(obj) {
             if (!(obj instanceof Object))
                 return obj;
@@ -52,12 +47,12 @@ define(function(require) {
             }
             return result;
         }
-        var data = localStorage.data;
+        var data = localStorage[name];
         data = data && JSON.parse(data);
         // console.log(data);
         data = deepWalk(data);
         // console.log(data);
-        world.set(data);
+        return data;
     }
 
     return {
