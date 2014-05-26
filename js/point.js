@@ -27,5 +27,11 @@ define([], function()  {
         return new Point(this.x / o, this.y / o);
     };
 
+    Object.defineProperty(Point.prototype, "length", {
+        get: function() {
+            return Math.sqrt(this.x * this.x + this.y * this.y);
+        },
+    });
+
     return Point;
 });

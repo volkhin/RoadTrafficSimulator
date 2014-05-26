@@ -31,7 +31,12 @@ define(["lane", "segment", "utils"], function(Lane, Segment, utils) {
 
     Object.defineProperty(Road.prototype, "length", {
         get: function() {
-            return utils.getDistance(this.source, this.target);
+            if (this.sourceSide && this.targetSide) {
+                var a = this.sourceSide.source,
+                    b = this.targetSide.target;
+                return b.subtract(a).length;
+            }
+            return NaN;
         },
     });
 

@@ -54,7 +54,9 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         this.cars.each(function(index, car) {
             var lane = car.lane;
             var road = lane.road;
-            car.position += 0.01;//2 * car.speed / road.length;
+            if (car.getDistanceToNextCar() > 15) { // FIXME
+                car.position += 0.01;//2 * car.speed / road.length;
+            }
             var junction = null, previousJunction = null;
             if (car.position >= 1) {
                 previousJunction = lane.sourceJunction;
@@ -72,11 +74,10 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
                     }
                     var nextRoad = _.sample(possibleRoads);
                     if (junction === nextRoad.source) {
-                        car.lane = nextRoad.lanes[0]; // FIXME: better choice
+                        car.moveToLane(nextRoad.lanes[0]);
                     } else {
-                        car.lane = nextRoad.lanes[nextRoad.lanesNumber - 1];
+                        car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
                     }
-                    car.position = 0;
                 }
             }
         });
@@ -115,7 +116,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         if (road) {
             var lane = road.lanes[0];
             if (lane) {
-                this.addCar(new Car(lane, Math.random()));
+                this.addCar(new Car(lane));
             }
         }
     };
