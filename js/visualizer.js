@@ -10,8 +10,10 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.tempRoad = null;
         this.tempJunction = null;
         this.dragJunction = null;
-        this.gridStep = 20;
         this.mousePos = null;
+
+        // settings
+        this.gridStep = 20;
         this.colors = {
             background: "#fff",
             redLight: "#f1433f",
@@ -93,11 +95,20 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
 
     }
 
+    Visualizer.prototype.ctx2coord = function(point) {
+        return point;
+    };
+
+    Visualizer.prototype.coord2ctx = function(point) {
+        return point;
+    };
+
     Visualizer.prototype.getPoint = function(e) {
-        return new Point(
+        var point = new Point(
             e.pageX - this.canvas.offsetLeft,
             e.pageY - this.canvas.offsetTop
         );
+        return point;
     };
 
     Visualizer.prototype.drawJunction = function(junction, alpha, forcedColor) {
@@ -106,10 +117,6 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             color = forcedColor;
         } else if (junction.color) {
             color = junction.color;
-        // } else if (junction.state == Junction.prototype.STATE.RED) {
-            // color = this.colors.redLight;
-        // } else if (junction.state == Junction.prototype.STATE.GREEN) {
-            // color = this.colors.greenLight;
         }
         var rect = junction.rect;
         var center = rect.getCenter();
@@ -117,19 +124,23 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.ctx.globalAlpha = alpha;
 
         // draw intersection
-        this.ctx.beginPath();
         this.ctx.fillStyle = color;
-        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+        this.fillRect(rect);
 
         this.ctx.restore();
     };
 
+    // drawing helpers
     Visualizer.prototype.moveTo = function(point) {
         this.ctx.moveTo(point.x, point.y);
     };
 
     Visualizer.prototype.lineTo = function(point) {
         this.ctx.lineTo(point.x, point.y);
+    };
+
+    Visualizer.prototype.fillRect = function(rect) {
+        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
@@ -148,10 +159,10 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             this.ctx.globalAlpha = alpha;
             this.ctx.fillStyle = this.colors.road;
             this.ctx.beginPath();
-            this.ctx.moveTo(s1.source.x, s1.source.y);
-            this.ctx.lineTo(s1.target.x, s1.target.y);
-            this.ctx.lineTo(s2.source.x, s2.source.y);
-            this.ctx.lineTo(s2.target.x, s2.target.y);
+            this.moveTo(s1.source);
+            this.lineTo(s1.target);
+            this.lineTo(s2.source);
+            this.lineTo(s2.target);
             this.ctx.closePath();
             this.ctx.fill();
             this.ctx.restore();
@@ -166,8 +177,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
                 self.ctx.setLineDash([dashSize]);
                 self.ctx.strokeStyle = self.colors.roadMarking;
                 self.ctx.beginPath();
-                self.ctx.moveTo(line.source.x, line.source.y);
-                self.ctx.lineTo(line.target.x, line.target.y);
+                self.moveTo(line.source);
+                self.lineTo(line.target);
                 self.ctx.stroke(); 
                 self.ctx.restore();
             }
@@ -175,11 +186,18 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
     };
 
     Visualizer.prototype.drawCar = function(car) {
-        var point = car.getCenter();
-        this.ctx.beginPath();
+        var angle = car.lane.getOrientation();
+        var width = this.gridStep / 4, length = this.gridStep / 2;
+        var center = car.getCenter();
+        var boundRect = (new Rect(0, 0, length, width)).setCenter(new Point(0, 0));
+
+        this.ctx.save();
+        this.ctx.translate(center.x, center.y);
+        this.ctx.rotate(angle);
         this.ctx.fillStyle = this.colors.car;
-        this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
-        this.ctx.fill();
+        // this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        this.fillRect(boundRect);
+        this.ctx.restore();
     };
 
     Visualizer.prototype.drawBackground = function() {

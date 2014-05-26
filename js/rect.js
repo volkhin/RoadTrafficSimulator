@@ -17,6 +17,7 @@ define(["point", "segment"], function(Point, Segment) {
         var position = Object.create(Point.prototype);
         Point.apply(position, arguments);
         this.position = position;
+        return this;
     };
 
     Rect.prototype.getPosition = function() {
@@ -25,6 +26,7 @@ define(["point", "segment"], function(Point, Segment) {
 
     Rect.prototype.setLeft = function(x) {
         this.position.x = x;
+        return this;
     };
 
     Rect.prototype.getLeft = function() {
@@ -37,6 +39,7 @@ define(["point", "segment"], function(Point, Segment) {
 
     Rect.prototype.setTop = function(y) {
         this.position.y = y;
+        return this;
     };
 
     Rect.prototype.getTop = function() {
@@ -49,6 +52,7 @@ define(["point", "segment"], function(Point, Segment) {
 
     Rect.prototype.setWidth = function(width) {
         this.width = width;
+        return this;
     };
 
     Rect.prototype.getWidth = function() {
@@ -57,10 +61,17 @@ define(["point", "segment"], function(Point, Segment) {
 
     Rect.prototype.setHeight = function(height) {
         this.height = height;
+        return this;
     };
 
     Rect.prototype.getHeight = function() {
         return this.height;
+    };
+
+    Rect.prototype.setCenter = function(point) {
+        this.position.x = point.x - this.width / 2;
+        this.position.y = point.y - this.height / 2;
+        return this;
     };
 
     Rect.prototype.getCenter = function() {

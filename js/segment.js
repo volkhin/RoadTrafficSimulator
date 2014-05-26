@@ -29,5 +29,10 @@ define(["point"], function(Point) {
         return new Segment(start, end);
     };
 
+    Segment.prototype.getOrientation = function() {
+        var offset = this.target.subtract(this.source);
+        return Math.atan2(offset.y, offset.x);
+    };
+
     return Segment;
 });

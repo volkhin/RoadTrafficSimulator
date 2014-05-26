@@ -28,5 +28,9 @@ define(["segment"], function(Segment) {
         );
     };
 
+    Lane.prototype.getOrientation = function() {
+        return this.getMiddleline().getOrientation();
+    };
+
     return Lane;
 });
