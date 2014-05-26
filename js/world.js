@@ -59,10 +59,15 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             var lane = car.lane;
             var road = lane.road;
             if (car.getDistanceToNextCar() > 15) { // FIXME
+                car.speed += car.acceleration;
+                if (car.speed > car.maxSpeed) {
+                    car.speed = car.maxSpeed;
+                }
                 car.position += car.speed / road.length;
             }
             var junction = null, previousJunction = null;
             if (car.position >= 1) {
+                car.speed = 0;
                 previousJunction = lane.sourceJunction;
                 junction = lane.targetJunction;
                 car.position = 1;

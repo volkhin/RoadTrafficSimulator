@@ -1,7 +1,9 @@
 define([], function() {
     function Car(lane, position) {
         this.id = window.__next_id++;
-        this.speed = (4 + Math.random()) / 5; // 0.8 - 1.0
+        this.speed = 0;
+        this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0
+        this.acceleration = 0.02;
         this.moveToLane(lane, position);
     }
 
