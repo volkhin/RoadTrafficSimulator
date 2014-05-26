@@ -59,7 +59,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             var lane = car.lane;
             var road = lane.road;
             if (car.getDistanceToNextCar() > 15) { // FIXME
-                car.position += 0.01;//2 * car.speed / road.length;
+                car.position += car.speed / road.length;
             }
             var junction = null, previousJunction = null;
             if (car.position >= 1) {
@@ -118,7 +118,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
     World.prototype.addRandomCar = function() {
         var road = _.sample(this.roads.all());
         if (road) {
-            var lane = road.lanes[0];
+            var lane = _.sample(road.lanes);
             if (lane) {
                 this.addCar(new Car(lane));
             }
