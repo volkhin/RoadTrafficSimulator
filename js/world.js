@@ -78,14 +78,15 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
                         return x.target !== previousJunction && x.source !== previousJunction;
                     });
                     if (possibleRoads.length === 0) {
-                        // TODO: we can just remove a car out of the map
-                        possibleRoads = junction.roads;
-                    }
-                    var nextRoad = _.sample(possibleRoads);
-                    if (junction === nextRoad.source) {
-                        car.moveToLane(nextRoad.lanes[0]);
+                        car.moveToLane(null);
+                        self.cars.pop(car.id);
                     } else {
-                        car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
+                        var nextRoad = _.sample(possibleRoads);
+                        if (junction === nextRoad.source) {
+                            car.moveToLane(nextRoad.lanes[0]);
+                        } else {
+                            car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
+                        }
                     }
                 }
             }

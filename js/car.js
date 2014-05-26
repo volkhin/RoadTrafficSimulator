@@ -19,7 +19,9 @@ define([], function() {
         if (this.lane) {
             this.lane.removeCar(this);
         }
-        lane.addCar(this);
+        if (lane) {
+            lane.addCar(this);
+        }
         this.lane = lane;
     };
 

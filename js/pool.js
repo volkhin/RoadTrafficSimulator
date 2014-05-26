@@ -24,6 +24,13 @@ define(["jquery"], function($) {
         this.objects[obj.id] = obj;
     };
 
+    Pool.prototype.pop = function(obj) {
+        var id = obj.id || obj;
+        var result = this.objects[id];
+        delete this.objects[id];
+        return result;
+    };
+
     Pool.prototype.all = function() {
         return this.objects;
     };
