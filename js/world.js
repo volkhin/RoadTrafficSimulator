@@ -19,6 +19,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         var data = {
             junctions: this.junctions,
             roads: this.roads,
+            __num_of_cars: this.cars.length,
             __next_id: __next_id,
         };
         localStorage.world = JSON.stringify(data);
@@ -39,6 +40,9 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             road = Road.copy(road);
             self.addRoad(road);
         });
+        for (var i = 0; i < data.__num_of_cars; i++) {
+            this.addRandomCar();
+        }
     };
 
     World.prototype.clear = function() {

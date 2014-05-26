@@ -36,5 +36,11 @@ define(["jquery"], function($) {
         this.objects = {};
     };
 
+    Object.defineProperty(Pool.prototype, "length", {
+        get: function() {
+            return Object.keys(this.objects).length;
+        },
+    });
+
     return Pool;
 });
