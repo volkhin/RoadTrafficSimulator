@@ -2,7 +2,7 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
     function Junction(arg0) {
         this.id = window.__next_id++;
         this.rect = arg0;
-        this._roads = [];
+        this._roadIds = [];
         this.state = this.STATE.RED;
         this.flipInterval = _.random(10, 50);
     }
@@ -18,6 +18,16 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
     Junction.prototype.STATE = {
         RED: 0,
         GREEN: 1,
+    };
+
+    Junction.prototype.toJSON = function() {
+        function replacer(key, value) {
+            console.log(key + ' ' + value);
+            return value;
+        }
+        console.log("here");
+        return this;
+        // return $.extend({}, this, {xxx_proto: this.constructor.name});
     };
 
     Object.defineProperty(Junction.prototype, "roads", {

@@ -18,5 +18,19 @@ require(["serializer"], function(serializer) {
             var restored = serializer.load("name1");
             expect(restored).toEqual(obj);
         });
+
+        it('works for objects with circular dependencies', function() {
+            var a = {x: 1};
+            var b = {a: a, y: 2};
+            a.b = b;
+            var data = {a: a, b: b};
+            function f() {
+                serializer.save("name", data);
+            }
+            expect(f).not.toThrow();
+            var restored = serializer.load("name");
+            console.info(restored);
+            expect(restored).toEqual(data);
+        });
     });
 });
