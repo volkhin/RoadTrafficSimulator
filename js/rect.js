@@ -76,6 +76,7 @@ define(["point", "segment"], function(Point, Segment) {
     };
 
     Rect.prototype.getVertices = function() {
+        // returns vertices in CW order starting with the top-left
         var x = this.position.x, y = this.position.y;
         return [
             new Point(x, y),
@@ -86,6 +87,7 @@ define(["point", "segment"], function(Point, Segment) {
     };
 
     Rect.prototype.getSide = function(i) {
+        // returns sides in CW order starting with the top
         var vertices = this.getVertices();
         return new Segment(vertices[i], vertices[(i + 1) % 4]);
     };

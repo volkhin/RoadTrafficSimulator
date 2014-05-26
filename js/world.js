@@ -52,11 +52,12 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             junction.onTick(self.ticks);
         });
         this.cars.each(function(index, car) {
-            var road = car.road;
+            var lane = car.lane;
+            var road = lane.road;
             car.position += 0.01;//2 * car.speed / road.length;
             var junction = null;
             if (car.position >= 1) {
-                junction = road.target;
+                junction = lane.targetJunction;
                 car.position = 1;
             }
             if (junction !== null) {
@@ -69,7 +70,11 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
                         possibleRoads = junction.roads;
                     }
                     var nextRoad = _.sample(possibleRoads);
-                    car.road = nextRoad.id;
+                    if (junction === nextRoad.source) {
+                        car.lane = nextRoad.lanes[0]; // FIXME: better choice
+                    } else {
+                        car.lane = nextRoad.lanes[nextRoad.lanesNumber - 1];
+                    }
                     car.position = 0;
                 }
             }
@@ -107,7 +112,10 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
     World.prototype.addRandomCar = function() {
         var road = _.sample(this.roads.all());
         if (road) {
-            this.addCar(new Car(road.id, Math.random()));
+            var lane = road.lanes[0];
+            if (lane) {
+                this.addCar(new Car(lane, Math.random()));
+            }
         }
     };
 

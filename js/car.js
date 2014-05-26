@@ -1,19 +1,17 @@
 define([], function() {
-    function Car(road, position) {
+    function Car(lane, position) {
         this.id = window.__next_id++;
-        this._road = road;
+        this.lane = lane;
         this.position = position;
         this.speed = (4 + Math.random()) / 5; // 0.8 - 1.0
     }
 
-    Object.defineProperty(Car.prototype, "road", {
-        get: function() {
-            return app.world.getRoad(this._road);
-        },
-        set: function(road) {
-            this._road = road;
-        },
-    });
+    Car.prototype.getCenter = function() {
+        var line = this.lane.getMiddleline();
+        var source = line.source, target = line.target;
+        var offset = target.subtract(source);
+        return source.add(offset.mult(this.position));
+    };
 
     return Car;
 });

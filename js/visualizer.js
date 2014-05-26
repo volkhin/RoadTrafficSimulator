@@ -124,6 +124,14 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.ctx.restore();
     };
 
+    Visualizer.prototype.moveTo = function(point) {
+        this.ctx.moveTo(point.x, point.y);
+    };
+
+    Visualizer.prototype.lineTo = function(point) {
+        this.ctx.lineTo(point.x, point.y);
+    };
+
     Visualizer.prototype.drawRoad = function(road, alpha) {
         var sourceJunction = road.source, targetJunction = road.target;
         if (sourceJunction && targetJunction) {
@@ -135,10 +143,9 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
 
             var self = this;
 
+            // draw the road
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
-
-            // draw the road
             this.ctx.fillStyle = this.colors.road;
             this.ctx.beginPath();
             this.ctx.moveTo(s1.source.x, s1.source.y);
@@ -147,16 +154,12 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             this.ctx.lineTo(s2.target.x, s2.target.y);
             this.ctx.closePath();
             this.ctx.fill();
+            this.ctx.restore();
 
-            // draw lanes
+            // draw interlanes
             this.ctx.fillStyle = this.colors.roadMarking;
-            for (var i = 0; i < road.lanes.length - 1; i++) {
-                var lane = road.lanes[i];
-                // FIXME: better way to find lane splits
-                var line = new Segment(
-                    lane.sourceSegment.target,
-                    lane.targetSegment.source
-                );
+            for (var i = 0; i < road.interlanes.length; i++) {
+                var line = road.interlanes[i];
                 self.ctx.save();
                 var dashSize = self.gridStep / 2;
                 self.ctx.lineDashOffset = 1.5 * dashSize;
@@ -168,20 +171,11 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
                 self.ctx.stroke(); 
                 self.ctx.restore();
             }
-
-            this.ctx.restore();
         }
     };
 
-    Visualizer.prototype.getCarPositionOnRoad = function(road, position) {
-        var line = road.lanes[0].getMiddleline();
-        var source = line.source, target = line.target;
-        var offset = target.subtract(source);
-        return source.add(offset.mult(position));
-    };
-
     Visualizer.prototype.drawCar = function(car) {
-        var point = this.getCarPositionOnRoad(car.road, car.position);
+        var point = car.getCenter();
         this.ctx.beginPath();
         this.ctx.fillStyle = this.colors.car;
         this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
