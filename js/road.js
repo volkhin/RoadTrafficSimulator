@@ -8,6 +8,25 @@ define(["lane", "utils"], function(Lane, utils) {
         this.update();
     }
 
+    Road.clone = function(road) {
+        if (typeof road._source === "number") {
+            road._source = app.world.getJunction(road._source);
+        }
+        if (typeof road._target === "number") {
+            road._target = app.world.getJunction(road._target);
+        }
+        var result = Object.create(Road.prototype);
+        return $.extend(result, road);
+    };
+
+    Road.prototype.toJSON = function() {
+        var obj = $.extend({}, this);
+        obj._source = obj._source.id;
+        obj._target = obj._target.id;
+        obj.lanes = []; // FIXME
+        return obj;
+    };
+
     Object.defineProperty(Road.prototype, "length", {
         get: function() {
             return utils.getDistance(this.source, this.target);
