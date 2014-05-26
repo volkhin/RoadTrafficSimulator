@@ -2,6 +2,10 @@
     border: 1px solid #333;
 }
 
+#gui {
+    border: 1px solid #333;
+}
+
 #canvas-wrapper {
     float: left;
     width: 800px;

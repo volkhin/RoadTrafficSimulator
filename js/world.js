@@ -55,15 +55,16 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             var lane = car.lane;
             var road = lane.road;
             car.position += 0.01;//2 * car.speed / road.length;
-            var junction = null;
+            var junction = null, previousJunction = null;
             if (car.position >= 1) {
+                previousJunction = lane.sourceJunction;
                 junction = lane.targetJunction;
                 car.position = 1;
             }
             if (junction !== null) {
                 if (junction.state) {
                     var possibleRoads = junction.roads.filter(function(x) {
-                        return x.target !== road.source;
+                        return x.target !== previousJunction && x.source !== previousJunction;
                     });
                     if (possibleRoads.length === 0) {
                         // TODO: we can just remove a car out of the map
