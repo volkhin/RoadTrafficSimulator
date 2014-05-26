@@ -33,6 +33,11 @@ define(["point", "segment"], function(Point, Segment) {
         return this.position.x;
     };
 
+    Rect.prototype.setRight = function(x) {
+        this.position.x = x - this.getWidth();
+        return this;
+    };
+
     Rect.prototype.getRight = function() {
         return this.getLeft() + this.getWidth();
     };
@@ -44,6 +49,11 @@ define(["point", "segment"], function(Point, Segment) {
 
     Rect.prototype.getTop = function() {
         return this.position.y;
+    };
+
+    Rect.prototype.setBottom = function(y) {
+        this.position.y = y - this.getHeight();
+        return this;
     };
 
     Rect.prototype.getBottom = function() {

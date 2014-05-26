@@ -167,11 +167,26 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             this.ctx.fill();
             this.ctx.restore();
 
+            // draw lanes
+            self.ctx.save();
+            for (var i = 0; i < road.lanes.length; i++) {
+                var lane = road.lanes[i];
+                var junction = lane.targetJunction;
+                var segment = lane.targetSegment.subsegment(0.2, 0.8);
+                self.ctx.beginPath();
+                self.ctx.strokeStyle = "red";
+                self.ctx.lineWidth = 2;
+                self.moveTo(segment.source);
+                self.lineTo(segment.target);
+                self.ctx.stroke();
+            }
+            self.ctx.restore();
+
             // draw interlanes
             this.ctx.fillStyle = this.colors.roadMarking;
+            self.ctx.save();
             for (var i = 0; i < road.interlanes.length; i++) {
                 var line = road.interlanes[i];
-                self.ctx.save();
                 var dashSize = self.gridStep / 2;
                 self.ctx.lineDashOffset = 1.5 * dashSize;
                 self.ctx.setLineDash([dashSize]);
@@ -180,8 +195,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
                 self.moveTo(line.source);
                 self.lineTo(line.target);
                 self.ctx.stroke(); 
-                self.ctx.restore();
             }
+            self.ctx.restore();
         }
     };
 
@@ -189,13 +204,17 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         var angle = car.lane.getOrientation();
         var width = this.gridStep / 4, length = this.gridStep / 2;
         var center = car.getCenter();
-        var boundRect = (new Rect(0, 0, length, width)).setCenter(new Point(0, 0));
+        var boundRect = (new Rect(0, 0, length, width))
+            .setCenter(new Point(0, 0)).setRight(-1);
 
         this.ctx.save();
         this.ctx.translate(center.x, center.y);
         this.ctx.rotate(angle);
-        this.ctx.fillStyle = this.colors.car;
-        // this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        var h = car.color;
+        var s = 100;
+        var l = 90 - 40 * car.speed / 0.8;
+        this.ctx.fillStyle = "hsl(" + h + ", " + s + "%, " + l + "%)";
+        // this.ctx.fillStyle = this.colors.car;
         this.fillRect(boundRect);
         this.ctx.restore();
     };

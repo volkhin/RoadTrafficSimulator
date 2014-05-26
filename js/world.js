@@ -58,16 +58,17 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         this.cars.each(function(index, car) {
             var lane = car.lane;
             var road = lane.road;
-            if (car.getDistanceToNextCar() > 15) { // FIXME
+            if (car.getDistanceToNextCar() > 15 && car.position < 1) { // FIXME
                 car.speed += car.acceleration;
                 if (car.speed > car.maxSpeed) {
                     car.speed = car.maxSpeed;
                 }
                 car.position += car.speed / road.length;
+            } else {
+                car.speed = 0;
             }
             var junction = null, previousJunction = null;
             if (car.position >= 1) {
-                car.speed = 0;
                 previousJunction = lane.sourceJunction;
                 junction = lane.targetJunction;
                 car.position = 1;
@@ -88,6 +89,9 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
                             car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
                         }
                     }
+                } else {
+                    car.speed = 0;
+                    // car.speed -= car.acceleration;
                 }
             }
         });
