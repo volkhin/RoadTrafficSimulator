@@ -7,8 +7,8 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         this.flipInterval = _.random(10, 50);
     }
 
-    Junction.clone = function(junction) {
-        junction.rect = Rect.clone(junction.rect);
+    Junction.copy = function(junction) {
+        junction.rect = Rect.copy(junction.rect);
         var result = Object.create(Junction.prototype);
         return $.extend(result, junction);
     };

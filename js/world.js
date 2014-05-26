@@ -32,11 +32,11 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         window.__next_id = data.__next_id || 1;
         var self = this;
         $.each(data.junctions, function(index, junction) {
-            junction = Junction.clone(junction);
+            junction = Junction.copy(junction);
             self.addJunction(junction);
         });
         $.each(data.roads, function(index, road) {
-            road = Road.clone(road);
+            road = Road.copy(road);
             self.addRoad(road);
         });
     };

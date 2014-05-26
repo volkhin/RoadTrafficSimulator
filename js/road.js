@@ -9,7 +9,7 @@ define(["lane", "segment", "utils"], function(Lane, Segment, utils) {
         this.update();
     }
 
-    Road.clone = function(road) {
+    Road.copy = function(road) {
         if (typeof road._source === "number") {
             road._source = app.world.getJunction(road._source);
         }

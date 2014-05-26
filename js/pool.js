@@ -4,7 +4,7 @@ define(["jquery"], function($) {
         this.objects = {};
         if (pool && pool.objects) {
             for (var key in pool.objects) {
-                this.objects[key] = factory.clone(pool.objects[key]);
+                this.objects[key] = factory.copy(pool.objects[key]);
             }
         }
     }

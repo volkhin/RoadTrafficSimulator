@@ -9,7 +9,7 @@ define(["point", "segment"], function(Point, Segment) {
         }
     }
 
-    Rect.clone = function(rect) {
+    Rect.copy = function(rect) {
         return new Rect(rect.position.x, rect.position.y, rect.width, rect.height);
     };
 
