@@ -1,4 +1,4 @@
-define(["point", "rect"], function(Point, Rect) {
+define(["point", "rect", "graphics"], function(Point, Rect, graphics) {
 
     function Button(title, callback, rect) {
         this.title = title;
@@ -26,7 +26,9 @@ define(["point", "rect"], function(Point, Rect) {
             var point = self.getPoint(e);
             $.each(self.buttons, function(index, button) {
                 if (button.rect.containsPoint(point)) {
-                    button.callback.call();
+                    if (button.callback && typeof button.callback === "function") {
+                        button.callback.call();
+                    }
                 }
             });
         });
@@ -40,22 +42,30 @@ define(["point", "rect"], function(Point, Rect) {
     };
 
     GUI.prototype.addButton = function(title, callback) {
-        var offset = this.buttons.length * this.gridStep;
-        var width = this.gridStep - this.margin;
-        var height = this.gridStep - 2 * this.margin;
-        var rect = new Rect(offset + this.margin, this.margin, width, height);
-        var button = new Button(title, callback, rect);
+        var button = new Button(title, callback, new Rect());
         this.buttons.push(button);
     };
 
     GUI.prototype.draw = function() {
+        graphics.clear("white", this.ctx);
+        var offsetX = 0, margin = this.margin;
         for (var i = 0; i < this.buttons.length; ++i) {
             var button = this.buttons[i];
-            var rect = button.rect;
+            var title = button.title;
+            if (typeof title === "function") {
+                title = title.call();
+            }
+            var textWidth = this.ctx.measureText(title).width;
             this.ctx.fillStyle = this.colors.buttonBackground;
-            this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+            button.rect
+                .setLeft(offsetX + margin)
+                .setTop(margin)
+                .setWidth(textWidth + 2 * margin)
+                .setHeight(this.gridStep - 2 * margin);
+            graphics.fillRect(button.rect, this.ctx);
             this.ctx.fillStyle = this.colors.buttonTitle;
-            this.ctx.fillText(button.title, rect.getLeft(), rect.getCenter().y);
+            this.ctx.fillText(title, offsetX + 2 * margin, this.gridStep / 2);
+            offsetX += textWidth + 3 * margin;
         }
     };
 

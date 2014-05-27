@@ -4,6 +4,7 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
     }
 
     App.prototype.init = function() {
+        var self = this;
         this.world = new World();
         this.world.load();
         this.visualizer = new Visualizer(this.world);
@@ -13,6 +14,7 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
         this.gui.addButton("clear", this.world.clear.bind(this.world));
         this.gui.addButton("add car", this.world.addRandomCar.bind(this.world));
         this.gui.addButton("del cars", this.world.removeAllCars.bind(this.world));
+        this.gui.addButton(function() { return "cars: " + self.world.cars.length; }, null);
         setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
         setInterval(this.world.onTick.bind(this.world), 1000 / this.FPS);
         setInterval(this.gui.draw.bind(this.gui), 1000 / this.FPS);

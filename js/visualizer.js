@@ -1,5 +1,5 @@
-define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
-        function($, Road, Intersection, Rect, Point, Segment, utils) {
+define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics", "utils"],
+        function($, Road, Intersection, Rect, Point, Segment, graphics, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -125,22 +125,9 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
 
         // draw intersection
         this.ctx.fillStyle = color;
-        this.fillRect(rect);
+        graphics.fillRect(rect, this.ctx);
 
         this.ctx.restore();
-    };
-
-    // drawing helpers
-    Visualizer.prototype.moveTo = function(point) {
-        this.ctx.moveTo(point.x, point.y);
-    };
-
-    Visualizer.prototype.lineTo = function(point) {
-        this.ctx.lineTo(point.x, point.y);
-    };
-
-    Visualizer.prototype.fillRect = function(rect) {
-        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
@@ -159,10 +146,10 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
             this.ctx.globalAlpha = alpha;
             this.ctx.fillStyle = this.colors.road;
             this.ctx.beginPath();
-            this.moveTo(s1.source);
-            this.lineTo(s1.target);
-            this.lineTo(s2.source);
-            this.lineTo(s2.target);
+            graphics.moveTo(s1.source, this.ctx);
+            graphics.lineTo(s1.target, this.ctx);
+            graphics.lineTo(s2.source, this.ctx);
+            graphics.lineTo(s2.target, this.ctx);
             this.ctx.closePath();
             this.ctx.fill();
             this.ctx.restore();
@@ -180,8 +167,8 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
                     self.ctx.strokeStyle = self.colors.greenLight;
                 }
                 self.ctx.lineWidth = 3;
-                self.moveTo(segment.source);
-                self.lineTo(segment.target);
+                graphics.moveTo(segment.source, self.ctx);
+                graphics.lineTo(segment.target, self.ctx);
                 self.ctx.stroke();
             }
             self.ctx.restore();
@@ -196,8 +183,8 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
                 self.ctx.setLineDash([dashSize]);
                 self.ctx.strokeStyle = self.colors.roadMarking;
                 self.ctx.beginPath();
-                self.moveTo(line.source);
-                self.lineTo(line.target);
+                graphics.moveTo(line.source, self.ctx);
+                graphics.lineTo(line.target, self.ctx);
                 self.ctx.stroke(); 
             }
             self.ctx.restore();
@@ -219,7 +206,7 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
         var l = 90 - 40 * car.speed / 0.8;
         this.ctx.fillStyle = "hsl(" + h + ", " + s + "%, " + l + "%)";
         // this.ctx.fillStyle = this.colors.car;
-        this.fillRect(boundRect);
+        graphics.fillRect(boundRect, this.ctx);
         this.ctx.restore();
     };
 

@@ -1,12 +1,8 @@
 define(["point", "segment"], function(Point, Segment) {
     function Rect(arg0, arg1, arg2, arg3) {
-        if (arguments.length === 4) {
-            this.position = new Point(arg0, arg1);
-            this.width = arg2;
-            this.height = arg3;
-        } else {
-            throw new Error("Invalid parammeters passed to Rect constructor");
-        }
+        this.position = new Point(arg0, arg1);
+        this.width = arg2 || 0;
+        this.height = arg3 || 0;
     }
 
     Rect.copy = function(rect) {
