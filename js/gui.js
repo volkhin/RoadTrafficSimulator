@@ -1,4 +1,4 @@
-define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, graphics) {
+define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, Graphics) {
     "use strict";
 
     function Button(title, callback, rect) {
@@ -21,6 +21,7 @@ define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, graphic
             buttonBackground: "#ddd",
             buttonTitle: "#333",
         };
+        this.graphics = new Graphics(this.ctx);
 
         var self = this;
 
@@ -49,7 +50,7 @@ define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, graphic
     };
 
     GUI.prototype.draw = function() {
-        graphics.clear("white", this.ctx);
+        this.graphics.clear("white");
         var offsetX = 0, margin = this.margin;
         for (var i = 0; i < this.buttons.length; ++i) {
             var button = this.buttons[i];
@@ -65,7 +66,7 @@ define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, graphic
                 .setTop(margin)
                 .setWidth(textWidth + 2 * margin)
                 .setHeight(this.gridStep - 2 * margin);
-            graphics.fillRect(button.rect, this.ctx);
+            this.graphics.fillRect(button.rect);
             this.ctx.fillStyle = this.colors.buttonTitle;
             this.ctx.fillText(title, button.rect.getLeft() + margin,
                     this.gridStep / 2 + this.fontSize / 2);

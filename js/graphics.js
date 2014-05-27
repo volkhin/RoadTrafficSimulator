@@ -1,54 +1,63 @@
 define([], function() {
     "use strict";
 
-    function fillRect(rect, ctx) {
-        ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+    function Graphics(ctx) {
+        this.ctx = ctx;
     }
 
-    function clear(color, ctx) {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    }
+    Graphics.prototype.fillRect = function(rect, style) {
+        if (style) {
+            this.ctx.fillStyle = style;
+        }
+        this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+    };
 
-    function moveTo(point, ctx) {
-        ctx.moveTo(point.x, point.y);
-    }
+    Graphics.prototype.clear = function(color) {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    };
 
-    function lineTo(point, ctx) {
-        ctx.lineTo(point.x, point.y);
-    }
+    Graphics.prototype.moveTo = function(point) {
+        this.ctx.moveTo(point.x, point.y);
+    };
 
-    function drawLine(source, target, ctx) {
-        ctx.beginPath();
-        moveTo(source, ctx);
-        lineTo(target, ctx);
-    }
+    Graphics.prototype.lineTo = function(point) {
+        this.ctx.lineTo(point.x, point.y);
+    };
 
-    function drawSegment(segment, ctx) {
-        drawLine(segment.source, segment.target, ctx);
-    }
+    Graphics.prototype.drawLine = function(source, target) {
+        this.ctx.beginPath();
+        this.moveTo(source);
+        this.lineTo(target);
+    };
 
-    function polyline(ctx) {
+    Graphics.prototype.drawSegment = function(segment) {
+        this.drawLine(segment.source, segment.target);
+    };
+
+    Graphics.prototype.fill = function(style) {
+        this.ctx.fillStyle = style;
+        this.ctx.fill();
+    };
+
+    Graphics.prototype.stroke = function(style) {
+        this.ctx.strokeStyle = style;
+        this.ctx.stroke();
+    };
+
+    Graphics.prototype.polyline = function() {
         if (arguments.length <= 1) {
             return;
         }
 
-        var points = Array.prototype.slice.call(arguments, 1);
-        ctx.beginPath();
-        moveTo(points[0], ctx);
+        var points = Array.prototype.slice.call(arguments);
+        this.ctx.beginPath();
+        this.moveTo(points[0]);
         for (var i = 1; i < points.length; i++) {
-            lineTo(points[i], ctx);
+            this.lineTo(points[i]);
         }
-        ctx.closePath();
-    }
-
-    return {
-        fillRect: fillRect,
-        clear: clear,
-        lineTo: lineTo,
-        moveTo: moveTo,
-        polyline: polyline,
-        drawLine: drawLine,
-        drawSegment: drawSegment,
+        this.ctx.closePath();
     };
+
+    return Graphics;
 });

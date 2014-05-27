@@ -6,7 +6,7 @@ define(function(require) {
         Point = require("point"),
         Rect = require("rect"),
         Road = require("road"),
-        graphics = require("graphics");
+        Graphics = require("graphics");
 
     function Visualizer(world) {
         this.world = world;
@@ -19,6 +19,7 @@ define(function(require) {
         this.tempIntersection = null;
         this.dragIntersection = null;
         this.mousePos = null;
+        this.graphics = new Graphics(this.ctx);
 
         // settings
         this.gridStep = 20;
@@ -106,14 +107,6 @@ define(function(require) {
 
     }
 
-    Visualizer.prototype.ctx2coord = function(point) {
-        return point;
-    };
-
-    Visualizer.prototype.coord2ctx = function(point) {
-        return point;
-    };
-
     Visualizer.prototype.getPoint = function(e) {
         var point = new Point(
             e.pageX - this.canvas.offsetLeft,
@@ -130,13 +123,11 @@ define(function(require) {
             color = intersection.color;
         }
         var rect = intersection.rect;
-        this.ctx.save();
-        this.ctx.globalAlpha = alpha;
 
         // draw intersection
-        this.ctx.fillStyle = color;
-        graphics.fillRect(rect, this.ctx);
-
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        this.graphics.fillRect(rect, color);
         this.ctx.restore();
     };
 
@@ -153,9 +144,8 @@ define(function(require) {
         // draw the road
         this.ctx.save();
         this.ctx.globalAlpha = alpha;
-        graphics.polyline(this.ctx, s1.source, s1.target, s2.source, s2.target);
-        this.ctx.fillStyle = this.colors.road;
-        this.ctx.fill();
+        this.graphics.polyline(s1.source, s1.target, s2.source, s2.target);
+        this.graphics.fill(this.colors.road);
         this.ctx.restore();
 
         var i;
@@ -165,14 +155,13 @@ define(function(require) {
             var lane = road.lanes[i];
             var intersection = lane.targetIntersection;
             var segment = lane.targetSegment.subsegment(0.2, 0.8);
-            if (intersection.state[road.targetSideId] === Intersection.STATE.RED) {
-                self.ctx.strokeStyle = self.colors.redLight;
-            } else {
-                self.ctx.strokeStyle = self.colors.greenLight;
-            }
-            graphics.drawSegment(segment, self.ctx);
+            this.graphics.drawSegment(segment);
             self.ctx.lineWidth = 3;
-            self.ctx.stroke();
+            if (intersection.state[road.targetSideId] === Intersection.STATE.RED) {
+                self.graphics.stroke(self.colors.redLight);
+            } else {
+                self.graphics.stroke(self.colors.greenLight);
+            }
         }
         self.ctx.restore();
 
@@ -181,11 +170,10 @@ define(function(require) {
         for (i = 0; i < road.interlanes.length; i++) {
             var line = road.interlanes[i];
             var dashSize = self.gridStep / 2;
-            graphics.drawSegment(line, self.ctx);
+            this.graphics.drawSegment(line);
             self.ctx.lineDashOffset = 1.5 * dashSize;
             self.ctx.setLineDash([dashSize]);
-            self.ctx.strokeStyle = self.colors.roadMarking;
-            self.ctx.stroke(); 
+            self.graphics.stroke(self.colors.roadMarking); 
         }
         self.ctx.restore();
     };
@@ -203,22 +191,16 @@ define(function(require) {
         var h = car.color;
         var s = 100;
         var l = 90 - 40 * car.speed / 0.8;
-        this.ctx.fillStyle = "hsl(" + h + ", " + s + "%, " + l + "%)";
-        // this.ctx.fillStyle = this.colors.car;
-        graphics.fillRect(boundRect, this.ctx);
+        var style = "hsl(" + h + ", " + s + "%, " + l + "%)";
+        this.graphics.fillRect(boundRect, style);
         this.ctx.restore();
-    };
-
-    Visualizer.prototype.drawBackground = function() {
-        this.ctx.fillStyle = this.colors.background;
-        this.ctx.fillRect(0, 0, this.width, this.height);
     };
 
     Visualizer.prototype.drawGrid = function() {
         this.ctx.fillStyle = this.colors.grid;
         for (var i = 0; i <= this.width; i += this.gridStep) {
             for (var j = 0; j <= this.height; j += this.gridStep) {
-                this.ctx.fillRect(i - 1, j - 1, 2, 2);
+                this.graphics.fillRect(new Rect(i - 1, j - 1, 2, 2), this.colors.grid);
             }
         }
     };
@@ -269,7 +251,7 @@ define(function(require) {
 
     Visualizer.prototype.draw = function() {
         var self = this;
-        this.drawBackground();
+        this.graphics.clear(this.colors.background);
         this.drawGrid();
         this.drawHighlightedCell();
         this.world.roads.each(function(index, road) {
