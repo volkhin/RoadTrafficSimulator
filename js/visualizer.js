@@ -1,5 +1,5 @@
-define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics", "utils"],
-        function($, Road, Intersection, Rect, Point, Segment, graphics, utils) {
+define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"],
+        function($, Road, Intersection, Rect, Point, Segment, graphics) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];

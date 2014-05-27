@@ -1,4 +1,4 @@
-define(["lane", "segment", "utils"], function(Lane, Segment, utils) {
+define(["lane", "segment"], function(Lane, Segment) {
     function Road(source, target) {
         this.id = window.__next_id++;
         this._source = source;
