@@ -28,20 +28,21 @@ define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
     World.prototype.load = function() {
         var data = localStorage.world;
         data = data && JSON.parse(data);
-        // this.set(data);
-        this.clear();
-        window.__next_id = data.__next_id || 1;
-        var self = this;
-        $.each(data.intersections, function(index, intersection) {
-            intersection = Intersection.copy(intersection);
-            self.addIntersection(intersection);
-        });
-        $.each(data.roads, function(index, road) {
-            road = Road.copy(road);
-            self.addRoad(road);
-        });
-        for (var i = 0; i < data.__num_of_cars; i++) {
-            this.addRandomCar();
+        if (data) {
+            this.clear();
+            window.__next_id = data.__next_id || 1;
+            var self = this;
+            $.each(data.intersections, function(index, intersection) {
+                intersection = Intersection.copy(intersection);
+                self.addIntersection(intersection);
+            });
+            $.each(data.roads, function(index, road) {
+                road = Road.copy(road);
+                self.addRoad(road);
+            });
+            for (var i = 0; i < data.__num_of_cars; i++) {
+                this.addRandomCar();
+            }
         }
     };
 
