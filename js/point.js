@@ -1,4 +1,6 @@
 define([], function()  {
+    "use strict";
+
     function Point(arg0, arg1) {
         if (arguments.length === 1 && arg0 instanceof Point) {
             this.x = arg0.x;

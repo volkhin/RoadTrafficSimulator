@@ -1,6 +1,8 @@
 define(["jquery", "underscore", "rect"], function($, _, Rect) {
+    "use strict";
+
     function Intersection(arg0) {
-        this.id = window.__next_id++;
+        this.id = window.__nextId++;
         this.rect = arg0;
         this.roads = [];
         this.state = [
@@ -31,7 +33,7 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
 
     Intersection.prototype.flip = function() {
         for (var i = 0; i < this.state.length; i++) {
-            this.state[i] = !this.state[i];
+            this.state[i] = (this.state[i] + 1) % 2;
         }
     };
 

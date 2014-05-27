@@ -1,6 +1,8 @@
 define([], function() {
+    "use strict";
+
     function Car(lane, position) {
-        this.id = window.__next_id++;
+        this.id = window.__nextId++;
         this.color = 255 * Math.random();
         this.speed = 0;
         this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0

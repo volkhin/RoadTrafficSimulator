@@ -1,4 +1,6 @@
 define(["point", "segment"], function(Point, Segment) {
+    "use strict";
+
     function Rect(arg0, arg1, arg2, arg3) {
         this.position = new Point(arg0, arg1);
         this.width = arg2 || 0;
@@ -113,14 +115,18 @@ define(["point", "segment"], function(Point, Segment) {
         // returns the closest side to the point
         var center = this.getCenter();
         var offset = point.subtract(center);
-        if (offset.y <= 0 && Math.abs(offset.x) <= Math.abs(offset.y))
+        if (offset.y <= 0 && Math.abs(offset.x) <= Math.abs(offset.y)) {
             return 0;
-        if (offset.x >= 0 && Math.abs(offset.x) >= Math.abs(offset.y))
+        }
+        if (offset.x >= 0 && Math.abs(offset.x) >= Math.abs(offset.y)) {
             return 1;
-        if (offset.y >= 0 && Math.abs(offset.x) <= Math.abs(offset.y))
+        }
+        if (offset.y >= 0 && Math.abs(offset.x) <= Math.abs(offset.y)) {
             return 2;
-        if (offset.x <= 0 && Math.abs(offset.x) >= Math.abs(offset.y))
+        }
+        if (offset.x <= 0 && Math.abs(offset.x) >= Math.abs(offset.y)) {
             return 3;
+        }
         throw Error("Algorithm error");
     };
 

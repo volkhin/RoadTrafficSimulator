@@ -1,5 +1,13 @@
-define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"],
-        function($, Road, Intersection, Rect, Point, Segment, graphics) {
+define(function(require) {
+    "use strict";
+
+    var $ = require("jquery"),
+        Intersection = require("intersection"),
+        Point = require("point"),
+        Rect = require("rect"),
+        Road = require("road"),
+        graphics = require("graphics");
+
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -67,7 +75,9 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"
             var point = self.getPoint(e);
             var hoveredIntersection = self.getHoveredIntersection(point);
             self.mousePos = point;
-            self.world.intersections.each(function(index, intersection) { intersection.color = null; });
+            self.world.intersections.each(function(index, intersection) {
+                intersection.color = null; }
+            );
             if (hoveredIntersection) {
                 hoveredIntersection.color = self.colors.hoveredIntersection;
             }
@@ -81,11 +91,12 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"
                 self.dragIntersection.update(); // FIXME: should be done automatically
             }
             if (self.tempIntersection) {
-                self.tempIntersection.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
+                self.tempIntersection.rect = self.getBoundGridRect(
+                    self.mouseDownPos, self.mousePos);
             }
         });
 
-        this.canvas.addEventListener("mouseout", function(e) {
+        this.canvas.addEventListener("mouseout", function() {
             self.mouseDownPos = null;
             self.tempRoad = null;
             self.dragIntersection = null;
@@ -119,7 +130,6 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"
             color = intersection.color;
         }
         var rect = intersection.rect;
-        var center = rect.getCenter();
         this.ctx.save();
         this.ctx.globalAlpha = alpha;
 
@@ -131,64 +141,53 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
-        var sourceIntersection = road.source, targetIntersection = road.target;
-        if (sourceIntersection && targetIntersection) {
-            var source = sourceIntersection.rect.getCenter(),
-                target = targetIntersection.rect.getCenter();
-
-            var s1 = sourceIntersection.rect.getSector(targetIntersection.rect.getCenter()),
-                s2 = targetIntersection.rect.getSector(sourceIntersection.rect.getCenter());
-
-            var self = this;
-
-            // draw the road
-            this.ctx.save();
-            this.ctx.globalAlpha = alpha;
-            this.ctx.fillStyle = this.colors.road;
-            this.ctx.beginPath();
-            graphics.moveTo(s1.source, this.ctx);
-            graphics.lineTo(s1.target, this.ctx);
-            graphics.lineTo(s2.source, this.ctx);
-            graphics.lineTo(s2.target, this.ctx);
-            this.ctx.closePath();
-            this.ctx.fill();
-            this.ctx.restore();
-
-            // draw lanes
-            self.ctx.save();
-            for (var i = 0; i < road.lanes.length; i++) {
-                var lane = road.lanes[i];
-                var intersection = lane.targetIntersection;
-                var segment = lane.targetSegment.subsegment(0.2, 0.8);
-                self.ctx.beginPath();
-                if (intersection.state[road.targetSideId] == Intersection.STATE.RED) {
-                    self.ctx.strokeStyle = self.colors.redLight;
-                } else {
-                    self.ctx.strokeStyle = self.colors.greenLight;
-                }
-                self.ctx.lineWidth = 3;
-                graphics.moveTo(segment.source, self.ctx);
-                graphics.lineTo(segment.target, self.ctx);
-                self.ctx.stroke();
-            }
-            self.ctx.restore();
-
-            // draw interlanes
-            this.ctx.fillStyle = this.colors.roadMarking;
-            self.ctx.save();
-            for (var i = 0; i < road.interlanes.length; i++) {
-                var line = road.interlanes[i];
-                var dashSize = self.gridStep / 2;
-                self.ctx.lineDashOffset = 1.5 * dashSize;
-                self.ctx.setLineDash([dashSize]);
-                self.ctx.strokeStyle = self.colors.roadMarking;
-                self.ctx.beginPath();
-                graphics.moveTo(line.source, self.ctx);
-                graphics.lineTo(line.target, self.ctx);
-                self.ctx.stroke(); 
-            }
-            self.ctx.restore();
+        if (!road.source || !road.target) {
+            return;
         }
+
+        var s1 = road.source.rect.getSector(road.target.rect.getCenter()),
+            s2 = road.target.rect.getSector(road.source.rect.getCenter());
+
+        var self = this;
+
+        // draw the road
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        graphics.polyline(this.ctx, s1.source, s1.target, s2.source, s2.target);
+        this.ctx.fillStyle = this.colors.road;
+        this.ctx.fill();
+        this.ctx.restore();
+
+        var i;
+        // draw lanes
+        self.ctx.save();
+        for (i = 0; i < road.lanes.length; i++) {
+            var lane = road.lanes[i];
+            var intersection = lane.targetIntersection;
+            var segment = lane.targetSegment.subsegment(0.2, 0.8);
+            if (intersection.state[road.targetSideId] === Intersection.STATE.RED) {
+                self.ctx.strokeStyle = self.colors.redLight;
+            } else {
+                self.ctx.strokeStyle = self.colors.greenLight;
+            }
+            graphics.drawSegment(segment, self.ctx);
+            self.ctx.lineWidth = 3;
+            self.ctx.stroke();
+        }
+        self.ctx.restore();
+
+        // draw interlanes
+        self.ctx.save();
+        for (i = 0; i < road.interlanes.length; i++) {
+            var line = road.interlanes[i];
+            var dashSize = self.gridStep / 2;
+            graphics.drawSegment(line, self.ctx);
+            self.ctx.lineDashOffset = 1.5 * dashSize;
+            self.ctx.setLineDash([dashSize]);
+            self.ctx.strokeStyle = self.colors.roadMarking;
+            self.ctx.stroke(); 
+        }
+        self.ctx.restore();
     };
 
     Visualizer.prototype.drawCar = function(car) {
@@ -257,10 +256,14 @@ define(["jquery", "road", "intersection", "rect", "point", "segment", "graphics"
     };
 
     Visualizer.prototype.getHoveredIntersection = function(point) {
-        for (var intersection_id in this.world.intersections.all()) {
-            var intersection = this.world.intersections.get(intersection_id);
-            if (intersection.rect.containsPoint(point))
-                return intersection;
+        var intersections = this.world.intersections.all();
+        for (var key in intersections) {
+            if (intersections.hasOwnProperty(key)) {
+                var intersection = intersections[key];
+                if (intersection.rect.containsPoint(point)) {
+                    return intersection;
+                }
+            }
         }
     };
 

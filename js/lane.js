@@ -1,4 +1,6 @@
 define(["jquery", "segment"], function($, Segment) {
+    "use strict";
+
     function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;

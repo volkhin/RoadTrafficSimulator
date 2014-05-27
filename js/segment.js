@@ -1,4 +1,6 @@
-define(["point"], function(Point) {
+define([], function() {
+    "use strict";
+
     function Segment(source, target) {
         this.source = source;
         this.target = target;

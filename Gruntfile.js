@@ -1,13 +1,16 @@
+/* global module */
 module.exports = function(grunt) {
+    "use strict";
+
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
         requirejs: {
             compile: {
                 options: {
-                    baseUrl: './js',
-                    mainConfigFile: './js/main.js',
-                    name: 'main',
-                    out: './dist/app.js',
+                    baseUrl: "./js",
+                    mainConfigFile: "./js/main.js",
+                    name: "main",
+                    out: "./dist/app.js",
                     optimize: "none",
                 },
             },
@@ -15,16 +18,7 @@ module.exports = function(grunt) {
         jshint: {
             files: ["Gruntfile.js", "js/**/*.js", "spec/*.js"],
             options: {
-                maxerr: 30,
-                // undef: true,
-                // unused: true,
-                proto: true,
-                globals: {
-                    jQuery: true,
-                    console: true,
-                    module: false,
-                    alert: true,
-                },
+                jshintrc: true,
             },
         },
         jasmine: {

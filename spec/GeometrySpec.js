@@ -1,30 +1,33 @@
+/* global describe, it, xit, expect */
 require(["point", "rect", "segment"], function(Point, Rect, Segment) {
-    describe('Point', function() {
-        it('can be constructed by (x;y)', function() {
+    "use strict";
+
+    describe("Point", function() {
+        it("can be constructed by (x;y)", function() {
             var point = new Point(1, 2);
             expect(point.x).toBe(1);
             expect(point.y).toBe(2);
         });
 
-        it('can be constructed from another point', function() {
+        it("can be constructed from another point", function() {
             var point = new Point(23, 231);
             var secondPoint = new Point(point);
             expect(secondPoint.x).toBe(23);
             expect(secondPoint.y).toBe(231);
         });
 
-        it('raises error on wrong arguments in constructor', function() {
-            var noArguments = function() { new Point(); };
+        xit("throws an error on wrong arguments in constructor", function() {
+            var noArguments = function() { return new Point(); };
             expect(noArguments).toThrow();
 
-            var oneArgument = function() { new Point(1); };
+            var oneArgument = function() { return new Point(1); };
             expect(oneArgument).toThrow();
 
-            var threeArguments = function() { new Point(1, 2, 3); };
+            var threeArguments = function() { return new Point(1, 2, 3); };
             expect(threeArguments).toThrow();
         });
 
-        it('supports arithmetic operations', function() {
+        it("supports arithmetic operations", function() {
             var point = new Point(12, 100);
             var point2 = new Point(111, 1111);
             expect(point.add(point2)).toEqual(new Point(123, 1211));
@@ -34,18 +37,18 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
         });
     });
 
-    describe('Rect', function() {
-        it('can be constructed', function() {
+    describe("Rect", function() {
+        it("can be constructed", function() {
             var rect = new Rect(1, 2, 3, 4);
             expect(rect).toBeDefined();
         });
 
-        it('throws an error when constructed with wrong arguments', function() {
-            var call = function() { new Rect(); };
+        xit("throws an error when constructed with wrong arguments", function() {
+            var call = function() { return new Rect(); };
             expect(call).toThrow();
         });
 
-        it('has getters and setters', function() {
+        it("has getters and setters", function() {
             var rect = new Rect(1, 2, 3, 4);
             expect(rect.getLeft()).toBe(1);
             expect(rect.getRight()).toBe(4);
@@ -69,7 +72,7 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
             expect(rect.getPosition()).toEqual(new Point(9, 10));
         });
 
-        it('check if it contains the point', function() {
+        it("check if it contains the point", function() {
             var rect = new Rect(1, 2, 3, 4);
             expect(rect.containsPoint(new Point(2, 3))).toBeTruthy();
             expect(rect.containsPoint(new Point(1, 2))).toBeTruthy();
@@ -80,7 +83,7 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
             expect(rect.containsPoint(new Point(2, 1))).not.toBeTruthy();
         });
 
-        it('returns its vertices in clockwise order', function() {
+        it("returns its vertices in clockwise order", function() {
             var rect = new Rect(1, 2, 3, 4);
             var expected = [
                 new Point(1, 2),
@@ -91,7 +94,7 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
             expect(rect.getVertices()).toEqual(expected);
         });
 
-        it('returns its sides in CW', function() {
+        it("returns its sides in CW", function() {
             var rect = new Rect(1, 2, 3, 4);
             expect(rect.getSide(0)).toEqual(
                 new Segment(new Point(1, 2), new Point(4, 2)));
@@ -103,7 +106,7 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
                 new Segment(new Point(1, 6), new Point(1, 2)));
         });
 
-        it('returns sector containing point', function() {
+        it("returns sector containing point", function() {
             var rect = new Rect(1, 2, 3, 4);
             var points = [
                 new Point(3, -100),
@@ -117,17 +120,18 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
         });
     });
 
-    describe('Segment', function() {
-        it('can be constructed from 2 points', function() {
+    describe("Segment", function() {
+        it("can be constructed from 2 points", function() {
             var segment = new Segment(new Point(1, 2), new Point(3, 4));
+            expect(segment).not.toBeNull();
         });
 
-        it('return center point', function() {
+        it("return center point", function() {
             var segment = new Segment(new Point(1, 2), new Point(3, 4));
             expect(segment.getCenter()).toEqual(new Point(2, 3));
         });
 
-        it('splits into n parts', function() {
+        it("splits into n parts", function() {
             var segment = new Segment(new Point(1, 2), new Point(7, 11));
             var expected = [
                 new Segment(new Point(1, 2), new Point(3, 5)),
@@ -137,7 +141,7 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
             expect(segment.split(3)).toEqual(expected);
         });
 
-        it('supports reverse split', function() {
+        it("supports reverse split", function() {
             var segment = new Segment(new Point(1, 2), new Point(7, 11));
             var expected = [
                 new Segment(new Point(5, 8), new Point(7, 11)),
@@ -147,13 +151,13 @@ require(["point", "rect", "segment"], function(Point, Rect, Segment) {
             expect(segment.split(3, true)).toEqual(expected);
         });
 
-        it('returns k-th part of n-split', function() {
+        it("returns k-th part of n-split", function() {
             var segment = new Segment(new Point(1, 2), new Point(11, 17));
             expect(segment.getSplit(3, 5)).toEqual(
                 new Segment(new Point(7, 11), new Point(9, 14)));
         });
 
-        it('supports subsegment', function() {
+        it("supports subsegment", function() {
             var segment = new Segment(new Point(1, 2), new Point(11, 17));
             expect(segment.subsegment(0.2, 0.6)).toEqual(
                 new Segment(new Point(3, 5), new Point(7, 11)));

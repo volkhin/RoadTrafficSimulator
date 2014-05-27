@@ -1,5 +1,13 @@
-define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
-        function(_, Car, Intersection, Road, Pool, Point, Rect) {
+define(function(require) {
+    "use strict";
+
+    var $ = require("jquery"),
+        _ = require("underscore"),
+        Car = require("car"),
+        Intersection = require("intersection"),
+        Road = require("road"),
+        Pool = require("pool");
+
     function World(o) {
         this.set(o);
     }
@@ -12,15 +20,15 @@ define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
         this.roads = new Pool(Road, o.roads);
         this.cars = new Pool(Car, o.cars);
         this.ticks = o.ticks || 0;
-        window.__next_id = o.__next_id || 1;
+        window.__nextId = o.__nextId || 1;
     };
 
     World.prototype.save = function() {
         var data = {
             intersections: this.intersections,
             roads: this.roads,
-            __num_of_cars: this.cars.length,
-            __next_id: __next_id,
+            __numOfCars: this.cars.length,
+            __nextId: window.__nextId,
         };
         localStorage.world = JSON.stringify(data);
     };
@@ -30,7 +38,7 @@ define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
         data = data && JSON.parse(data);
         if (data) {
             this.clear();
-            window.__next_id = data.__next_id || 1;
+            window.__nextId = data.__nextId || 1;
             var self = this;
             $.each(data.intersections, function(index, intersection) {
                 intersection = Intersection.copy(intersection);
@@ -40,7 +48,7 @@ define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
                 road = Road.copy(road);
                 self.addRoad(road);
             });
-            for (var i = 0; i < data.__num_of_cars; i++) {
+            for (var i = 0; i < data.__numOfCars; i++) {
                 this.addRandomCar();
             }
         }
@@ -77,7 +85,8 @@ define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
             if (intersection !== null) {
                 if (intersection.state[road.targetSideId]) {
                     var possibleRoads = intersection.roads.filter(function(x) {
-                        return x.target !== previousIntersection && x.source !== previousIntersection;
+                        return x.target !== previousIntersection &&
+                            x.source !== previousIntersection;
                     });
                     if (possibleRoads.length === 0) {
                         car.moveToLane(null);

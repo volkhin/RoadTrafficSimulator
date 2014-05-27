@@ -1,9 +1,13 @@
 define(["jquery"], function($) {
+    "use strict";
+
     function Pool(factory, pool) {
         this.factory = factory;
         this.objects = {};
-        if (pool && pool.objects) {
-            for (var key in pool.objects) {
+        pool = pool || {};
+        pool.objects = pool.objects || {};
+        for (var key in pool.objects) {
+            if (pool.objects.hasOwnProperty(key)) {
                 this.objects[key] = factory.copy(pool.objects[key]);
             }
         }
