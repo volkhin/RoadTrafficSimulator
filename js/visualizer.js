@@ -16,8 +16,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.gridStep = 20;
         this.colors = {
             background: "#fff",
-            redLight: "#f1433f",
-            greenLight: "#a9cf54",
+            redLight: "hsl(0, 100%, 50%)",
+            greenLight: "hsl(120, 100%, 50%)",
             junction: "#666",
             road: "#666",
             roadMarking: "#eee",
@@ -174,8 +174,12 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
                 var junction = lane.targetJunction;
                 var segment = lane.targetSegment.subsegment(0.2, 0.8);
                 self.ctx.beginPath();
-                self.ctx.strokeStyle = "red";
-                self.ctx.lineWidth = 2;
+                if (junction.state[road.targetSideId] == Junction.STATE.RED) {
+                    self.ctx.strokeStyle = self.colors.redLight;
+                } else {
+                    self.ctx.strokeStyle = self.colors.greenLight;
+                }
+                self.ctx.lineWidth = 3;
                 self.moveTo(segment.source);
                 self.lineTo(segment.target);
                 self.ctx.stroke();

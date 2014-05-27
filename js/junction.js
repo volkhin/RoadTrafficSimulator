@@ -3,8 +3,13 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         this.id = window.__next_id++;
         this.rect = arg0;
         this.roads = [];
-        this.state = this.STATE.RED;
-        this.flipInterval = _.random(10, 50);
+        this.state = [
+            Junction.STATE.RED,
+            Junction.STATE.GREEN,
+            Junction.STATE.RED,
+            Junction.STATE.GREEN,
+        ];
+        this.flipInterval = _.random(50, 100);
     }
 
     Junction.copy = function(junction) {
@@ -19,13 +24,15 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         return obj;
     };
 
-    Junction.prototype.STATE = {
+    Junction.STATE = {
         RED: 0,
         GREEN: 1,
     };
 
     Junction.prototype.flip = function() {
-        this.state = !this.state;
+        for (var i = 0; i < this.state.length; i++) {
+            this.state[i] = !this.state[i];
+        }
     };
 
     Junction.prototype.onTick = function(ticks) {

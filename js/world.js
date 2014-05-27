@@ -74,7 +74,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
                 car.position = 1;
             }
             if (junction !== null) {
-                if (junction.state) {
+                if (junction.state[road.targetSideId]) {
                     var possibleRoads = junction.roads.filter(function(x) {
                         return x.target !== previousJunction && x.source !== previousJunction;
                     });
@@ -136,6 +136,9 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
     };
 
     World.prototype.removeAllCars = function() {
+        this.cars.each(function(index, car) {
+            car.moveToLane(null);
+        });
         this.cars.clear();
     };
 
