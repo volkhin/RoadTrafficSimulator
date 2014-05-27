@@ -15,8 +15,9 @@ define(["point", "rect", "graphics"], function(Point, Rect, graphics) {
         this.gridStep = this.height;
         this.margin = 5;
         this.buttons = [];
+        this.fontSize = 12;
         this.colors = {
-            buttonBackground: "#bbb",
+            buttonBackground: "#ddd",
             buttonTitle: "#333",
         };
 
@@ -55,6 +56,7 @@ define(["point", "rect", "graphics"], function(Point, Rect, graphics) {
             if (typeof title === "function") {
                 title = title.call();
             }
+            this.ctx.font = this.fontSize + "pt Lucida Grant";
             var textWidth = this.ctx.measureText(title).width;
             this.ctx.fillStyle = this.colors.buttonBackground;
             button.rect
@@ -64,7 +66,8 @@ define(["point", "rect", "graphics"], function(Point, Rect, graphics) {
                 .setHeight(this.gridStep - 2 * margin);
             graphics.fillRect(button.rect, this.ctx);
             this.ctx.fillStyle = this.colors.buttonTitle;
-            this.ctx.fillText(title, offsetX + 2 * margin, this.gridStep / 2);
+            this.ctx.fillText(title, button.rect.getLeft() + margin,
+                    this.gridStep / 2 + this.fontSize / 2);
             offsetX += textWidth + 3 * margin;
         }
     };
