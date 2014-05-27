@@ -1,9 +1,9 @@
 define(["jquery", "segment"], function($, Segment) {
-    function Lane(sourceSegment, targetSegment, sourceJunction, targetJunction, road) {
+    function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;
-        this.sourceJunction = sourceJunction;
-        this.targetJunction = targetJunction;
+        this.sourceIntersection = sourceIntersection;
+        this.targetIntersection = targetIntersection;
         this.road = road;
         this.cars = [];
     }

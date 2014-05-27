@@ -11,10 +11,10 @@ define(["lane", "segment", "utils"], function(Lane, Segment, utils) {
 
     Road.copy = function(road) {
         if (typeof road._source === "number") {
-            road._source = app.world.getJunction(road._source);
+            road._source = app.world.getIntersection(road._source);
         }
         if (typeof road._target === "number") {
-            road._target = app.world.getJunction(road._target);
+            road._target = app.world.getIntersection(road._target);
         }
         var result = Object.create(Road.prototype);
         return $.extend(result, road);

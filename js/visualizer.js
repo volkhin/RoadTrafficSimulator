@@ -1,5 +1,5 @@
-define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
-        function($, Road, Junction, Rect, Point, Segment, utils) {
+define(["jquery", "road", "intersection", "rect", "point", "segment", "utils"],
+        function($, Road, Intersection, Rect, Point, Segment, utils) {
     function Visualizer(world) {
         this.world = world;
         this.canvas = $("#canvas")[0];
@@ -8,8 +8,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.height = this.canvas.height;
         this.mouseDownPos = null;
         this.tempRoad = null;
-        this.tempJunction = null;
-        this.dragJunction = null;
+        this.tempIntersection = null;
+        this.dragIntersection = null;
         this.mousePos = null;
 
         // settings
@@ -18,11 +18,11 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             background: "#fff",
             redLight: "hsl(0, 100%, 50%)",
             greenLight: "hsl(120, 100%, 50%)",
-            junction: "#666",
+            intersection: "#666",
             road: "#666",
             roadMarking: "#eee",
             car: "#333",
-            hoveredJunction: "#3d4c53",
+            hoveredIntersection: "#3d4c53",
             tempRoad: "#aaa",
             grid: "#70b7ba",
             hoveredGrid: "#f4e8e1",
@@ -32,65 +32,65 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         $(this.canvas).mousedown(function(e) {
             var point = self.getPoint(e);
             self.mouseDownPos = point;
-            var hoveredJunction = self.getHoveredJunction(point);
+            var hoveredIntersection = self.getHoveredIntersection(point);
             if (e.shiftKey) {
                 var rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
-                self.tempJunction = new Junction(rect);
+                self.tempIntersection = new Intersection(rect);
             } else if (e.altKey) {
-                self.dragJunction = hoveredJunction;
-            } else if (hoveredJunction) {
-                self.tempRoad = new Road(hoveredJunction, null);
+                self.dragIntersection = hoveredIntersection;
+            } else if (hoveredIntersection) {
+                self.tempRoad = new Road(hoveredIntersection, null);
             }
         });
 
         $(this.canvas).mouseup(function(e) {
             var point = self.getPoint(e);
             if (self.tempRoad) {
-                var hoveredJunction = self.getHoveredJunction(point);
-                if (hoveredJunction && self.tempRoad.source.id !== hoveredJunction.id) {
-                    var road1 = new Road(self.tempRoad.source, hoveredJunction);
+                var hoveredIntersection = self.getHoveredIntersection(point);
+                if (hoveredIntersection && self.tempRoad.source.id !== hoveredIntersection.id) {
+                    var road1 = new Road(self.tempRoad.source, hoveredIntersection);
                     self.world.addRoad(road1);
-                    // var road2 = new Road(hoveredJunction, self.tempRoad.source);
+                    // var road2 = new Road(hoveredIntersection, self.tempRoad.source);
                     // self.world.addRoad(road2);
                 }
                 self.tempRoad = null;
             }
-            if (self.tempJunction) {
-                self.world.addJunction(self.tempJunction);
-                self.tempJunction = null;
+            if (self.tempIntersection) {
+                self.world.addIntersection(self.tempIntersection);
+                self.tempIntersection = null;
             }
             self.mouseDownPos = null;
-            self.dragJunction = null;
+            self.dragIntersection = null;
         });
 
         $(this.canvas).mousemove(function(e) {
             var point = self.getPoint(e);
-            var hoveredJunction = self.getHoveredJunction(point);
+            var hoveredIntersection = self.getHoveredIntersection(point);
             self.mousePos = point;
-            self.world.junctions.each(function(index, junction) { junction.color = null; });
-            if (hoveredJunction) {
-                hoveredJunction.color = self.colors.hoveredJunction;
+            self.world.intersections.each(function(index, intersection) { intersection.color = null; });
+            if (hoveredIntersection) {
+                hoveredIntersection.color = self.colors.hoveredIntersection;
             }
             if (self.tempRoad) {
-                self.tempRoad.target = hoveredJunction;
+                self.tempRoad.target = hoveredIntersection;
             }
-            if (self.dragJunction) {
+            if (self.dragIntersection) {
                 var gridPoint = self.getClosestGridPoint(point);
-                self.dragJunction.rect.setLeft(gridPoint.x);
-                self.dragJunction.rect.setTop(gridPoint.y);
-                self.dragJunction.update(); // FIXME: should be done automatically
+                self.dragIntersection.rect.setLeft(gridPoint.x);
+                self.dragIntersection.rect.setTop(gridPoint.y);
+                self.dragIntersection.update(); // FIXME: should be done automatically
             }
-            if (self.tempJunction) {
-                self.tempJunction.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
+            if (self.tempIntersection) {
+                self.tempIntersection.rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
             }
         });
 
         this.canvas.addEventListener("mouseout", function(e) {
             self.mouseDownPos = null;
             self.tempRoad = null;
-            self.dragJunction = null;
+            self.dragIntersection = null;
             self.mousePos = null;
-            self.tempJunction = null;
+            self.tempIntersection = null;
         });
 
     }
@@ -111,14 +111,14 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         return point;
     };
 
-    Visualizer.prototype.drawJunction = function(junction, alpha, forcedColor) {
-        var color = this.colors.junction;
+    Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
+        var color = this.colors.intersection;
         if (forcedColor) {
             color = forcedColor;
-        } else if (junction.color) {
-            color = junction.color;
+        } else if (intersection.color) {
+            color = intersection.color;
         }
-        var rect = junction.rect;
+        var rect = intersection.rect;
         var center = rect.getCenter();
         this.ctx.save();
         this.ctx.globalAlpha = alpha;
@@ -144,13 +144,13 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
-        var sourceJunction = road.source, targetJunction = road.target;
-        if (sourceJunction && targetJunction) {
-            var source = sourceJunction.rect.getCenter(),
-                target = targetJunction.rect.getCenter();
+        var sourceIntersection = road.source, targetIntersection = road.target;
+        if (sourceIntersection && targetIntersection) {
+            var source = sourceIntersection.rect.getCenter(),
+                target = targetIntersection.rect.getCenter();
 
-            var s1 = sourceJunction.rect.getSector(targetJunction.rect.getCenter()),
-                s2 = targetJunction.rect.getSector(sourceJunction.rect.getCenter());
+            var s1 = sourceIntersection.rect.getSector(targetIntersection.rect.getCenter()),
+                s2 = targetIntersection.rect.getSector(sourceIntersection.rect.getCenter());
 
             var self = this;
 
@@ -171,10 +171,10 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
             self.ctx.save();
             for (var i = 0; i < road.lanes.length; i++) {
                 var lane = road.lanes[i];
-                var junction = lane.targetJunction;
+                var intersection = lane.targetIntersection;
                 var segment = lane.targetSegment.subsegment(0.2, 0.8);
                 self.ctx.beginPath();
-                if (junction.state[road.targetSideId] == Junction.STATE.RED) {
+                if (intersection.state[road.targetSideId] == Intersection.STATE.RED) {
                     self.ctx.strokeStyle = self.colors.redLight;
                 } else {
                     self.ctx.strokeStyle = self.colors.greenLight;
@@ -269,11 +269,11 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         return new Rect(x1, y1, x2 - x1, y2 - y1);
     };
 
-    Visualizer.prototype.getHoveredJunction = function(point) {
-        for (var junction_id in this.world.junctions.all()) {
-            var junction = this.world.junctions.get(junction_id);
-            if (junction.rect.containsPoint(point))
-                return junction;
+    Visualizer.prototype.getHoveredIntersection = function(point) {
+        for (var intersection_id in this.world.intersections.all()) {
+            var intersection = this.world.intersections.get(intersection_id);
+            if (intersection.rect.containsPoint(point))
+                return intersection;
         }
     };
 
@@ -285,8 +285,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         this.world.roads.each(function(index, road) {
             self.drawRoad(road, 0.9);
         });
-        this.world.junctions.each(function(index, junction) {
-            self.drawJunction(junction, 0.9);
+        this.world.intersections.each(function(index, intersection) {
+            self.drawIntersection(intersection, 0.9);
         });
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
@@ -294,8 +294,8 @@ define(["jquery", "road", "junction", "rect", "point", "segment", "utils"],
         if (self.tempRoad) {
             self.drawRoad(self.tempRoad, 0.4);
         }
-        if (self.tempJunction) {
-            self.drawJunction(self.tempJunction, 0.4);
+        if (self.tempIntersection) {
+            self.drawIntersection(self.tempIntersection, 0.4);
         }
     };
 

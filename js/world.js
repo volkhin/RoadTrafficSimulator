@@ -1,5 +1,5 @@
-define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
-        function(_, Car, Junction, Road, Pool, Point, Rect) {
+define(["underscore", "car", "intersection", "road", "pool", "point", "rect"],
+        function(_, Car, Intersection, Road, Pool, Point, Rect) {
     function World(o) {
         this.set(o);
     }
@@ -8,7 +8,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         if (o === undefined) {
             o = {};
         }
-        this.junctions = new Pool(Junction, o.junctions);
+        this.intersections= new Pool(Intersection, o.intersections);
         this.roads = new Pool(Road, o.roads);
         this.cars = new Pool(Car, o.cars);
         this.ticks = o.ticks || 0;
@@ -17,7 +17,7 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
 
     World.prototype.save = function() {
         var data = {
-            junctions: this.junctions,
+            intersections: this.intersections,
             roads: this.roads,
             __num_of_cars: this.cars.length,
             __next_id: __next_id,
@@ -32,9 +32,9 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         this.clear();
         window.__next_id = data.__next_id || 1;
         var self = this;
-        $.each(data.junctions, function(index, junction) {
-            junction = Junction.copy(junction);
-            self.addJunction(junction);
+        $.each(data.intersections, function(index, intersection) {
+            intersection = Intersection.copy(intersection);
+            self.addIntersection(intersection);
         });
         $.each(data.roads, function(index, road) {
             road = Road.copy(road);
@@ -52,8 +52,8 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
     World.prototype.onTick = function() {
         var self = this;
         this.ticks++;
-        this.junctions.each(function(index, junction) {
-            junction.onTick(self.ticks);
+        this.intersections.each(function(index, intersection) {
+            intersection.onTick(self.ticks);
         });
         this.cars.each(function(index, car) {
             var lane = car.lane;
@@ -67,23 +67,23 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
             } else {
                 car.speed = 0;
             }
-            var junction = null, previousJunction = null;
+            var intersection = null, previousIntersection = null;
             if (car.position >= 1) {
-                previousJunction = lane.sourceJunction;
-                junction = lane.targetJunction;
+                previousIntersection = lane.sourceIntersection;
+                intersection = lane.targetIntersection;
                 car.position = 1;
             }
-            if (junction !== null) {
-                if (junction.state[road.targetSideId]) {
-                    var possibleRoads = junction.roads.filter(function(x) {
-                        return x.target !== previousJunction && x.source !== previousJunction;
+            if (intersection !== null) {
+                if (intersection.state[road.targetSideId]) {
+                    var possibleRoads = intersection.roads.filter(function(x) {
+                        return x.target !== previousIntersection && x.source !== previousIntersection;
                     });
                     if (possibleRoads.length === 0) {
                         car.moveToLane(null);
                         self.cars.pop(car.id);
                     } else {
                         var nextRoad = _.sample(possibleRoads);
-                        if (junction === nextRoad.source) {
+                        if (intersection === nextRoad.source) {
                             car.moveToLane(nextRoad.lanes[0]);
                         } else {
                             car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
@@ -117,12 +117,12 @@ define(["underscore", "car", "junction", "road", "pool", "point", "rect"],
         return this.cars.get(id);
     };
 
-    World.prototype.addJunction = function(junction) {
-        this.junctions.put(junction);
+    World.prototype.addIntersection = function(intersection) {
+        this.intersections.put(intersection);
     };
 
-    World.prototype.getJunction = function(id) {
-        return this.junctions.get(id);
+    World.prototype.getIntersection = function(id) {
+        return this.intersections.get(id);
     };
 
     World.prototype.addRandomCar = function() {
