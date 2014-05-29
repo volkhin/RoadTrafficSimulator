@@ -5,11 +5,16 @@ define([], function() {
         this.ctx = ctx;
     }
 
-    Graphics.prototype.fillRect = function(rect, style) {
+    Graphics.prototype.fillRect = function(rect, style, alpha) {
         if (style) {
             this.ctx.fillStyle = style;
         }
+        var oldAlpha = this.ctx.globalAlpha;
+        if (alpha) {
+            this.ctx.globalAlpha = alpha;
+        }
         this.ctx.fillRect(rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+        this.ctx.globalAlpha = oldAlpha;
     };
 
     Graphics.prototype.clear = function(color) {
@@ -35,9 +40,14 @@ define([], function() {
         this.drawLine(segment.source, segment.target);
     };
 
-    Graphics.prototype.fill = function(style) {
+    Graphics.prototype.fill = function(style, alpha) {
         this.ctx.fillStyle = style;
+        var oldAlpha = this.ctx.globalAlpha;
+        if (alpha) {
+            this.ctx.globalAlpha = alpha;
+        }
         this.ctx.fill();
+        this.ctx.globalAlpha = oldAlpha;
     };
 
     Graphics.prototype.stroke = function(style) {

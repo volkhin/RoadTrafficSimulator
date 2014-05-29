@@ -125,10 +125,7 @@ define(function(require) {
         var rect = intersection.rect;
 
         // draw intersection
-        this.ctx.save();
-        this.ctx.globalAlpha = alpha;
-        this.graphics.fillRect(rect, color);
-        this.ctx.restore();
+        this.graphics.fillRect(rect, color, alpha);
     };
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
@@ -142,11 +139,8 @@ define(function(require) {
         var self = this;
 
         // draw the road
-        this.ctx.save();
-        this.ctx.globalAlpha = alpha;
         this.graphics.polyline(s1.source, s1.target, s2.source, s2.target);
-        this.graphics.fill(this.colors.road);
-        this.ctx.restore();
+        this.graphics.fill(this.colors.road, alpha);
 
         var i;
         // draw lanes
@@ -197,7 +191,6 @@ define(function(require) {
     };
 
     Visualizer.prototype.drawGrid = function() {
-        this.ctx.fillStyle = this.colors.grid;
         for (var i = 0; i <= this.width; i += this.gridStep) {
             for (var j = 0; j <= this.height; j += this.gridStep) {
                 this.graphics.fillRect(new Rect(i - 1, j - 1, 2, 2), this.colors.grid);
