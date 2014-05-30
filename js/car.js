@@ -13,7 +13,7 @@ define([], function() {
     }
 
     Car.prototype.getCenter = function() {
-        var line = this.lane.getMiddleline();
+        var line = this.lane.middleLine;
         var source = line.source, target = line.target;
         var offset = target.subtract(source);
         return source.add(offset.mult(this.relativePosition));

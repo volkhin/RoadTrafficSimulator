@@ -7,11 +7,7 @@ define(["jquery", "segment"], function($, Segment) {
         this.sourceIntersection = sourceIntersection;
         this.targetIntersection = targetIntersection;
         this.road = road;
-        this.line = new Segment(
-            this.sourceSegment.getCenter(),
-            this.targetSegment.getCenter()
-        );
-        this.length = this.line.length;
+        this.length = this.middleLine.length;
         this.cars = [];
     }
 
@@ -21,9 +17,14 @@ define(["jquery", "segment"], function($, Segment) {
         return obj;
     };
 
-    Lane.prototype.getMiddleline = function() {
-        return this.line;
-    };
+    Object.defineProperty(Lane.prototype, "middleLine", {
+        get: function() {
+            return new Segment(
+                this.sourceSegment.getCenter(),
+                this.targetSegment.getCenter()
+            );
+        },
+    });
 
     Lane.prototype.getLeftBorder = function() {
         return new Segment(
@@ -40,7 +41,7 @@ define(["jquery", "segment"], function($, Segment) {
     };
 
     Lane.prototype.getOrientation = function() {
-        return this.getMiddleline().getOrientation();
+        return this.middleLine.getOrientation();
     };
 
     Lane.prototype.addCar = function(car) {
