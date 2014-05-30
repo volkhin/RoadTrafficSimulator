@@ -19,6 +19,12 @@ define([], function() {
         return splits;
     };
 
+    Object.defineProperty(Segment.prototype, "length", {
+        get: function() {
+            return this.target.subtract(this.source).length;
+        },
+    });
+
     Segment.prototype.getSplit = function(k, n) {
         var splits = this.split(n);
         return splits[k];

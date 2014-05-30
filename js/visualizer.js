@@ -174,9 +174,8 @@ define(function(require) {
 
     Visualizer.prototype.drawCar = function(car) {
         var angle = car.lane.getOrientation();
-        var width = this.gridStep / 4, length = this.gridStep / 2;
         var center = car.getCenter();
-        var boundRect = (new Rect(0, 0, length, width))
+        var boundRect = (new Rect(0, 0, car.length, car.width))
             .setCenter(new Point(0, 0)).setRight(-1);
 
         this.ctx.save();

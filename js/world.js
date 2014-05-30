@@ -67,20 +67,20 @@ define(function(require) {
         this.cars.each(function(index, car) {
             var lane = car.lane;
             var road = lane.road;
-            if (car.getDistanceToNextCar() > 15 && car.position < 1) { // FIXME
+            if (car.getDistanceToNextCar() > 15 && car.relativePosition < 1) { // FIXME
                 car.speed += car.acceleration;
                 if (car.speed > car.maxSpeed) {
                     car.speed = car.maxSpeed;
                 }
-                car.position += car.speed / road.length;
+                car.absolutePosition += car.speed;
             } else {
                 car.speed = 0;
             }
             var intersection = null, previousIntersection = null;
-            if (car.position >= 1) {
+            if (car.relativePosition >= 1) {
                 previousIntersection = lane.sourceIntersection;
                 intersection = lane.targetIntersection;
-                car.position = 1;
+                car.relativePosition = 1;
             }
             if (intersection !== null) {
                 if (intersection.state[road.targetSideId]) {

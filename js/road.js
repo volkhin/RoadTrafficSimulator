@@ -82,11 +82,11 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
             for (i = 0; i < this.lanesNumber; i++) {
                 if (i < this.lanesNumber / 2) {
                     this.lanes.push(new Lane(
-                        null, null, this.source, this.target, this
+                        sourceSplits[i], targetSplits[i], this.source, this.target, this
                     ));
                 } else {
                     this.lanes.push(new Lane(
-                        null, null, this.target, this.source, this
+                        targetSplits[i], sourceSplits[i], this.target, this.source, this
                     ));
                 }
             }

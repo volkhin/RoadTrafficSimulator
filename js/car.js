@@ -5,6 +5,8 @@ define([], function() {
         this.id = window.__nextId++;
         this.color = 255 * Math.random();
         this.speed = 0;
+        this.width = 5;
+        this.length = 10;
         this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0
         this.acceleration = 0.02;
         this.moveToLane(lane, position);
@@ -14,11 +16,28 @@ define([], function() {
         var line = this.lane.getMiddleline();
         var source = line.source, target = line.target;
         var offset = target.subtract(source);
-        return source.add(offset.mult(this.position));
+        return source.add(offset.mult(this.relativePosition));
     };
 
+    Object.defineProperty(Car.prototype, "absolutePosition", {
+        get: function() {
+            return this._absolutePosition;
+        },
+        set: function(absolutePosition) {
+            this._absolutePosition = absolutePosition;
+        },
+    });
+
+    Object.defineProperty(Car.prototype, "relativePosition", {
+        get: function() {
+            return this._absolutePosition / this.lane.length;
+        },
+        set: function(relativePosition) {
+            this._absolutePosition = relativePosition * this.lane.length;
+        },
+    });
+
     Car.prototype.moveToLane = function(lane, position) {
-        this.position = position || 0;
         if (this.lane) {
             this.lane.removeCar(this);
         }
@@ -26,6 +45,7 @@ define([], function() {
             lane.addCar(this);
         }
         this.lane = lane;
+        this.absolutePosition = position || 0;
     };
 
     Car.prototype.getNextCar = function() {
@@ -37,8 +57,7 @@ define([], function() {
         if (!nextCar) {
             return Infinity;
         }
-        var roadLength = this.lane.road.length;
-        return (nextCar.position - this.position) * roadLength;
+        return nextCar.absolutePosition - this.absolutePosition;
     };
 
     return Car;

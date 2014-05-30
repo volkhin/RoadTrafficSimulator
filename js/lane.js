@@ -7,6 +7,11 @@ define(["jquery", "segment"], function($, Segment) {
         this.sourceIntersection = sourceIntersection;
         this.targetIntersection = targetIntersection;
         this.road = road;
+        this.line = new Segment(
+            this.sourceSegment.getCenter(),
+            this.targetSegment.getCenter()
+        );
+        this.length = this.line.length;
         this.cars = [];
     }
 
@@ -17,10 +22,7 @@ define(["jquery", "segment"], function($, Segment) {
     };
 
     Lane.prototype.getMiddleline = function() {
-        return new Segment(
-            this.sourceSegment.getCenter(),
-            this.targetSegment.getCenter()
-        );
+        return this.line;
     };
 
     Lane.prototype.getLeftBorder = function() {
