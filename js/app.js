@@ -15,6 +15,11 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
         this.gui.addButton("Load", this.world.load.bind(this.world));
         this.gui.addButton("Clear", this.world.clear.bind(this.world));
         this.gui.addButton("Add car", this.world.addRandomCar.bind(this.world));
+        this.gui.addButton("Add 10 cars", function() {
+            for (var i = 0; i < 10; i++) {
+                self.world.addRandomCar.call(self.world);
+            }
+        });
         this.gui.addButton("Del cars", this.world.removeAllCars.bind(this.world));
         this.gui.addButton(function() {
             return "Cars: " + self.world.cars.length;

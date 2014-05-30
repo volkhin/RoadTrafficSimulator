@@ -183,7 +183,7 @@ define(function(require) {
         this.ctx.rotate(angle);
         var h = car.color;
         var s = 100;
-        var l = 90 - 40 * car.speed / 0.8;
+        var l = 90 - 40 * car.speed / car.maxSpeed;
         var style = "hsl(" + h + ", " + s + "%, " + l + "%)";
         this.graphics.fillRect(boundRect, style);
         this.ctx.restore();
