@@ -2,12 +2,16 @@
 path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $path $0; chmod +x $0; exit
 
 [ ] better deciding where to go on the junction
+[ ] change lanes in the middle of a road
 [ ] draw control signals as arrows
 [ ] get rid of getters, replace with properties
 [ ] implement rules for turns (right -> right, left -> left)
+[ ] metric units for length and time
 [ ] number of lanes should be equal to the intersection length
 [ ] output statistics (num cars/roads/junctions, average speed/waiting time) etc
 [ ] realtime graphs of average speed, number of cars etc
+[ ] scale and scroll map
+[ ] scale time
 [X] OOP, classes, application
 [X] Trajectory class. Contains currentLine and nextLine, allow cars to occupy 2 lanes at once
 [X] create cars
