@@ -26,6 +26,7 @@ define(function(require) {
 
         // settings
         this.gridStep = 20;
+        this.scale = 1.0;
         this.colors = {
             background: "#fff",
             redLight: "hsl(0, 100%, 50%)",
@@ -182,7 +183,7 @@ define(function(require) {
         var boundRect = (new Rect(0, 0, car.length, car.width))
             .setCenter(new Point(0, 0)).setRight(-1);
 
-        this.ctx.save();
+        this.graphics.save();
         this.ctx.translate(center.x, center.y);
         this.ctx.rotate(angle);
         var h = car.color;
@@ -191,7 +192,7 @@ define(function(require) {
         var style = "hsl(" + h + ", " + s + "%, " + l + "%)";
         this.graphics.drawImage(this.carImage, rect);
         this.graphics.fillRect(boundRect, style, 0.8);
-        this.ctx.restore();
+        this.graphics.restore();
     };
 
     Visualizer.prototype.drawGrid = function() {
@@ -249,13 +250,15 @@ define(function(require) {
     Visualizer.prototype.draw = function() {
         var self = this;
         this.graphics.clear(this.colors.background);
+        this.graphics.save();
+        this.ctx.scale(this.scale, this.scale);
         this.drawGrid();
         this.drawHighlightedCell();
-        this.world.roads.each(function(index, road) {
-            self.drawRoad(road, 0.9);
-        });
         this.world.intersections.each(function(index, intersection) {
             self.drawIntersection(intersection, 0.9);
+        });
+        this.world.roads.each(function(index, road) {
+            self.drawRoad(road, 0.9);
         });
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
@@ -266,6 +269,19 @@ define(function(require) {
         if (self.tempIntersection) {
             self.drawIntersection(self.tempIntersection, 0.4);
         }
+        this.graphics.restore();
+    };
+
+    Visualizer.prototype.zoomIn = function() {
+        this.scale *= 2;
+    };
+
+    Visualizer.prototype.zoomNormal = function() {
+        this.scale = 1.0;
+    };
+
+    Visualizer.prototype.zoomOut = function() {
+        this.scale /= 2;
     };
 
     return Visualizer;

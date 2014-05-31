@@ -73,5 +73,13 @@ define([], function() {
         this.ctx.closePath();
     };
 
+    Graphics.prototype.save = function() {
+        this.ctx.save();
+    };
+
+    Graphics.prototype.restore = function() {
+        this.ctx.restore();
+    };
+
     return Graphics;
 });
