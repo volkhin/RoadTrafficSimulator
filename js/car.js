@@ -1,4 +1,4 @@
-define(["underscore"], function(_) {
+define(["underscore", "trajectory"], function(_, Trajectory) {
     "use strict";
 
     function Car(lane, position) {
@@ -7,107 +7,68 @@ define(["underscore"], function(_) {
         this.speed = 0;
         this.width = 5;
         this.length = 10;
+        this.safeDistance = 15;
         this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0
         this.acceleration = 0.02;
-        this.moveToLane(lane, position);
+        this.trajectory = new Trajectory(this, lane, position);
+        this.alive = true;
     }
 
     Car.prototype.getCenter = function() {
-        var line = this.lane.middleLine;
-        var source = line.source, target = line.target;
-        var offset = target.subtract(source);
-        return source.add(offset.mult(this.relativePosition));
+        return this.trajectory.getCoords();
     };
 
     Object.defineProperty(Car.prototype, "absolutePosition", {
         get: function() {
-            return this._absolutePosition;
+            return this.trajectory.current.position;
         },
         set: function(absolutePosition) {
-            this._absolutePosition = absolutePosition;
+            this.trajectory.current.position = absolutePosition;
         },
     });
 
     Object.defineProperty(Car.prototype, "relativePosition", {
         get: function() {
-            return this._absolutePosition / this.lane.length;
+            return this.trajectory.current.position / this.trajectory.current.lane.length;
         },
         set: function(relativePosition) {
-            this._absolutePosition = relativePosition * this.lane.length;
+            this.trajectory.current.position =
+                relativePosition * this.trajectory.current.lane.length;
         },
     });
 
-    Car.prototype.moveToLane = function(lane, position) {
-        if (this.lane) {
-            this.lane.removeCar(this);
-        }
-        if (lane) {
-            lane.addCar(this);
-        }
-        this.lane = lane;
-        this.absolutePosition = position || 0;
-    };
-
-    Car.prototype.getNextCar = function() {
-        return this.lane.getNextCar(this);
-    };
-
-    Car.prototype.getDistanceToNextCar = function() {
-        var nextCar = this.getNextCar();
-        if (!nextCar) {
-            return Infinity;
-        }
-        return nextCar.absolutePosition - this.absolutePosition;
-    };
-
-    Car.prototype.pickNextRoad = function() {
-        var intersection = this.lane.targetIntersection,
-            previousIntersection = this.lane.sourceIntersection;
-        var possibleRoads = intersection.roads.filter(function(x) {
-            return x.target !== previousIntersection &&
-                   x.source !== previousIntersection;
-        });
-        if (possibleRoads.length !== 0) {
-            return _.sample(possibleRoads);
-        }
-    };
+    Object.defineProperty(Car.prototype, "speed", {
+        get: function() {
+            return this._speed;
+        },
+        set: function(speed) {
+            if (speed < 0) {
+                speed = 0;
+            } else if (speed > this.maxSpeed) {
+                speed = this.maxSpeed;
+            }
+            this._speed = speed;
+        },
+    });
 
     Car.prototype.move = function() {
-        if (this.getDistanceToNextCar() > 15 && this.relativePosition < 1) { // FIXME
+        if (this.trajectory.getDistanceToNextCar() > this.safeDistance) { // FIXME
+            // enough room to move forward
             this.speed += this.acceleration;
-            if (this.speed > this.maxSpeed) {
-                this.speed = this.maxSpeed;
-            }
-            this.absolutePosition += this.speed;
         } else {
             this.speed = 0;
         }
-        var intersection = null, previousIntersection = null;
-        if (this.relativePosition >= 1) {
-            previousIntersection = this.lane.sourceIntersection;
-            intersection = this.lane.targetIntersection;
-            this.relativePosition = 1;
-        }
-        if (intersection) {
-            if (this.lane.canLeave()) {
-                var nextRoad = this.pickNextRoad();
-                if (!nextRoad) {
-                    // removing car from the world
-                    this.moveToLane(null);
-                    // self.cars.pop(car.id); // FIXME
-                    this.removed = true;
-                } else {
-                    if (intersection === nextRoad.source) {
-                        this.moveToLane(nextRoad.lanes[0]);
-                    } else {
-                        this.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
-                    }
-                }
-            } else {
-                this.speed = 0;
-            }
+        this.trajectory.moveForward(this.speed);
+        if (!this.trajectory.current.lane) {
+            this.alive = false;
         }
     };
+
+    Object.defineProperty(Car.prototype, "orientation", {
+        get: function() {
+            return this.trajectory.lane.middleLine.getOrientation();
+        },
+    });
 
     return Car;
 });

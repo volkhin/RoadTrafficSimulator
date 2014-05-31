@@ -1,4 +1,4 @@
-define(["jquery", "segment"], function($, Segment) {
+define(["jquery", "underscore", "segment"], function($, _, Segment) {
     "use strict";
 
     function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road) {
@@ -8,12 +8,12 @@ define(["jquery", "segment"], function($, Segment) {
         this.targetIntersection = targetIntersection;
         this.road = road;
         this.length = this.middleLine.length;
-        this.cars = [];
+        this.carsPositions = {};
     }
 
     Lane.prototype.toJSON = function() {
         var obj = $.extend({}, this);
-        delete obj.cars;
+        delete obj.carsPositions;
         return obj;
     };
 
@@ -44,26 +44,36 @@ define(["jquery", "segment"], function($, Segment) {
         return this.middleLine.getOrientation();
     };
 
-    Lane.prototype.canLeave = function() {
-        return this.targetIntersection.state[this.road.targetSideId];
+    Lane.prototype.addCarPosition = function(carPosition) {
+        this.carsPositions[carPosition.id] = carPosition;
     };
 
-    Lane.prototype.addCar = function(car) {
-        this.cars.push(car);
-    };
-
-    Lane.prototype.removeCar = function(car) {
-        var index = this.cars.indexOf(car);
-        if (index !== -1) {
-            return this.cars.splice(index, 1);
+    Lane.prototype._findCarIndex = function(car) {
+        for (var i = 0; i < this.carsPositions.length; i++) {
+            if (this.carsPositions[i].car === car) {
+                return i;
+            }
         }
+        return -1;
     };
 
-    Lane.prototype.getNextCar = function(car) {
-        var index = this.cars.indexOf(car);
-        if (index > 0) {
-            return this.cars[index - 1];
+    Lane.prototype.removeCar = function(carPosition) {
+        delete this.carsPositions[carPosition.id];
+    };
+
+    Lane.prototype.getNext = function(carPosition) {
+        if (carPosition.lane !== this) {
+            throw Error("CarPosition belongs to another lane!");
         }
+        var next = null, bestDistance = Infinity;
+        $.each(this.carsPositions, function(index, o) {
+            var distance = o.position - carPosition.position;
+            if (0 < distance && distance < bestDistance) {
+                bestDistance = distance;
+                next = o;
+            }
+        });
+        return next;
     };
 
     return Lane;

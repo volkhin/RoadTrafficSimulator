@@ -145,17 +145,15 @@ define(function(require) {
         var i;
         // draw lanes
         self.ctx.save();
+        var lightsColors = [this.colors.redLight, this.colors.greenLight];
         for (i = 0; i < road.lanes.length; i++) {
             var lane = road.lanes[i];
             var intersection = lane.targetIntersection;
+            var lights = intersection.state[road.targetSideId];
             var segment = lane.targetSegment.subsegment(0.2, 0.8);
             this.graphics.drawSegment(segment);
             self.ctx.lineWidth = 3;
-            if (intersection.state[road.targetSideId] === Intersection.STATE.RED) {
-                self.graphics.stroke(self.colors.redLight);
-            } else {
-                self.graphics.stroke(self.colors.greenLight);
-            }
+            self.graphics.stroke(lightsColors[lights[0]]);
         }
         self.ctx.restore();
 
@@ -173,7 +171,7 @@ define(function(require) {
     };
 
     Visualizer.prototype.drawCar = function(car) {
-        var angle = car.lane.getOrientation();
+        var angle = car.orientation;
         var center = car.getCenter();
         var boundRect = (new Rect(0, 0, car.length, car.width))
             .setCenter(new Point(0, 0)).setRight(-1);

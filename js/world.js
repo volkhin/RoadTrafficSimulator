@@ -66,7 +66,7 @@ define(function(require) {
         });
         this.cars.each(function(index, car) {
             car.move();
-            if (car.removed) {
+            if (!car.alive) {
                 self.cars.pop(car.id);
             }
         });
@@ -110,9 +110,10 @@ define(function(require) {
     };
 
     World.prototype.removeAllCars = function() {
-        this.cars.each(function(index, car) {
-            car.moveToLane(null);
-        });
+        // FIXME
+        // this.cars.each(function(index, car) {
+            // car.moveToLane(null);
+        // });
         this.cars.clear();
     };
 
