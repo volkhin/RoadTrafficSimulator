@@ -2,7 +2,6 @@
 path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $path $0; chmod +x $0; exit
 
 [ ] better deciding where to go on the junction
-[ ] change lanes in the middle of a road
 [ ] draw control signals as arrows
 [ ] get rid of getters, replace with properties
 [ ] implement rules for turns (right -> right, left -> left)
@@ -14,6 +13,7 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [ ] scale time
 [X] OOP, classes, application
 [X] Trajectory class. Contains currentLine and nextLine, allow cars to occupy 2 lanes at once
+[X] change lanes in the middle of a road
 [X] create cars
 [X] create roads
 [X] don’t go back on the junction

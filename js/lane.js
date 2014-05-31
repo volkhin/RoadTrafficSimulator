@@ -1,13 +1,16 @@
 define(["jquery", "underscore", "segment"], function($, _, Segment) {
     "use strict";
 
-    function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road, direction) {
+    function Lane(sourceSegment, targetSegment, sourceIntersection,
+            targetIntersection, road, direction) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;
         this.sourceIntersection = sourceIntersection;
         this.targetIntersection = targetIntersection;
         this.road = road;
         this.direction = direction;
+        this.leftAdjacent = null;
+        this.rightAdjacent = null;
         this.length = this.middleLine.length;
         this.carsPositions = {};
     }

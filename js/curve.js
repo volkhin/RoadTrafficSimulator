@@ -15,6 +15,7 @@ define(["segment"], function(Segment) {
             if (!this.O) {
                 return this.AB.length;
             }
+            // FIXME: it's not the real length
             return this.AB.length;
         },
     });

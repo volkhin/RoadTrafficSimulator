@@ -31,6 +31,12 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
         return obj;
     };
 
+    Object.defineProperty(Road.prototype, "forwardLanes", {
+        get: function() {
+            return parseInt((this.lanesNumber + 1) / 2);
+        },
+    });
+
     Object.defineProperty(Road.prototype, "length", {
         get: function() {
             if (this.sourceSide && this.targetSide) {
@@ -79,10 +85,12 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
         var sourceSplits = this.sourceSide.split(this.lanesNumber, true),
             targetSplits = this.targetSide.split(this.lanesNumber);
 
+        var lanesNumber = this.lanesNumber, forwardLanes = this.forwardLanes;
+
         if (!this.lanes || this.lanes.length === 0) {
             this.lanes = [];
-            for (i = 0; i < this.lanesNumber; i++) {
-                if (i < this.lanesNumber / 2) {
+            for (i = 0; i < lanesNumber; i++) {
+                if (i < forwardLanes) {
                     this.lanes.push(new Lane(
                         sourceSplits[i], targetSplits[i], this.source, this.target, this, true
                     ));
@@ -94,13 +102,25 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
             }
         }
 
-        for (i = 0; i < this.lanesNumber; i++) {
-            if (i < this.lanesNumber / 2) {
+        for (i = 0; i < lanesNumber; i++) {
+            if (i < forwardLanes) {
                 this.lanes[i].sourceSegment = sourceSplits[i];
                 this.lanes[i].targetSegment = targetSplits[i];
+                if (i + 1 < forwardLanes) {
+                    this.lanes[i].leftAdjacent = this.lanes[i + 1];
+                }
+                if (i > 0) {
+                    this.lanes[i].rightAdjacent = this.lanes[i - 1];
+                }
             } else {
                 this.lanes[i].sourceSegment = targetSplits[i];
                 this.lanes[i].targetSegment = sourceSplits[i];
+                if (i > forwardLanes) {
+                    this.lanes[i].leftAdjacent = this.lanes[i - 1];
+                }
+                if (i + 1 < lanesNumber) {
+                    this.lanes[i].rightAdjacent = this.lanes[i + 1];
+                }
             }
         }
 

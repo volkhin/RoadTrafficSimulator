@@ -3,8 +3,7 @@ define(function(require) {
 
     var _ = require("underscore"),
         LanePosition = require("laneposition"),
-        Curve = require("curve"),
-        Point = require("point");
+        Curve = require("curve");
 
     function Trajectory(car, lane, position) {
         this.car = car;
@@ -85,25 +84,36 @@ define(function(require) {
     };
 
     Trajectory.prototype.moveForward = function(distance) {
-        if (this.current.position + this.car.length >= this.current.lane.length
-                && !this.isChangingLanes) {
+        if (this.current.position + this.car.length >= this.current.lane.length &&
+                !this.isChangingLanes) {
             if (this.canEnterIntersection()) {
-                this.startChangingLanes();
+                this.next.position = 0;
+                this.startChangingLanes(true);
             } else {
                 // FIXME: car model should set appropriate acceleration itself
                 this.car.speed = 0;
                 distance = 0;
             }
         }
+        //TODO: stop this random lane changing
+        if (!this.isChangingLanes && _.random(1000) === 0) {
+            var nextLane = this.current.lane.leftAdjacent || this.current.lane.rightAdjacent;
+            var nextPosition = this.current.position + 5 * this.car.length;
+            if (nextLane && nextPosition < nextLane.length) {
+                this.next.lane = nextLane;
+                this.next.position = nextPosition;
+                this.startChangingLanes(false);
+            }
+        }
         this.current.position += distance;
         this.next.position += distance;
         this.temp.position += distance;
-        if (this.next.position >= 0) {
+        if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
             this.finishChangingLanes();
         }
     };
 
-    Trajectory.prototype.startChangingLanes = function() {
+    Trajectory.prototype.startChangingLanes = function(keepOldLine) {
         if (this.isChangingLanes) {
             throw Error("Invalid call order: start/finish changing lanes");
         }
@@ -115,29 +125,16 @@ define(function(require) {
         }
 
         this.isChangingLanes = true;
-        var p1 = this.current.lane.targetSegment.getCenter(),
-            p2 = this.next.lane.sourceSegment.getCenter(),
-            center = this.current.lane.targetIntersection.rect.getCenter();
-        var control = new Point(center);
-        if (p1.x < control.x && p2.x < control.x) {
-            control.x = Math.max(p1.x, p2.x);
-        } else if (p1.x > control.x && p2.x > control.x) {
-            control.x = Math.min(p1.x, p2.x);
-        }
-        if (p1.y < control.y && p2.y < control.y) {
-            control.y = Math.max(p1.y, p2.y);
-        } else if (p1.y > control.y && p2.y > control.y) {
-            control.y = Math.min(p1.y, p2.y);
-        }
+        var p1 = this.current.lane.getPoint(this.current.position / this.current.lane.length),
+            p2 = this.next.lane.getPoint(this.next.position / this.next.lane.length);
+        var distance = p2.subtract(p1).length;
+        var control = p1.add(this.current.lane.middleLine.vector.normalize().mult(distance / 2));
         this.temp.lane = new Curve(p1, p2, control);
-        /* this.temp.lane = new Lane(
-            this.current.lane.targetSegment,
-            this.next.lane.sourceSegment,
-            this.current.lane.targetIntersection,
-            this.next.lane.sourceIntersection
-        ); */
         this.temp.position = 0;
-        this.next.position = -this.temp.lane.length; // FIXME
+        this.next.position -= this.temp.lane.length; // FIXME
+        if (!keepOldLine) {
+            this.current.release();
+        }
     };
 
     Trajectory.prototype.finishChangingLanes = function() {
@@ -177,8 +174,10 @@ define(function(require) {
             var laneNumber;
             if (intersection === nextRoad.source) {
                 laneNumber = _.random(0, nextRoad.lanesNumber / 2 - 1);
+                // laneNumber = 0;
             } else {
                 laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
+                // laneNumber = nextRoad.lanesNumber - 1;
             }
             this.next.lane = nextRoad.lanes[laneNumber];
             this.next.position = NaN;

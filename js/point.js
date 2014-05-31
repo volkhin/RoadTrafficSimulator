@@ -27,6 +27,11 @@ define([], function()  {
         return new Point(this.x / o, this.y / o);
     };
 
+    Point.prototype.normalize = function() {
+        var l = this.length;
+        return new Point(this.x / l, this.y / l);
+    };
+
     Object.defineProperty(Point.prototype, "length", {
         get: function() {
             return Math.sqrt(this.x * this.x + this.y * this.y);

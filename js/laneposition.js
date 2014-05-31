@@ -6,6 +6,7 @@ define([], function() {
         this.car = car;
         this.lane = lane || null;
         this.position = position || NaN;
+        this.free = true;
     }
 
     Object.defineProperty(LanePosition.prototype, "lane", {
@@ -13,13 +14,9 @@ define([], function() {
             return this._lane;
         },
         set: function(lane) {
-            if (this._lane && this._lane.removeCar) {
-                this._lane.removeCar(this);
-            }
-            if (lane && lane.addCarPosition) {
-                lane.addCarPosition(this);
-            }
+            this.release();
             this._lane = lane;
+            this.acquire();
         },
     });
 
@@ -32,8 +29,22 @@ define([], function() {
         },
     });
 
+    LanePosition.prototype.acquire = function() {
+        if (this.lane && this.lane.addCarPosition) {
+            this.free = false;
+            this.lane.addCarPosition(this);
+        }
+    };
+
+    LanePosition.prototype.release = function() {
+        if (this.lane && this.lane.removeCar) {
+            this.free = true;
+            this.lane.removeCar(this);
+        }
+    };
+
     LanePosition.prototype.getNext = function() {
-        if (this.lane) {
+        if (this.lane && !this.free) {
             return this.lane.getNext(this);
         }
     };
