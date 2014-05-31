@@ -60,8 +60,7 @@ define(function(require) {
             if (self.tempRoad) {
                 var hoveredIntersection = self.getHoveredIntersection(point);
                 if (hoveredIntersection && self.tempRoad.source.id !== hoveredIntersection.id) {
-                    var road1 = new Road(self.tempRoad.source, hoveredIntersection);
-                    self.world.addRoad(road1);
+                    self.world.addRoad(self.tempRoad);
                 }
                 self.tempRoad = null;
             }
@@ -177,7 +176,7 @@ define(function(require) {
 
     Visualizer.prototype.drawCar = function(car) {
         var angle = car.orientation;
-        var center = car.getCenter();
+        var center = car.coords;
         var rect = (new Rect(0, 0, 1.1 * car.length, 1.7 * car.width))
             .setCenter(new Point(0, 0)).setRight(0);
         var boundRect = (new Rect(0, 0, car.length, car.width))

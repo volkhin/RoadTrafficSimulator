@@ -14,9 +14,11 @@ define(["underscore", "trajectory"], function(_, Trajectory) {
         this.alive = true;
     }
 
-    Car.prototype.getCenter = function() {
-        return this.trajectory.getCoords();
-    };
+    Object.defineProperty(Car.prototype, "coords", {
+        get: function() {
+            return this.trajectory.coords;
+        },
+    });
 
     Object.defineProperty(Car.prototype, "absolutePosition", {
         get: function() {
@@ -66,7 +68,7 @@ define(["underscore", "trajectory"], function(_, Trajectory) {
 
     Object.defineProperty(Car.prototype, "orientation", {
         get: function() {
-            return this.trajectory.lane.middleLine.getOrientation();
+            return this.trajectory.orientation;
         },
     });
 

@@ -73,6 +73,8 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
         this.sourceSide = this.source.rect.getSide(this.sourceSideId);
         this.targetSideId = this.target.rect.getSectorId(this.source.rect.getCenter());
         this.targetSide = this.target.rect.getSide(this.targetSideId);
+        var smallSide = Math.min(this.sourceSide.length, this.targetSide.length);
+        // this.lanesNumber = smallSide /
 
         var sourceSplits = this.sourceSide.split(this.lanesNumber, true),
             targetSplits = this.targetSide.split(this.lanesNumber);

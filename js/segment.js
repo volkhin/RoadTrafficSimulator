@@ -19,11 +19,21 @@ define([], function() {
         return splits;
     };
 
-    Object.defineProperty(Segment.prototype, "length", {
+    Object.defineProperty(Segment.prototype, "vector", {
         get: function() {
-            return this.target.subtract(this.source).length;
+            return this.target.subtract(this.source);
         },
     });
+
+    Object.defineProperty(Segment.prototype, "length", {
+        get: function() {
+            return this.vector.length;
+        },
+    });
+
+    Segment.prototype.getPoint = function(a) {
+        return this.source.add(this.vector.mult(a));
+    };
 
     Segment.prototype.getSplit = function(k, n) {
         var splits = this.split(n);
@@ -31,15 +41,13 @@ define([], function() {
     };
 
     Segment.prototype.subsegment = function(a, b) {
-        var offset = this.target.subtract(this.source);
-        var start = this.source.add(offset.mult(a)),
-            end = this.source.add(offset.mult(b));
+        var start = this.source.add(this.vector.mult(a)),
+            end = this.source.add(this.vector.mult(b));
         return new Segment(start, end);
     };
 
     Segment.prototype.getOrientation = function() {
-        var offset = this.target.subtract(this.source);
-        return Math.atan2(offset.y, offset.x);
+        return Math.atan2(this.vector.y, this.vector.x);
     };
 
     return Segment;

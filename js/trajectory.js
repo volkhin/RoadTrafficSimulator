@@ -26,13 +26,20 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         },
     });
 
-    Trajectory.prototype.getCoords = function() {
-        var line = this.lane.middleLine;
-        var source = line.source, target = line.target;
-        var offset = target.subtract(source);
-        var relativePosition = this.position / this.lane.middleLine.length;
-        return source.add(offset.mult(relativePosition));
-    };
+    Object.defineProperty(Trajectory.prototype, "orientation", {
+        get: function() {
+            return this.lane.middleLine.getOrientation();
+        },
+    });
+
+    Object.defineProperty(Trajectory.prototype, "coords", {
+        get: function() {
+            var lane = this.temp.lane ? this.temp.lane : this.current.lane;
+            var position = this.temp.lane ? this.temp.position : this.current.position;
+            var relativePosition = position / lane.length;
+            return lane.middleLine.getPoint(relativePosition);
+        },
+    });
 
     Trajectory.prototype.getDistanceToNextCar = function() {
         return Math.min(
@@ -51,8 +58,6 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
 
     Trajectory.prototype.canEnterIntersection = function() {
         //TODO: right turn is allowe donly form right lane
-            // if (this.current.lane.canLeave()) {
-        // var side1 = this.road.targetSideId;
         var sourceLane = this.current.lane,
             nextLane = this.next.lane;
         if (!nextLane) {
@@ -61,7 +66,7 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
             // throw Error("It should have been processed before");
         }
         var intersection = sourceLane.targetIntersection;
-        var side1 = sourceLane.targetSideId, // FIXME
+        var side1 = sourceLane.targetSideId,
             side2 = nextLane.sourceSideId;
         var turnNumber = (side2 - side1 - 1 + 4) % 4; // 0 - left, 1 - forward, 2 - right
         if (side1 === side2) {
@@ -73,7 +78,6 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
 
     Trajectory.prototype.moveForward = function(distance) {
         if (this.current.position >= this.current.lane.length && !this.isChangingLanes) {
-            // if (this.current.lane.canLeave()) {
             if (this.canEnterIntersection()) {
                 this.startChangingLanes();
             } else {
@@ -98,6 +102,7 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         if (!this.next.lane) {
             // TODO: it shouldn't be here
             this.car.alive = false;
+            return;
         }
 
         this.isChangingLanes = true;
@@ -108,10 +113,7 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
             this.next.lane.sourceIntersection
         );
         this.temp.position = 0;
-        this.next.position = -this.temp.lane.middleLine.length;
-        // if (this.next.lane) {
-            // this.next.lane.addCarPosition(this.next);
-        // }
+        this.next.position = -this.temp.lane.middleLine.length; // FIXME
     };
 
     Trajectory.prototype.finishChangingLanes = function() {

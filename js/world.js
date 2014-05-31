@@ -110,7 +110,7 @@ define(function(require) {
     };
 
     World.prototype.removeAllCars = function() {
-        // FIXME
+        // FIXME: actually remove cars
         // this.cars.each(function(index, car) {
             // car.moveToLane(null);
         // });
