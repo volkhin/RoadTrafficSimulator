@@ -17,6 +17,10 @@ define([], function() {
         this.ctx.globalAlpha = oldAlpha;
     };
 
+    Graphics.prototype.drawImage = function(image, rect, style, alpha) {
+        this.ctx.drawImage(image, rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
+    };
+
     Graphics.prototype.clear = function(color) {
         this.ctx.fillStyle = color;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

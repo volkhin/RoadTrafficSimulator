@@ -1,12 +1,13 @@
 define(["jquery", "underscore", "segment"], function($, _, Segment) {
     "use strict";
 
-    function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road) {
+    function Lane(sourceSegment, targetSegment, sourceIntersection, targetIntersection, road, direction) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;
         this.sourceIntersection = sourceIntersection;
         this.targetIntersection = targetIntersection;
         this.road = road;
+        this.direction = direction;
         this.length = this.middleLine.length;
         this.carsPositions = {};
     }
@@ -23,6 +24,18 @@ define(["jquery", "underscore", "segment"], function($, _, Segment) {
                 this.sourceSegment.getCenter(),
                 this.targetSegment.getCenter()
             );
+        },
+    });
+
+    Object.defineProperty(Lane.prototype, "sourceSideId", {
+        get: function() {
+            return this.direction ? this.road.sourceSideId : this.road.targetSideId;
+        },
+    });
+
+    Object.defineProperty(Lane.prototype, "targetSideId", {
+        get: function() {
+            return this.direction ? this.road.targetSideId : this.road.sourceSideId;
         },
     });
 

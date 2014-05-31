@@ -21,6 +21,9 @@ define(function(require) {
         this.mousePos = null;
         this.graphics = new Graphics(this.ctx);
 
+        this.carImage = new Image();
+        this.carImage.src = "images/car.png";
+
         // settings
         this.gridStep = 20;
         this.colors = {
@@ -59,8 +62,6 @@ define(function(require) {
                 if (hoveredIntersection && self.tempRoad.source.id !== hoveredIntersection.id) {
                     var road1 = new Road(self.tempRoad.source, hoveredIntersection);
                     self.world.addRoad(road1);
-                    // var road2 = new Road(hoveredIntersection, self.tempRoad.source);
-                    // self.world.addRoad(road2);
                 }
                 self.tempRoad = null;
             }
@@ -177,6 +178,8 @@ define(function(require) {
     Visualizer.prototype.drawCar = function(car) {
         var angle = car.orientation;
         var center = car.getCenter();
+        var rect = (new Rect(0, 0, 1.1 * car.length, 1.7 * car.width))
+            .setCenter(new Point(0, 0)).setRight(0);
         var boundRect = (new Rect(0, 0, car.length, car.width))
             .setCenter(new Point(0, 0)).setRight(-1);
 
@@ -187,7 +190,8 @@ define(function(require) {
         var s = 100;
         var l = 90 - 40 * car.speed / car.maxSpeed;
         var style = "hsl(" + h + ", " + s + "%, " + l + "%)";
-        this.graphics.fillRect(boundRect, style);
+        this.graphics.drawImage(this.carImage, rect);
+        this.graphics.fillRect(boundRect, style, 0.8);
         this.ctx.restore();
     };
 

@@ -58,13 +58,15 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         if (!nextLane) {
             // the car will be removed from the world
             return true;
+            // throw Error("It should have been processed before");
         }
         var intersection = sourceLane.targetIntersection;
-        var side1 = sourceLane.road.targetSideId,
-            side2 = nextLane.road.sourceSideId;
+        var side1 = sourceLane.targetSideId, // FIXME
+            side2 = nextLane.sourceSideId;
         var turnNumber = (side2 - side1 - 1 + 4) % 4; // 0 - left, 1 - forward, 2 - right
         if (side1 === side2) {
-            turnNumber = 0; // same as left turn
+            throw Error("No U-turn are allowed");
+            // turnNumber = 0; // same as left turn
         }
         return intersection.state[side1][turnNumber];
     };
@@ -93,13 +95,17 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
             throw Error("Invalid call order: start/finish changing lanes");
         }
 
+        if (!this.next.lane) {
+            // TODO: it shouldn't be here
+            this.car.alive = false;
+        }
+
         this.isChangingLanes = true;
         this.temp.lane = new Lane(
             this.current.lane.targetSegment,
             this.next.lane.sourceSegment,
             this.current.lane.targetIntersection,
-            this.next.lane.sourceIntersection,
-            null
+            this.next.lane.sourceIntersection
         );
         this.temp.position = 0;
         this.next.position = -this.temp.lane.middleLine.length;
@@ -142,11 +148,13 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         });
         if (possibleRoads.length !== 0) {
             var nextRoad = _.sample(possibleRoads);
+            var laneNumber;
             if (intersection === nextRoad.source) {
-                this.next.lane = nextRoad.lanes[0];
+                laneNumber = _.random(0, nextRoad.lanesNumber / 2 - 1);
             } else {
-                this.next.lane = nextRoad.lanes[nextRoad.lanesNumber - 1];
+                laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
             }
+            this.next.lane = nextRoad.lanes[laneNumber];
             this.next.position = NaN;
             return this.next.lane;
         }

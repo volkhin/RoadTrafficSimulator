@@ -5,7 +5,7 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
         this.id = window.__nextId++;
         this._source = source;
         this._target = target;
-        this.lanesNumber = 2; // FIXME: hack
+        this.lanesNumber = 4; // FIXME: hack
         this.lanes = [];
         this.interlanes = [];
         this.update();
@@ -82,11 +82,11 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
             for (i = 0; i < this.lanesNumber; i++) {
                 if (i < this.lanesNumber / 2) {
                     this.lanes.push(new Lane(
-                        sourceSplits[i], targetSplits[i], this.source, this.target, this
+                        sourceSplits[i], targetSplits[i], this.source, this.target, this, true
                     ));
                 } else {
                     this.lanes.push(new Lane(
-                        targetSplits[i], sourceSplits[i], this.target, this.source, this
+                        targetSplits[i], sourceSplits[i], this.target, this.source, this, false
                     ));
                 }
             }

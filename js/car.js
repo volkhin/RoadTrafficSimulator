@@ -7,7 +7,7 @@ define(["underscore", "trajectory"], function(_, Trajectory) {
         this.speed = 0;
         this.width = 5;
         this.length = 10;
-        this.safeDistance = 15;
+        this.safeDistance = 1.5 * this.length;
         this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0
         this.acceleration = 0.02;
         this.trajectory = new Trajectory(this, lane, position);
