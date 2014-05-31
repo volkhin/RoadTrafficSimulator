@@ -6,11 +6,6 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         this.rect = arg0;
         this.roads = [];
         this.stateNum = 0;
-        /* this.statesStrings = [
-            ["LFR", "", "LFR", ""],
-            ["", "LFR", "", "LFR"],
-        ]; */
-        this.initStates();
         this.stateNum = 0;
         this.flipInterval = _.random(50, 100);
     }
@@ -19,7 +14,6 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         intersection.rect = Rect.copy(intersection.rect);
         var result = Object.create(Intersection.prototype);
         result = $.extend(result, intersection);
-        result.initStates();
         return result;
     };
 
@@ -31,10 +25,11 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         return obj;
     };
 
-    Intersection.prototype.statesStrings = [
-        ["LFR", "", "LFR", ""],
-        ["", "LFR", "", "LFR"],
-        ["", "", "", ""],
+    Intersection.prototype.states = [
+        ["L", "", "L", ""],
+        ["FR", "", "FR", ""],
+        ["", "L", "", "L"],
+        ["", "FR", "", "FR"],
     ];
 
     Intersection.STATE = {
@@ -42,9 +37,10 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
         GREEN: 1,
     };
 
-    Intersection.prototype.initStates = function() {
-        this.states = $.map(this.statesStrings, function(stateString) {
-            return [$.map(stateString, function(pattern) {
+    Object.defineProperty(Intersection.prototype, "state", {
+        get: function() {
+            var stringState = this.states[this.stateNum % this.states.length];
+            return $.map(stringState, function(pattern) {
                 var state = [0, 0, 0];
                 if (pattern.indexOf("L") > -1) {
                     state[0] = 1;
@@ -56,13 +52,7 @@ define(["jquery", "underscore", "rect"], function($, _, Rect) {
                     state[2] = 1;
                 }
                 return [state];
-            })];
-        });
-    };
-
-    Object.defineProperty(Intersection.prototype, "state", {
-        get: function() {
-            return this.states[this.stateNum % this.states.length];
+            });
         },
     });
 

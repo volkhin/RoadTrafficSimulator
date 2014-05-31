@@ -150,10 +150,14 @@ define(function(require) {
             var lane = road.lanes[i];
             var intersection = lane.targetIntersection;
             var lights = intersection.state[road.targetSideId];
-            var segment = lane.targetSegment.subsegment(0.2, 0.8);
-            this.graphics.drawSegment(segment);
             self.ctx.lineWidth = 3;
+            var segment = lane.targetSegment;
+            this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
             self.graphics.stroke(lightsColors[lights[0]]);
+            this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
+            self.graphics.stroke(lightsColors[lights[1]]);
+            this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
+            self.graphics.stroke(lightsColors[lights[2]]);
         }
         self.ctx.restore();
 
