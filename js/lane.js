@@ -54,7 +54,11 @@ define(["jquery", "underscore", "segment"], function($, _, Segment) {
     };
 
     Lane.prototype.getOrientation = function() {
-        return this.middleLine.getOrientation();
+        return this.middleLine.orientation;
+    };
+
+    Lane.prototype.getPoint = function(a) {
+        return this.middleLine.getPoint(a);
     };
 
     Lane.prototype.addCarPosition = function(carPosition) {

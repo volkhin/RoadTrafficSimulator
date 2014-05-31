@@ -1,5 +1,10 @@
-define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
+define(function(require) {
     "use strict";
+
+    var _ = require("underscore"),
+        LanePosition = require("laneposition"),
+        Curve = require("curve"),
+        Point = require("point");
 
     function Trajectory(car, lane, position) {
         this.car = car;
@@ -20,24 +25,27 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         },
     });
 
-    Object.defineProperty(Trajectory.prototype, "position", {
+    Object.defineProperty(Trajectory.prototype, "absolutePosition", {
         get: function() {
             return this.temp.lane ? this.temp.position : this.current.position;
         },
     });
 
+    Object.defineProperty(Trajectory.prototype, "relativePosition", {
+        get: function() {
+            return this.absolutePosition / this.lane.length;
+        },
+    });
+
     Object.defineProperty(Trajectory.prototype, "orientation", {
         get: function() {
-            return this.lane.middleLine.getOrientation();
+            return this.lane.getOrientation(this.relativePosition);
         },
     });
 
     Object.defineProperty(Trajectory.prototype, "coords", {
         get: function() {
-            var lane = this.temp.lane ? this.temp.lane : this.current.lane;
-            var position = this.temp.lane ? this.temp.position : this.current.position;
-            var relativePosition = position / lane.length;
-            return lane.middleLine.getPoint(relativePosition);
+            return this.lane.getPoint(this.relativePosition);
         },
     });
 
@@ -77,7 +85,8 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
     };
 
     Trajectory.prototype.moveForward = function(distance) {
-        if (this.current.position >= this.current.lane.length && !this.isChangingLanes) {
+        if (this.current.position + this.car.length >= this.current.lane.length
+                && !this.isChangingLanes) {
             if (this.canEnterIntersection()) {
                 this.startChangingLanes();
             } else {
@@ -106,14 +115,29 @@ define(["underscore", "lane", "laneposition"], function(_, Lane, LanePosition) {
         }
 
         this.isChangingLanes = true;
-        this.temp.lane = new Lane(
+        var p1 = this.current.lane.targetSegment.getCenter(),
+            p2 = this.next.lane.sourceSegment.getCenter(),
+            center = this.current.lane.targetIntersection.rect.getCenter();
+        var control = new Point(center);
+        if (p1.x < control.x && p2.x < control.x) {
+            control.x = Math.max(p1.x, p2.x);
+        } else if (p1.x > control.x && p2.x > control.x) {
+            control.x = Math.min(p1.x, p2.x);
+        }
+        if (p1.y < control.y && p2.y < control.y) {
+            control.y = Math.max(p1.y, p2.y);
+        } else if (p1.y > control.y && p2.y > control.y) {
+            control.y = Math.min(p1.y, p2.y);
+        }
+        this.temp.lane = new Curve(p1, p2, control);
+        /* this.temp.lane = new Lane(
             this.current.lane.targetSegment,
             this.next.lane.sourceSegment,
             this.current.lane.targetIntersection,
             this.next.lane.sourceIntersection
-        );
+        ); */
         this.temp.position = 0;
-        this.next.position = -this.temp.lane.middleLine.length; // FIXME
+        this.next.position = -this.temp.lane.length; // FIXME
     };
 
     Trajectory.prototype.finishChangingLanes = function() {

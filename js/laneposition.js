@@ -13,10 +13,10 @@ define([], function() {
             return this._lane;
         },
         set: function(lane) {
-            if (this._lane) {
+            if (this._lane && this._lane.removeCar) {
                 this._lane.removeCar(this);
             }
-            if (lane) {
+            if (lane && lane.addCarPosition) {
                 lane.addCarPosition(this);
             }
             this._lane = lane;

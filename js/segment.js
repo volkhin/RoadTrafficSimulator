@@ -7,7 +7,7 @@ define([], function() {
     }
 
     Segment.prototype.getCenter = function() {
-        return this.source.add(this.target).divide(2);
+        return this.getPoint(0.5);
     };
 
     Segment.prototype.split = function(n, reverse) {
@@ -31,6 +31,12 @@ define([], function() {
         },
     });
 
+    Object.defineProperty(Segment.prototype, "orientation", {
+        get: function() {
+            return this.vector.orientation;
+        },
+    });
+
     Segment.prototype.getPoint = function(a) {
         return this.source.add(this.vector.mult(a));
     };
@@ -44,10 +50,6 @@ define([], function() {
         var start = this.source.add(this.vector.mult(a)),
             end = this.source.add(this.vector.mult(b));
         return new Segment(start, end);
-    };
-
-    Segment.prototype.getOrientation = function() {
-        return Math.atan2(this.vector.y, this.vector.x);
     };
 
     return Segment;

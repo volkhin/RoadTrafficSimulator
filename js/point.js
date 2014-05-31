@@ -33,5 +33,10 @@ define([], function()  {
         },
     });
 
+    Object.defineProperty(Point.prototype, "orientation", {
+        get: function() {
+            return Math.atan2(this.y, this.x);
+        },
+    });
     return Point;
 });

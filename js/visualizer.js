@@ -179,9 +179,9 @@ define(function(require) {
         var angle = car.orientation;
         var center = car.coords;
         var rect = (new Rect(0, 0, 1.1 * car.length, 1.7 * car.width))
-            .setCenter(new Point(0, 0)).setRight(0);
+            .setCenter(new Point(0, 0));
         var boundRect = (new Rect(0, 0, car.length, car.width))
-            .setCenter(new Point(0, 0)).setRight(-1);
+            .setCenter(new Point(0, 0));
 
         this.graphics.save();
         this.ctx.translate(center.x, center.y);
@@ -191,7 +191,7 @@ define(function(require) {
         var l = 90 - 40 * car.speed / car.maxSpeed;
         var style = "hsl(" + h + ", " + s + "%, " + l + "%)";
         this.graphics.drawImage(this.carImage, rect);
-        this.graphics.fillRect(boundRect, style, 0.8);
+        this.graphics.fillRect(boundRect, style, 0.5);
         this.graphics.restore();
     };
 
