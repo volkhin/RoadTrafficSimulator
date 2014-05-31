@@ -1,0 +1,27 @@
+#!/bin/bash 
+path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $path $0; chmod +x $0; exit
+
+[ ] better deciding where to go on the junction
+[ ] draw control signals as arrows
+[ ] get rid of getters, replace with properties
+[ ] implement rules for turns (right -> right, left -> left)
+[ ] number of lanes should be equal to the intersection length
+[ ] output statistics (num cars/roads/junctions, average speed/waiting time) etc
+[ ] realtime graphs of average speed, number of cars etc
+[X] OOP, classes, application
+[X] Trajectory class. Contains currentLine and nextLine, allow cars to occupy 2 lanes at once
+[X] create cars
+[X] create roads
+[X] don’t go back on the junction
+[X] draw lines
+[X] flexible time intervals for the lights
+[X] get rid of tempRoad
+[X] highlight junctions
+[X] id to objects and fix serialization (avoid references problems)
+[X] implement geometry — need Rect (as Polygon), Point, Segment, GridCell
+[X] linter
+[X] move junctions holding alt
+[X] roads should be connected to their graphical representation, draw cars exactly on the road
+[X] save roads to json
+[X] simulate movement
+[X] use storage instead of cookies + serialize/deserialize
