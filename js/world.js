@@ -65,48 +65,12 @@ define(function(require) {
             intersection.onTick(self.ticks);
         });
         this.cars.each(function(index, car) {
-            var lane = car.lane;
-            var road = lane.road;
-            if (car.getDistanceToNextCar() > 15 && car.relativePosition < 1) { // FIXME
-                car.speed += car.acceleration;
-                if (car.speed > car.maxSpeed) {
-                    car.speed = car.maxSpeed;
-                }
-                car.absolutePosition += car.speed;
-            } else {
-                car.speed = 0;
-            }
-            var intersection = null, previousIntersection = null;
-            if (car.relativePosition >= 1) {
-                previousIntersection = lane.sourceIntersection;
-                intersection = lane.targetIntersection;
-                car.relativePosition = 1;
-            }
-            if (intersection !== null) {
-                if (intersection.state[road.targetSideId]) {
-                    var possibleRoads = intersection.roads.filter(function(x) {
-                        return x.target !== previousIntersection &&
-                            x.source !== previousIntersection;
-                    });
-                    if (possibleRoads.length === 0) {
-                        car.moveToLane(null);
-                        self.cars.pop(car.id);
-                    } else {
-                        var nextRoad = _.sample(possibleRoads);
-                        if (intersection === nextRoad.source) {
-                            car.moveToLane(nextRoad.lanes[0]);
-                        } else {
-                            car.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
-                        }
-                    }
-                } else {
-                    car.speed = 0;
-                    // car.speed -= car.acceleration;
-                }
+            car.move();
+            if (car.removed) {
+                self.cars.pop(car.id);
             }
         });
     };
-
 
     World.prototype.addRoad = function(road) {
         this.roads.put(road);

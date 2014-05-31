@@ -1,4 +1,4 @@
-define([], function() {
+define(["underscore"], function(_) {
     "use strict";
 
     function Car(lane, position) {
@@ -58,6 +58,55 @@ define([], function() {
             return Infinity;
         }
         return nextCar.absolutePosition - this.absolutePosition;
+    };
+
+    Car.prototype.pickNextRoad = function() {
+        var intersection = this.lane.targetIntersection,
+            previousIntersection = this.lane.sourceIntersection;
+        var possibleRoads = intersection.roads.filter(function(x) {
+            return x.target !== previousIntersection &&
+                   x.source !== previousIntersection;
+        });
+        if (possibleRoads.length !== 0) {
+            return _.sample(possibleRoads);
+        }
+    };
+
+    Car.prototype.move = function() {
+        if (this.getDistanceToNextCar() > 15 && this.relativePosition < 1) { // FIXME
+            this.speed += this.acceleration;
+            if (this.speed > this.maxSpeed) {
+                this.speed = this.maxSpeed;
+            }
+            this.absolutePosition += this.speed;
+        } else {
+            this.speed = 0;
+        }
+        var intersection = null, previousIntersection = null;
+        if (this.relativePosition >= 1) {
+            previousIntersection = this.lane.sourceIntersection;
+            intersection = this.lane.targetIntersection;
+            this.relativePosition = 1;
+        }
+        if (intersection) {
+            if (this.lane.canLeave()) {
+                var nextRoad = this.pickNextRoad();
+                if (!nextRoad) {
+                    // removing car from the world
+                    this.moveToLane(null);
+                    // self.cars.pop(car.id); // FIXME
+                    this.removed = true;
+                } else {
+                    if (intersection === nextRoad.source) {
+                        this.moveToLane(nextRoad.lanes[0]);
+                    } else {
+                        this.moveToLane(nextRoad.lanes[nextRoad.lanesNumber - 1]);
+                    }
+                }
+            } else {
+                this.speed = 0;
+            }
+        }
     };
 
     return Car;

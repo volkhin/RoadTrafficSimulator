@@ -44,6 +44,10 @@ define(["jquery", "segment"], function($, Segment) {
         return this.middleLine.getOrientation();
     };
 
+    Lane.prototype.canLeave = function() {
+        return this.targetIntersection.state[this.road.targetSideId];
+    };
+
     Lane.prototype.addCar = function(car) {
         this.cars.push(car);
     };
