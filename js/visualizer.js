@@ -7,6 +7,7 @@ define(function(require) {
         Rect = require("rect"),
         Road = require("road"),
         Graphics = require("graphics"),
+        ToolMover = require("toolmover"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {
@@ -20,7 +21,6 @@ define(function(require) {
         this.tempIntersection = null;
         this.dragIntersection = null;
         this.mousePos = null;
-        this.movingCenter = null;
 
         this.carImage = new Image();
         this.carImage.src = "images/car.png";
@@ -43,6 +43,7 @@ define(function(require) {
 
         this.zoomer = new Zoomer(this.ctx, 20);
         this.graphics = new Graphics(this.ctx);
+        this.toolMover = new ToolMover(this);
 
         var self = this;
 
@@ -57,8 +58,6 @@ define(function(require) {
                 self.dragIntersection = hoveredIntersection;
             } else if (hoveredIntersection) {
                 self.tempRoad = new Road(hoveredIntersection, null);
-            } else {
-                self.movingCenter = self.getPoint(e);
             }
         });
 
@@ -74,9 +73,6 @@ define(function(require) {
             if (self.tempIntersection) {
                 self.world.addIntersection(self.tempIntersection);
                 self.tempIntersection = null;
-            }
-            if (self.movingCenter) {
-                self.movingCenter = null;
             }
             self.mouseDownPos = null;
             self.dragIntersection = null;
@@ -105,15 +101,10 @@ define(function(require) {
                 self.tempIntersection.rect = self.zoomer.getBoundingBox(
                     self.mouseDownPos, self.mousePos);
             }
-            if (self.movingCenter) {
-                self.zoomer.moveCenter(self.getPoint(e).subtract(self.movingCenter));
-                self.movingCenter = self.getPoint(e);
-            }
         });
 
         $(this.canvas).mouseout(function() {
             self.mouseDownPos = null;
-            self.movingCenter = null;
             self.tempRoad = null;
             self.dragIntersection = null;
             self.mousePos = null;
