@@ -131,7 +131,7 @@ define(function(require) {
         var control = p1.add(this.current.lane.middleLine.vector.normalize().mult(distance / 2));
         this.temp.lane = new Curve(p1, p2, control);
         this.temp.position = 0;
-        this.next.position -= this.temp.lane.length; // FIXME
+        this.next.position -= this.temp.lane.length;
         if (!keepOldLine) {
             this.current.release();
         }

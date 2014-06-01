@@ -5,11 +5,11 @@ define(["underscore", "trajectory"], function(_, Trajectory) {
         this.id = window.__nextId++;
         this.color = 255 * Math.random();
         this.speed = 0;
-        this.width = 5;
-        this.length = 10;
+        this.width = 0.5;
+        this.length = 1.0;
         this.safeDistance = 1.5 * this.length;
-        this.maxSpeed = (4 + Math.random()) / 5; // 0.8 - 1.0
-        this.acceleration = 0.02;
+        this.maxSpeed = (4 + Math.random()) / 5 / 20; // 0.04 - 0.05
+        this.acceleration = 0.02 / 20;
         this.trajectory = new Trajectory(this, lane, position);
         this.alive = true;
     }

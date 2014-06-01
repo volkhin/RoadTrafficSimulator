@@ -94,6 +94,16 @@ define(["point", "segment"], function(Point, Segment) {
             this.getTop() <= point.y && point.y <= this.getBottom();
     };
 
+    Rect.prototype.containsRect = function(rect) {
+        if (!rect instanceof Rect) {
+            throw Error("Should be a rect!");
+        }
+        return this.getLeft() <= rect.getLeft() &&
+               rect.getRight() <= this.getRight() &&
+               this.getTop() <= rect.getTop() &&
+               rect.getBottom() <= this.getBottom();
+    };
+
     Rect.prototype.getVertices = function() {
         // returns vertices in CW order starting with the top-left
         var x = this.position.x, y = this.position.y;

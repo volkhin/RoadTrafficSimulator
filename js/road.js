@@ -33,7 +33,7 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
 
     Object.defineProperty(Road.prototype, "forwardLanes", {
         get: function() {
-            return parseInt((this.lanesNumber + 1) / 2);
+            return Math.floor((this.lanesNumber + 1) / 2);
         },
     });
 

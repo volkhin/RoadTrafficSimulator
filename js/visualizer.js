@@ -6,7 +6,8 @@ define(function(require) {
         Point = require("point"),
         Rect = require("rect"),
         Road = require("road"),
-        Graphics = require("graphics");
+        Graphics = require("graphics"),
+        Zoomer = require("zoomer");
 
     function Visualizer(world) {
         this.world = world;
@@ -19,14 +20,12 @@ define(function(require) {
         this.tempIntersection = null;
         this.dragIntersection = null;
         this.mousePos = null;
-        this.graphics = new Graphics(this.ctx);
+        this.movingCenter = null;
 
         this.carImage = new Image();
         this.carImage.src = "images/car.png";
 
         // settings
-        this.gridStep = 20;
-        this.scale = 1.0;
         this.colors = {
             background: "#fff",
             redLight: "hsl(0, 100%, 50%)",
@@ -37,29 +36,36 @@ define(function(require) {
             car: "#333",
             hoveredIntersection: "#3d4c53",
             tempRoad: "#aaa",
-            grid: "#70b7ba",
+            grid1: "#fff",//"#70b7ba",
+            grid2: "#f9f9f9", //"#70b7ba",
             hoveredGrid: "#f4e8e1",
         };
+
+        this.zoomer = new Zoomer(this.ctx, 20);
+        this.graphics = new Graphics(this.ctx);
+
         var self = this;
 
         $(this.canvas).mousedown(function(e) {
-            var point = self.getPoint(e);
-            self.mouseDownPos = point;
-            var hoveredIntersection = self.getHoveredIntersection(point);
+            var cell = self.getCell(e);
+            self.mouseDownPos = cell;
+            var hoveredIntersection = self.getHoveredIntersection(cell);
             if (e.shiftKey) {
-                var rect = self.getBoundGridRect(self.mouseDownPos, self.mousePos);
+                var rect = new Rect(cell.x, cell.y, 1, 1);
                 self.tempIntersection = new Intersection(rect);
             } else if (e.altKey) {
                 self.dragIntersection = hoveredIntersection;
             } else if (hoveredIntersection) {
                 self.tempRoad = new Road(hoveredIntersection, null);
+            } else {
+                self.movingCenter = self.getPoint(e);
             }
         });
 
         $(this.canvas).mouseup(function(e) {
-            var point = self.getPoint(e);
+            var cell = self.getCell(e);
             if (self.tempRoad) {
-                var hoveredIntersection = self.getHoveredIntersection(point);
+                var hoveredIntersection = self.getHoveredIntersection(cell);
                 if (hoveredIntersection && self.tempRoad.source.id !== hoveredIntersection.id) {
                     self.world.addRoad(self.tempRoad);
                 }
@@ -69,14 +75,17 @@ define(function(require) {
                 self.world.addIntersection(self.tempIntersection);
                 self.tempIntersection = null;
             }
+            if (self.movingCenter) {
+                self.movingCenter = null;
+            }
             self.mouseDownPos = null;
             self.dragIntersection = null;
         });
 
         $(this.canvas).mousemove(function(e) {
-            var point = self.getPoint(e);
-            var hoveredIntersection = self.getHoveredIntersection(point);
-            self.mousePos = point;
+            var cell = self.getCell(e);
+            var hoveredIntersection = self.getHoveredIntersection(cell);
+            self.mousePos = cell;
             self.world.intersections.each(function(index, intersection) {
                 intersection.color = null; }
             );
@@ -87,25 +96,29 @@ define(function(require) {
                 self.tempRoad.target = hoveredIntersection;
             }
             if (self.dragIntersection) {
-                var gridPoint = self.getClosestGridPoint(point);
+                var gridPoint = cell;
                 self.dragIntersection.rect.setLeft(gridPoint.x);
                 self.dragIntersection.rect.setTop(gridPoint.y);
                 self.dragIntersection.update(); // FIXME: should be done automatically
             }
             if (self.tempIntersection) {
-                self.tempIntersection.rect = self.getBoundGridRect(
+                self.tempIntersection.rect = self.zoomer.getBoundingBox(
                     self.mouseDownPos, self.mousePos);
+            }
+            if (self.movingCenter) {
+                self.zoomer.moveCenter(self.getPoint(e).subtract(self.movingCenter));
+                self.movingCenter = self.getPoint(e);
             }
         });
 
         this.canvas.addEventListener("mouseout", function() {
             self.mouseDownPos = null;
+            self.movingCenter = null;
             self.tempRoad = null;
             self.dragIntersection = null;
             self.mousePos = null;
             self.tempIntersection = null;
         });
-
     }
 
     Visualizer.prototype.getPoint = function(e) {
@@ -114,6 +127,10 @@ define(function(require) {
             e.pageY - this.canvas.offsetTop
         );
         return point;
+    };
+
+    Visualizer.prototype.getCell = function(e) {
+        return this.zoomer.toCellCoords(this.getPoint(e));
     };
 
     Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
@@ -144,8 +161,7 @@ define(function(require) {
                 sideId = road.sourceSideId;
             }
             var lights = intersection.state[sideId];
-            this.ctx.lineWidth = 3;
-            // var segment = lane.targetSegment;
+            this.ctx.lineWidth = 0.1;
             this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
             this.graphics.stroke(lightsColors[lights[0]]);
             this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
@@ -176,8 +192,9 @@ define(function(require) {
         self.ctx.save();
         for (i = 0; i < road.interlanes.length; i++) {
             var line = road.interlanes[i];
-            var dashSize = self.gridStep / 2;
+            var dashSize = 0.5;
             this.graphics.drawSegment(line);
+            self.ctx.lineWidth = 0.1;
             self.ctx.lineDashOffset = 1.5 * dashSize;
             self.ctx.setLineDash([dashSize]);
             self.graphics.stroke(self.colors.roadMarking); 
@@ -206,51 +223,30 @@ define(function(require) {
     };
 
     Visualizer.prototype.drawGrid = function() {
-        for (var i = 0; i <= this.width; i += this.gridStep) {
-            for (var j = 0; j <= this.height; j += this.gridStep) {
-                this.graphics.fillRect(new Rect(i - 1, j - 1, 2, 2), this.colors.grid);
+        var box = this.zoomer.getBoundingBox();
+        for (var i = box.getLeft(); i <= box.getRight(); i++) {
+            for (var j = box.getTop(); j <= box.getBottom(); j++) {
+                var color = ((i + j) % 2 === 0) ? this.colors.grid1 : this.colors.grid2;
+                this.graphics.fillRect(new Rect(i, j, 1, 1), color);
             }
         }
-    };
-
-    Visualizer.prototype.getClosestGridPoint = function(point) {
-        var result = new Point(
-            Math.floor(point.x / this.gridStep) * this.gridStep,
-            Math.floor(point.y / this.gridStep) * this.gridStep
-        );
-        return result;
     };
 
     Visualizer.prototype.drawHighlightedCell = function() {
         if (this.mousePos) {
             this.ctx.fillStyle = this.colors.hoveredGrid;
-            var topLeftCorner = this.getClosestGridPoint(this.mousePos);
-            this.ctx.fillRect(topLeftCorner.x, topLeftCorner.y, this.gridStep, this.gridStep);
+            var cell = this.mousePos;
+            this.ctx.fillRect(cell.x, cell.y, 1, 1);
         }
     };
 
-    Visualizer.prototype.getBoundGridRect = function(point1, point2) {
-        var gridPoint1 = this.getClosestGridPoint(point1),
-            gridPoint2 = this.getClosestGridPoint(point2);
-        var x1 = gridPoint1.x, y1 = gridPoint1.y,
-            x2 = gridPoint2.x, y2 = gridPoint2.y;
-        if (x1 > x2) {
-            x1 = x2 + (x2 = x1, 0);
-        }
-        if (y1 > y2) {
-            y1 = y2 + (y2 = y1, 0);
-        }
-        x2 += this.gridStep;
-        y2 += this.gridStep;
-        return new Rect(x1, y1, x2 - x1, y2 - y1);
-    };
-
-    Visualizer.prototype.getHoveredIntersection = function(point) {
+    Visualizer.prototype.getHoveredIntersection = function(cell) {
+        var cellRect = new Rect(cell.x, cell.y, 1, 1);
         var intersections = this.world.intersections.all();
         for (var key in intersections) {
             if (intersections.hasOwnProperty(key)) {
                 var intersection = intersections[key];
-                if (intersection.rect.containsPoint(point)) {
+                if (intersection.rect.containsRect(cellRect)) {
                     return intersection;
                 }
             }
@@ -261,9 +257,7 @@ define(function(require) {
         var self = this;
         this.graphics.clear(this.colors.background);
         this.graphics.save();
-        this.ctx.translate(this.width / 2, this.height / 2);
-        this.ctx.scale(this.scale, this.scale);
-        this.ctx.translate(-this.width / 2, -this.height / 2);
+        this.zoomer.transform();
         this.drawGrid();
         this.drawHighlightedCell();
         this.world.intersections.each(function(index, intersection) {
@@ -288,15 +282,15 @@ define(function(require) {
     };
 
     Visualizer.prototype.zoomIn = function() {
-        this.scale *= 2;
+        this.zoomer.zoomIn();
     };
 
     Visualizer.prototype.zoomNormal = function() {
-        this.scale = 1.0;
+        this.zoomer.zoomNormal();
     };
 
     Visualizer.prototype.zoomOut = function() {
-        this.scale /= 2;
+        this.zoomer.zoomOut();
     };
 
     return Visualizer;

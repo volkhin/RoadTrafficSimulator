@@ -26,7 +26,7 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
         }, null);
         this.gui.addButton("-", this.visualizer.zoomOut.bind(this.visualizer));
         this.gui.addButton(function() {
-            return parseInt(100 * self.visualizer.scale) + "%";
+            return Math.floor(100 * self.visualizer.zoomer.scale) + "%";
         }, this.visualizer.zoomNormal.bind(this.visualizer));
         this.gui.addButton("+", this.visualizer.zoomIn.bind(this.visualizer));
         setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
