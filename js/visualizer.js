@@ -111,7 +111,7 @@ define(function(require) {
             }
         });
 
-        this.canvas.addEventListener("mouseout", function() {
+        $(this.canvas).mouseout(function() {
             self.mouseDownPos = null;
             self.movingCenter = null;
             self.tempRoad = null;
