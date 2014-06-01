@@ -3,8 +3,8 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
 
     function Road(source, target) {
         this.id = window.__nextId++;
-        this._source = source;
-        this._target = target;
+        this.source = source;
+        this.target = target;
         this.lanesNumber = 4; // FIXME: hack
         this.lanes = [];
         this.interlanes = [];
@@ -71,6 +71,7 @@ define(["jquery", "lane", "segment"], function($, Lane, Segment) {
     Road.prototype.update = function() {
         if (!this.source || !this.target) {
             // road is not ready to process - no source/junction intersections
+            // throw Error("Incomplete road"); // TODO: don't create such roads
             return;
         }
 

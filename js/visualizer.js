@@ -129,6 +129,33 @@ define(function(require) {
         this.graphics.fillRect(rect, color, alpha);
     };
 
+    Visualizer.prototype.drawSignals = function(intersection) {
+        // draw control signals
+        this.ctx.save();
+        var lightsColors = [this.colors.redLight, this.colors.greenLight];
+        for (var i = 0; i < intersection.roads.length; i++) {
+            var road = intersection.roads[i];
+            var segment, sideId;
+            if (road.target === intersection) {
+                segment = road.targetSide;
+                sideId = road.targetSideId;
+            } else {
+                segment = road.sourceSide;
+                sideId = road.sourceSideId;
+            }
+            var lights = intersection.state[sideId];
+            this.ctx.lineWidth = 3;
+            // var segment = lane.targetSegment;
+            this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
+            this.graphics.stroke(lightsColors[lights[0]]);
+            this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
+            this.graphics.stroke(lightsColors[lights[1]]);
+            this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
+            this.graphics.stroke(lightsColors[lights[2]]);
+        }
+        this.ctx.restore();
+    };
+
     Visualizer.prototype.drawRoad = function(road, alpha) {
         if (!road.source || !road.target) {
             return;
@@ -144,23 +171,6 @@ define(function(require) {
         this.graphics.fill(this.colors.road, alpha);
 
         var i;
-        // draw lanes
-        self.ctx.save();
-        var lightsColors = [this.colors.redLight, this.colors.greenLight];
-        for (i = 0; i < road.lanes.length; i++) {
-            var lane = road.lanes[i];
-            var intersection = lane.targetIntersection;
-            var lights = intersection.state[road.targetSideId];
-            self.ctx.lineWidth = 3;
-            var segment = lane.targetSegment;
-            this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
-            self.graphics.stroke(lightsColors[lights[0]]);
-            this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
-            self.graphics.stroke(lightsColors[lights[1]]);
-            this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
-            self.graphics.stroke(lightsColors[lights[2]]);
-        }
-        self.ctx.restore();
 
         // draw interlanes
         self.ctx.save();
@@ -251,7 +261,9 @@ define(function(require) {
         var self = this;
         this.graphics.clear(this.colors.background);
         this.graphics.save();
+        this.ctx.translate(this.width / 2, this.height / 2);
         this.ctx.scale(this.scale, this.scale);
+        this.ctx.translate(-this.width / 2, -this.height / 2);
         this.drawGrid();
         this.drawHighlightedCell();
         this.world.intersections.each(function(index, intersection) {
@@ -259,6 +271,9 @@ define(function(require) {
         });
         this.world.roads.each(function(index, road) {
             self.drawRoad(road, 0.9);
+        });
+        this.world.intersections.each(function(index, intersection) {
+            self.drawSignals(intersection);
         });
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
