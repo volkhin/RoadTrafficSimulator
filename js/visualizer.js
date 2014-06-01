@@ -9,6 +9,7 @@ define(function(require) {
         Graphics = require("graphics"),
         ToolMover = require("tool-mover"),
         ToolIntersectionMover = require("tool-intersection-mover"),
+        ToolIntersectionBuilder = require("tool-intersection-builder"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {
@@ -19,7 +20,6 @@ define(function(require) {
         this.height = this.canvas.height;
         this.mouseDownPos = null;
         this.tempRoad = null;
-        this.tempIntersection = null;
         this.mousePos = null;
 
         this.carImage = new Image();
@@ -47,6 +47,8 @@ define(function(require) {
         this.toolMover.bind();
         this.toolIntersectionMover = new ToolIntersectionMover(this);
         this.toolIntersectionMover.bind();
+        this.toolIntersectionBuilder = new ToolIntersectionBuilder(this);
+        this.toolIntersectionBuilder.bind();
 
         var self = this;
 
@@ -54,10 +56,7 @@ define(function(require) {
             var cell = self.getCell(e);
             self.mouseDownPos = cell;
             var hoveredIntersection = self.getHoveredIntersection(cell);
-            if (e.shiftKey) {
-                var rect = new Rect(cell.x, cell.y, 1, 1);
-                self.tempIntersection = new Intersection(rect);
-            } else if (hoveredIntersection) {
+            if (hoveredIntersection) {
                 self.tempRoad = new Road(hoveredIntersection, null);
             }
         });
@@ -70,10 +69,6 @@ define(function(require) {
                     self.world.addRoad(self.tempRoad);
                 }
                 self.tempRoad = null;
-            }
-            if (self.tempIntersection) {
-                self.world.addIntersection(self.tempIntersection);
-                self.tempIntersection = null;
             }
             self.mouseDownPos = null;
         });
@@ -91,17 +86,12 @@ define(function(require) {
             if (self.tempRoad) {
                 self.tempRoad.target = hoveredIntersection;
             }
-            if (self.tempIntersection) {
-                self.tempIntersection.rect = self.zoomer.getBoundingBox(
-                    self.mouseDownPos, self.mousePos);
-            }
         });
 
         $(this.canvas).mouseout(function() {
             self.mouseDownPos = null;
             self.tempRoad = null;
             self.mousePos = null;
-            self.tempIntersection = null;
         });
     }
 
@@ -260,9 +250,7 @@ define(function(require) {
         if (self.tempRoad) {
             self.drawRoad(self.tempRoad, 0.4);
         }
-        if (self.tempIntersection) {
-            self.drawIntersection(self.tempIntersection, 0.4);
-        }
+        this.toolIntersectionBuilder.draw(); // TODO: all tools
         this.graphics.restore();
     };
 

@@ -57,6 +57,9 @@ define(function(require) {
     Tool.prototype.onMouseOut = function() {
     };
 
+    Tool.prototype.draw = function() {
+    };
+
     Tool.prototype.getPoint = function(e) {
         var point = new Point(
             e.pageX - this.canvas.offsetLeft,
