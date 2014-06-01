@@ -44,6 +44,7 @@ define(function(require) {
         this.zoomer = new Zoomer(this.ctx, 20);
         this.graphics = new Graphics(this.ctx);
         this.toolMover = new ToolMover(this);
+        this.toolMover.bind();
 
         var self = this;
 

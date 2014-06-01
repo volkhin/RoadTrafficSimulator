@@ -1,39 +1,34 @@
 define(function(require) {
     "use strict";
 
-    var $ = require("jquery"),
-        Tool = require("tool");
+    var Tool = require("tool");
 
     function ToolMover() {
         Tool.apply(this, arguments);
-        this.movingCenter = null;
-
-        var self = this;
-        $(this.canvas).mousedown(function(e) {
-            self.movingCenter = self.getPoint(e);
-            console.log("tool mover works!");
-        });
-
-        $(this.canvas).mouseup(function() {
-            if (self.movingCenter) {
-                self.movingCenter = null;
-            }
-        });
-
-        $(this.canvas).mousemove(function(e) {
-            if (self.movingCenter) {
-                self.visualizer.zoomer.moveCenter(self.getPoint(e).subtract(self.movingCenter));
-                self.movingCenter = self.getPoint(e);
-            }
-        });
-
-        $(this.canvas).mouseout(function() {
-            self.movingCenter = null;
-        });
-
+        this.startPosition = null;
     }
 
     ToolMover.prototype = Object.create(Tool.prototype);
+
+    ToolMover.prototype.onMouseDown = function(e) {
+        this.startPosition = this.getPoint(e);
+    };
+
+    ToolMover.prototype.onMouseUp = function() {
+        this.startPosition = null;
+    };
+
+    ToolMover.prototype.onMouseMove = function(e) {
+        if (this.startPosition) {
+            var offset = this.getPoint(e).subtract(this.startPosition);
+            this.visualizer.zoomer.moveCenter(offset);
+            this.startPosition = this.getPoint(e);
+        }
+    };
+
+    ToolMover.prototype.onMouseOut = function() {
+        this.startPosition = null;
+    };
 
     return ToolMover;
 });

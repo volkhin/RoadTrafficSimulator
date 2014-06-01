@@ -29,6 +29,10 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
             return Math.floor(100 * self.visualizer.zoomer.scale) + "%";
         }, this.visualizer.zoomer.zoom.bind(this.visualizer.zoomer, 1.0));
         this.gui.addButton("+", this.visualizer.zoomer.zoomIn.bind(this.visualizer.zoomer));
+        this.gui.addButton(function() {
+            var state = self.visualizer.toolMover.isBound ? "on" : "off";
+            return "move(" + state + ")";
+        }, this.visualizer.toolMover.toggleState.bind(this.visualizer.toolMover));
         setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
         setInterval(this.world.onTick.bind(this.world), 1000 / this.FPS);
         setInterval(this.gui.draw.bind(this.gui), 1000 / this.FPS);
