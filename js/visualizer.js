@@ -7,7 +7,7 @@ define(function(require) {
         Rect = require("rect"),
         Road = require("road"),
         Graphics = require("graphics"),
-        ToolMover = require("toolmover"),
+        ToolMover = require("tool-mover"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {

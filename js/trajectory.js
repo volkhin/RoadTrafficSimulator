@@ -2,7 +2,7 @@ define(function(require) {
     "use strict";
 
     var _ = require("underscore"),
-        LanePosition = require("laneposition"),
+        LanePosition = require("lane-position"),
         Curve = require("curve");
 
     function Trajectory(car, lane, position) {
