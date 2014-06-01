@@ -160,6 +160,7 @@ define(function(require) {
                 segment = road.sourceSide;
                 sideId = road.sourceSideId;
             }
+            segment = segment.subsegment(0, 0.5);
             var lights = intersection.state[sideId];
             this.ctx.lineWidth = 0.1;
             this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
