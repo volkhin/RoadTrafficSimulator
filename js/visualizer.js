@@ -8,6 +8,7 @@ define(function(require) {
         Road = require("road"),
         Graphics = require("graphics"),
         ToolMover = require("tool-mover"),
+        ToolIntersectionMover = require("tool-intersection-mover"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {
@@ -19,7 +20,6 @@ define(function(require) {
         this.mouseDownPos = null;
         this.tempRoad = null;
         this.tempIntersection = null;
-        this.dragIntersection = null;
         this.mousePos = null;
 
         this.carImage = new Image();
@@ -45,6 +45,8 @@ define(function(require) {
         this.graphics = new Graphics(this.ctx);
         this.toolMover = new ToolMover(this);
         this.toolMover.bind();
+        this.toolIntersectionMover = new ToolIntersectionMover(this);
+        this.toolIntersectionMover.bind();
 
         var self = this;
 
@@ -55,8 +57,6 @@ define(function(require) {
             if (e.shiftKey) {
                 var rect = new Rect(cell.x, cell.y, 1, 1);
                 self.tempIntersection = new Intersection(rect);
-            } else if (e.altKey) {
-                self.dragIntersection = hoveredIntersection;
             } else if (hoveredIntersection) {
                 self.tempRoad = new Road(hoveredIntersection, null);
             }
@@ -76,7 +76,6 @@ define(function(require) {
                 self.tempIntersection = null;
             }
             self.mouseDownPos = null;
-            self.dragIntersection = null;
         });
 
         $(this.canvas).mousemove(function(e) {
@@ -92,12 +91,6 @@ define(function(require) {
             if (self.tempRoad) {
                 self.tempRoad.target = hoveredIntersection;
             }
-            if (self.dragIntersection) {
-                var gridPoint = cell;
-                self.dragIntersection.rect.setLeft(gridPoint.x);
-                self.dragIntersection.rect.setTop(gridPoint.y);
-                self.dragIntersection.update(); // FIXME: should be done automatically
-            }
             if (self.tempIntersection) {
                 self.tempIntersection.rect = self.zoomer.getBoundingBox(
                     self.mouseDownPos, self.mousePos);
@@ -107,7 +100,6 @@ define(function(require) {
         $(this.canvas).mouseout(function() {
             self.mouseDownPos = null;
             self.tempRoad = null;
-            self.dragIntersection = null;
             self.mousePos = null;
             self.tempIntersection = null;
         });

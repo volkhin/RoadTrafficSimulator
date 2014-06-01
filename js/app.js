@@ -33,6 +33,10 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
             var state = self.visualizer.toolMover.isBound ? "on" : "off";
             return "move(" + state + ")";
         }, this.visualizer.toolMover.toggleState.bind(this.visualizer.toolMover));
+        this.gui.addButton(function() {
+            var state = self.visualizer.toolIntersectionMover.isBound ? "on" : "off";
+            return "move-intersection(" + state + ")";
+        }, this.visualizer.toolIntersectionMover.toggleState.bind(this.visualizer.toolIntersectionMover));
         setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
         setInterval(this.world.onTick.bind(this.world), 1000 / this.FPS);
         setInterval(this.gui.draw.bind(this.gui), 1000 / this.FPS);

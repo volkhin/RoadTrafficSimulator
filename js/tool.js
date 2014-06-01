@@ -2,7 +2,8 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Point = require("point");
+        Point = require("point"),
+        Rect = require("rect");
 
     function Tool(visualizer) {
         this.visualizer = visualizer;
@@ -64,6 +65,22 @@ define(function(require) {
         return point;
     };
 
+    Tool.prototype.getCell = function(e) {
+        return this.visualizer.zoomer.toCellCoords(this.getPoint(e));
+    };
+
+    Tool.prototype.getHoveredIntersection = function(cell) {
+        var cellRect = new Rect(cell.x, cell.y, 1, 1);
+        var intersections = this.visualizer.world.intersections.all();
+        for (var key in intersections) {
+            if (intersections.hasOwnProperty(key)) {
+                var intersection = intersections[key];
+                if (intersection.rect.containsRect(cellRect)) {
+                    return intersection;
+                }
+            }
+        }
+    };
 
     return Tool;
 });
