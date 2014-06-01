@@ -282,17 +282,5 @@ define(function(require) {
         this.graphics.restore();
     };
 
-    Visualizer.prototype.zoomIn = function() {
-        this.zoomer.zoomIn();
-    };
-
-    Visualizer.prototype.zoomNormal = function() {
-        this.zoomer.zoomNormal();
-    };
-
-    Visualizer.prototype.zoomOut = function() {
-        this.zoomer.zoomOut();
-    };
-
     return Visualizer;
 });

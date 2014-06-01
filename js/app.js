@@ -24,11 +24,11 @@ define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, Wo
         this.gui.addButton(function() {
             return "Cars: " + self.world.cars.length;
         }, null);
-        this.gui.addButton("-", this.visualizer.zoomOut.bind(this.visualizer));
+        this.gui.addButton("-", this.visualizer.zoomer.zoomOut.bind(this.visualizer.zoomer));
         this.gui.addButton(function() {
             return Math.floor(100 * self.visualizer.zoomer.scale) + "%";
-        }, this.visualizer.zoomNormal.bind(this.visualizer));
-        this.gui.addButton("+", this.visualizer.zoomIn.bind(this.visualizer));
+        }, this.visualizer.zoomer.zoom.bind(this.visualizer.zoomer, 1.0));
+        this.gui.addButton("+", this.visualizer.zoomer.zoomIn.bind(this.visualizer.zoomer));
         setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
         setInterval(this.world.onTick.bind(this.world), 1000 / this.FPS);
         setInterval(this.gui.draw.bind(this.gui), 1000 / this.FPS);

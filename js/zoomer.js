@@ -43,21 +43,22 @@ define(function(require) {
     };
 
     Zoomer.prototype.zoom = function(k) {
-        this.scale *= k;
+        k = k || 1.0;
         var offset = this.center.subtract(this.screnCenter);
-        this.center = this.screnCenter.add(offset.mult(k));
+        this.center = this.screnCenter.add(offset.mult(k / this.scale));
+        this.scale = k;
     };
 
     Zoomer.prototype.zoomIn = function() {
-        this.zoom(2.0);
+        this.zoom(2.0 * this.scale);
     };
 
     Zoomer.prototype.zoomNormal = function() {
-        this.zoom(1.0 / this.scale);
+        this.zoom(1.0);
     };
 
     Zoomer.prototype.zoomOut = function() {
-        this.zoom(0.5);
+        this.zoom(0.5 * this.scale);
     };
 
     Zoomer.prototype.moveCenter = function(offset) {
