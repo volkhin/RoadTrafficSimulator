@@ -9,8 +9,8 @@ define(function(require) {
         this.id = window.__nextId++;
         this.source = source;
         this.target = target;
-        this.lanesNumber = 4; // FIXME: hack
         this.lanes = [];
+        this.lanesNumber = undefined;
         this.interlanes = [];
         this.update();
     }
@@ -32,6 +32,7 @@ define(function(require) {
         obj._target = obj._target.id;
         obj.lanes = []; // FIXME
         obj.interlanes = [];
+        delete obj.lanesNumber;
         return obj;
     };
 
@@ -84,18 +85,18 @@ define(function(require) {
         this.sourceSide = this.source.rect.getSide(this.sourceSideId);
         this.targetSideId = this.target.rect.getSectorId(this.source.rect.getCenter());
         this.targetSide = this.target.rect.getSide(this.targetSideId);
-        var smallSide = Math.min(this.sourceSide.length, this.targetSide.length);
-        // this.lanesNumber = smallSide /
-
+        if (typeof this.lanesNumber === "undefined") {
+            this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length);
+            this.lanesNumber = 2 * Math.floor(this.lanesNumber / 2);
+        }
         var sourceSplits = this.sourceSide.split(this.lanesNumber, true),
             targetSplits = this.targetSide.split(this.lanesNumber);
 
-        var lanesNumber = this.lanesNumber, forwardLanes = this.forwardLanes;
-
         if (!this.lanes || this.lanes.length === 0) {
             this.lanes = [];
-            for (i = 0; i < lanesNumber; i++) {
-                if (i < forwardLanes) {
+
+            for (i = 0; i < this.lanesNumber; i++) {
+                if (i < this.forwardLanes) {
                     this.lanes.push(new Lane(
                         sourceSplits[i], targetSplits[i], this.source, this.target, this, true
                     ));
@@ -107,11 +108,11 @@ define(function(require) {
             }
         }
 
-        for (i = 0; i < lanesNumber; i++) {
-            if (i < forwardLanes) {
+        for (i = 0; i < this.lanesNumber; i++) {
+            if (i < this.forwardLanes) {
                 this.lanes[i].sourceSegment = sourceSplits[i];
                 this.lanes[i].targetSegment = targetSplits[i];
-                if (i + 1 < forwardLanes) {
+                if (i + 1 < this.forwardLanes) {
                     this.lanes[i].leftAdjacent = this.lanes[i + 1];
                 }
                 if (i > 0) {
@@ -120,10 +121,10 @@ define(function(require) {
             } else {
                 this.lanes[i].sourceSegment = targetSplits[i];
                 this.lanes[i].targetSegment = sourceSplits[i];
-                if (i > forwardLanes) {
+                if (i > this.forwardLanes) {
                     this.lanes[i].leftAdjacent = this.lanes[i - 1];
                 }
-                if (i + 1 < lanesNumber) {
+                if (i + 1 < this.lanesNumber) {
                     this.lanes[i].rightAdjacent = this.lanes[i + 1];
                 }
             }

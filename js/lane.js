@@ -14,7 +14,6 @@ define(function(require) {
         this.direction = direction;
         this.leftAdjacent = null;
         this.rightAdjacent = null;
-        this.length = this.middleLine.length;
         this.carsPositions = {};
     }
 
@@ -23,6 +22,12 @@ define(function(require) {
         delete obj.carsPositions;
         return obj;
     };
+
+    Object.defineProperty(Lane.prototype, "length", {
+        get: function() {
+            return this.middleLine.length;
+        },
+    });
 
     Object.defineProperty(Lane.prototype, "middleLine", {
         get: function() {

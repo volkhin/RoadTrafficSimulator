@@ -5,7 +5,6 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [ ] draw control signals as arrows
 [ ] implement rules for turns (right -> right, left -> left)
 [ ] metric units for length and time
-[ ] number of lanes should be equal to the intersection length
 [ ] output statistics (num cars/roads/junctions, average speed/waiting time) etc
 [ ] realtime graphs of average speed, number of cars etc
 [ ] scale time
@@ -24,6 +23,7 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [X] implement geometry — need Rect (as Polygon), Point, Segment, GridCell
 [X] linter
 [X] move junctions holding alt
+[X] number of lanes should be equal to the intersection length
 [X] roads should be connected to their graphical representation, draw cars exactly on the road
 [X] save roads to json
 [X] scale and scroll map
