@@ -17,7 +17,7 @@ define(function() {
         this.ctx.globalAlpha = oldAlpha;
     };
 
-    Graphics.prototype.drawImage = function(image, rect, style, alpha) {
+    Graphics.prototype.drawImage = function(image, rect) {
         this.ctx.drawImage(image, rect.getLeft(), rect.getTop(), rect.getWidth(), rect.getHeight());
     };
 

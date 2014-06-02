@@ -31,13 +31,13 @@ define(function(require) {
         return (new Segment(p0, p1)).getPoint(a);
     };
 
-    Curve.prototype.getOrientation = function(a) {
+    Curve.prototype.getDirection = function(a) {
         if (!this.O) {
-            return this.AB.orientation;
+            return this.AB.direction;
         }
         var p0 = this.AO.getPoint(a),
             p1 = this.OB.getPoint(a);
-        return (new Segment(p0, p1)).orientation;
+        return (new Segment(p0, p1)).direction;
     };
 
     return Curve;

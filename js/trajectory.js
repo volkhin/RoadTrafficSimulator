@@ -1,8 +1,7 @@
 define(function(require) {
     "use strict";
 
-    var _ = require("underscore"),
-        LanePosition = require("lane-position"),
+    var LanePosition = require("lane-position"),
         Curve = require("geometry/curve");
 
     function Trajectory(car, lane, position) {
@@ -31,9 +30,9 @@ define(function(require) {
         },
     });
 
-    Object.defineProperty(Trajectory.prototype, "orientation", {
+    Object.defineProperty(Trajectory.prototype, "direction", {
         get: function() {
-            return this.lane.getOrientation(this.relativePosition);
+            return this.lane.getDirection(this.relativePosition);
         },
     });
 
@@ -87,10 +86,6 @@ define(function(require) {
                 this.car.speed = 0;
                 distance = 0;
             }
-        }
-
-        //TODO: stop this random lane changing
-        if (!this.isChangingLanes && _.random(1000) === 0) {
         }
 
         this.current.position += distance;

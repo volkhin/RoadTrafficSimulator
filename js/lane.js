@@ -64,8 +64,8 @@ define(function(require) {
         );
     };
 
-    Lane.prototype.getOrientation = function() {
-        return this.middleLine.orientation;
+    Lane.prototype.getDirection = function() {
+        return this.middleLine.direction;
     };
 
     Lane.prototype.getPoint = function(a) {

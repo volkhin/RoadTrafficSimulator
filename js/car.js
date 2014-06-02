@@ -80,17 +80,16 @@ define(function(require) {
         }
     };
 
-    Object.defineProperty(Car.prototype, "orientation", {
+    Object.defineProperty(Car.prototype, "direction", {
         get: function() {
-            return this.trajectory.orientation;
+            return this.trajectory.direction;
         },
     });
 
     Car.prototype.pickNextLane = function() {
         var intersection = this.trajectory.getNextIntersection(),
             previousIntersection = this.trajectory.getPreviousIntersection(),
-            currentLane = this.trajectory.current.lane,
-            currentRoad = currentLane.road;
+            currentLane = this.trajectory.current.lane;
         var possibleRoads = intersection.roads.filter(function(x) {
             return x.target !== previousIntersection &&
                    x.source !== previousIntersection;

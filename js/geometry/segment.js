@@ -31,9 +31,9 @@ define(function() {
         },
     });
 
-    Object.defineProperty(Segment.prototype, "orientation", {
+    Object.defineProperty(Segment.prototype, "direction", {
         get: function() {
-            return this.vector.orientation;
+            return this.vector.direction;
         },
     });
 
