@@ -9,6 +9,7 @@ define(function(require) {
         ToolIntersectionMover = require("tool-intersection-mover"),
         ToolIntersectionBuilder = require("tool-intersection-builder"),
         ToolRoadBuilder = require("tool-road-builder"),
+        ToolHighlighter = require("tool-highlighter"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {
@@ -17,7 +18,6 @@ define(function(require) {
         this.ctx = this.canvas.getContext("2d");
         this.width = this.canvas.width;
         this.height = this.canvas.height;
-        this.mousePos = null;
 
         this.carImage = new Image();
         this.carImage.src = "images/car.png";
@@ -44,8 +44,7 @@ define(function(require) {
         this.toolIntersectionMover = new ToolIntersectionMover(this, true);
         this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
         this.toolRoadbuilder = new ToolRoadBuilder(this, true);
-
-        var self = this;
+        this.toolHighlighter = new ToolHighlighter(this, true);
 
         $(this.canvas).mousedown(function() {
         });
@@ -53,20 +52,10 @@ define(function(require) {
         $(this.canvas).mouseup(function() {
         });
 
-        $(this.canvas).mousemove(function(e) {
-            var cell = self.getCell(e);
-            var hoveredIntersection = self.getHoveredIntersection(cell);
-            self.mousePos = cell;
-            self.world.intersections.each(function(index, intersection) {
-                intersection.color = null; }
-            );
-            if (hoveredIntersection) {
-                hoveredIntersection.color = self.colors.hoveredIntersection;
-            }
+        $(this.canvas).mousemove(function() {
         });
 
         $(this.canvas).mouseout(function() {
-            self.mousePos = null;
         });
     }
 
@@ -182,14 +171,6 @@ define(function(require) {
         }
     };
 
-    Visualizer.prototype.drawHighlightedCell = function() {
-        if (this.mousePos) {
-            this.ctx.fillStyle = this.colors.hoveredGrid;
-            var cell = this.mousePos;
-            this.ctx.fillRect(cell.x, cell.y, 1, 1);
-        }
-    };
-
     Visualizer.prototype.getHoveredIntersection = function(cell) {
         var cellRect = new Rect(cell.x, cell.y, 1, 1);
         var intersections = this.world.intersections.all();
@@ -209,7 +190,6 @@ define(function(require) {
         this.graphics.save();
         this.zoomer.transform();
         this.drawGrid();
-        this.drawHighlightedCell();
         this.world.intersections.each(function(index, intersection) {
             self.drawIntersection(intersection, 0.9);
         });
@@ -224,6 +204,7 @@ define(function(require) {
         });
         this.toolIntersectionBuilder.draw(); // TODO: all tools
         this.toolRoadbuilder.draw();
+        this.toolHighlighter.draw();
         this.graphics.restore();
     };
 
