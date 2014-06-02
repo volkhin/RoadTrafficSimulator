@@ -14,6 +14,7 @@ define(function(require) {
         settings = require("settings");
 
     function Visualizer(world) {
+        this.isRunning = false;
         this.world = world;
         this.canvas = $("#canvas")[0];
         this.ctx = this.canvas.getContext("2d");
@@ -154,6 +155,23 @@ define(function(require) {
         this.toolRoadbuilder.draw();
         this.toolHighlighter.draw();
         this.graphics.restore();
+    };
+
+    Visualizer.prototype.start = function() {
+        this.world.start();
+        if (!this._interval) {
+            this._interval = setInterval(this.draw.bind(this), 1000 / settings.fps);
+            this.isRunning = true;
+        }
+    };
+
+    Visualizer.prototype.stop = function() {
+        this.world.stop();
+        if (this._interval) {
+            clearInterval(this._interval);
+            this._interval = null;
+            this.isRunning = false;
+        }
     };
 
     return Visualizer;

@@ -4,7 +4,8 @@ define(function(require) {
     var $ = require("jquery"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect"),
-        Graphics = require("graphics");
+        Graphics = require("graphics"),
+        settings = require("settings");
 
     function Button(title, callback, rect) {
         this.title = title;
@@ -14,6 +15,7 @@ define(function(require) {
 
 
     function GUI() {
+        this.fps = 10;
         this.canvas = $("#gui")[0];
         this.ctx = this.canvas.getContext("2d");
         this.width = this.canvas.width;
@@ -27,6 +29,7 @@ define(function(require) {
             buttonTitle: "#333",
         };
         this.graphics = new Graphics(this.ctx);
+        setInterval(this.draw.bind(this), 1000 / this.fps);
 
         var self = this;
 

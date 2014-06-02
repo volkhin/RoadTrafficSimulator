@@ -15,6 +15,7 @@ define(function() {
             grid2: "#f9f9f9", //"#70b7ba",
             hoveredGrid: "#f4e8e1",
         },
+        fps: 30,
     };
 
     return settings;

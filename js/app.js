@@ -3,10 +3,10 @@ define(function(require) {
 
     var Visualizer = require("visualizer"),
         GUI = require("GUI"),
-        World = require("World");
+        World = require("World"),
+        settings = require("settings");
 
     function App() {
-        this.FPS = 30;
     }
 
     App.prototype.init = function() {
@@ -15,6 +15,18 @@ define(function(require) {
         this.world.load();
         this.visualizer = new Visualizer(this.world);
         this.gui = new GUI();
+        this.gui.addButton(
+            function() {
+                return self.visualizer.isRunning ? "Stop" : "Start";
+            },
+            function() {
+                if (self.visualizer.isRunning) {
+                    self.visualizer.stop.call(self.visualizer);
+                } else {
+                    self.visualizer.start.call(self.visualizer);
+                }
+            }
+        );
         this.gui.addButton("Save", this.world.save.bind(this.world));
         this.gui.addButton("Load", this.world.load.bind(this.world));
         this.gui.addButton("Clear", this.world.clear.bind(this.world));
@@ -41,9 +53,8 @@ define(function(require) {
             var state = self.visualizer.toolIntersectionMover.isBound ? "on" : "off";
             return "move-intersection(" + state + ")";
         }, this.visualizer.toolIntersectionMover.toggleState.bind(this.visualizer.toolIntersectionMover));
-        setInterval(this.visualizer.draw.bind(this.visualizer), 1000 / this.FPS);
-        setInterval(this.world.onTick.bind(this.world), 1000 / this.FPS);
-        setInterval(this.gui.draw.bind(this.gui), 1000 / this.FPS);
+
+        this.visualizer.start();
     };
 
     return App;

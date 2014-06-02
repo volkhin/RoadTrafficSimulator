@@ -6,10 +6,12 @@ define(function(require) {
         Car = require("car"),
         Intersection = require("intersection"),
         Road = require("road"),
-        Pool = require("pool");
+        Pool = require("pool"),
+        settings = require("settings");
 
     function World(o) {
         this.set(o);
+        this.isRunning = false;
     }
 
    World.prototype.set = function(o) {
@@ -115,6 +117,21 @@ define(function(require) {
             // car.moveToLane(null);
         // });
         this.cars.clear();
+    };
+
+    World.prototype.start = function() {
+        if (!this._interval) {
+            this._interval = setInterval(this.onTick.bind(this), 1000 / settings.fps);
+            this.isRunning = true;
+        }
+    };
+
+    World.prototype.stop = function() {
+        if (this._interval) {
+            clearInterval(this._interval);
+            this._interval = null;
+            this.isRunning = false;
+        }
     };
 
     return World;
