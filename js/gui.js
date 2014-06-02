@@ -4,8 +4,7 @@ define(function(require) {
     var $ = require("jquery"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect"),
-        Graphics = require("graphics"),
-        settings = require("settings");
+        Graphics = require("graphics");
 
     function Button(title, callback, rect) {
         this.title = title;

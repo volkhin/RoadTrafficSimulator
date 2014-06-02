@@ -3,8 +3,7 @@ define(function(require) {
 
     var Visualizer = require("visualizer"),
         GUI = require("GUI"),
-        World = require("World"),
-        settings = require("settings");
+        World = require("World");
 
     function App() {
     }

@@ -1,6 +1,8 @@
 define(function(require) {
     "use strict";
 
+    var _ = require("underscore");
+
     var Trajectory = require("trajectory");
 
     function Car(lane, position) {
@@ -73,6 +75,33 @@ define(function(require) {
             return this.trajectory.orientation;
         },
     });
+
+    Car.prototype.pickNextLane = function() {
+        if (this.trajectory.next.lane) {
+            return this.trajectory.next.lane;
+        }
+
+        var intersection = this.trajectory.getNextIntersection(),
+            previousIntersection = this.trajectory.getPreviousIntersection();
+        var possibleRoads = intersection.roads.filter(function(x) {
+            return x.target !== previousIntersection &&
+                   x.source !== previousIntersection;
+        });
+        if (possibleRoads.length !== 0) {
+            var nextRoad = _.sample(possibleRoads);
+            var laneNumber;
+            if (intersection === nextRoad.source) {
+                laneNumber = _.random(0, nextRoad.lanesNumber / 2 - 1);
+                // laneNumber = 0;
+            } else {
+                laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
+                // laneNumber = nextRoad.lanesNumber - 1;
+            }
+            this.trajectory.next.lane = nextRoad.lanes[laneNumber];
+            this.trajectory.next.position = NaN;
+            return this.trajectory.next.lane;
+        }
+    };
 
     return Car;
 });

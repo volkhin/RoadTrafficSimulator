@@ -12,9 +12,6 @@ define(function(require) {
         this.temp = new LanePosition(this.car, null, NaN);
         this.current.lane = lane;
         this.current.position = position || 0;
-        if (this.current.lane) {
-            this.pickNextLane();
-        }
         this.isChangingLanes = false;
     }
 
@@ -111,6 +108,9 @@ define(function(require) {
         if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
             this.finishChangingLanes();
         }
+        if (this.current.lane && !this.next.lane) {
+            this.car.pickNextLane();
+        }
     };
 
     Trajectory.prototype.startChangingLanes = function(keepOldLine) {
@@ -150,39 +150,9 @@ define(function(require) {
         this.current.position = this.next.position || 0;
         this.next.lane = null;
         this.next.position = NaN;
-        if (this.current.lane) {
-            this.pickNextLane();
-        }
         this.temp.lane = null;
         this.temp.position = NaN;
         return this.current.lane;
-    };
-
-    Trajectory.prototype.pickNextLane = function() {
-        if (this.next.lane) {
-            return this.next.lane;
-        }
-
-        var intersection = this.getNextIntersection(),
-            previousIntersection = this.getPreviousIntersection();
-        var possibleRoads = intersection.roads.filter(function(x) {
-            return x.target !== previousIntersection &&
-                   x.source !== previousIntersection;
-        });
-        if (possibleRoads.length !== 0) {
-            var nextRoad = _.sample(possibleRoads);
-            var laneNumber;
-            if (intersection === nextRoad.source) {
-                laneNumber = _.random(0, nextRoad.lanesNumber / 2 - 1);
-                // laneNumber = 0;
-            } else {
-                laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
-                // laneNumber = nextRoad.lanesNumber - 1;
-            }
-            this.next.lane = nextRoad.lanes[laneNumber];
-            this.next.position = NaN;
-            return this.next.lane;
-        }
     };
 
     return Trajectory;
