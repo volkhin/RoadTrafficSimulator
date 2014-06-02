@@ -4,11 +4,11 @@ define(function(require) {
     var $ = require("jquery"),
         Point = require("point"),
         Rect = require("rect"),
-        Road = require("road"),
         Graphics = require("graphics"),
         ToolMover = require("tool-mover"),
         ToolIntersectionMover = require("tool-intersection-mover"),
         ToolIntersectionBuilder = require("tool-intersection-builder"),
+        ToolRoadBuilder = require("tool-road-builder"),
         Zoomer = require("zoomer");
 
     function Visualizer(world) {
@@ -17,8 +17,6 @@ define(function(require) {
         this.ctx = this.canvas.getContext("2d");
         this.width = this.canvas.width;
         this.height = this.canvas.height;
-        this.mouseDownPos = null;
-        this.tempRoad = null;
         this.mousePos = null;
 
         this.carImage = new Image();
@@ -42,34 +40,17 @@ define(function(require) {
 
         this.zoomer = new Zoomer(this.ctx, 20);
         this.graphics = new Graphics(this.ctx);
-        this.toolMover = new ToolMover(this);
-        this.toolMover.bind();
-        this.toolIntersectionMover = new ToolIntersectionMover(this);
-        this.toolIntersectionMover.bind();
-        this.toolIntersectionBuilder = new ToolIntersectionBuilder(this);
-        this.toolIntersectionBuilder.bind();
+        this.toolMover = new ToolMover(this, true);
+        this.toolIntersectionMover = new ToolIntersectionMover(this, true);
+        this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
+        this.toolRoadbuilder = new ToolRoadBuilder(this, true);
 
         var self = this;
 
-        $(this.canvas).mousedown(function(e) {
-            var cell = self.getCell(e);
-            self.mouseDownPos = cell;
-            var hoveredIntersection = self.getHoveredIntersection(cell);
-            if (hoveredIntersection) {
-                self.tempRoad = new Road(hoveredIntersection, null);
-            }
+        $(this.canvas).mousedown(function() {
         });
 
-        $(this.canvas).mouseup(function(e) {
-            var cell = self.getCell(e);
-            if (self.tempRoad) {
-                var hoveredIntersection = self.getHoveredIntersection(cell);
-                if (hoveredIntersection && self.tempRoad.source.id !== hoveredIntersection.id) {
-                    self.world.addRoad(self.tempRoad);
-                }
-                self.tempRoad = null;
-            }
-            self.mouseDownPos = null;
+        $(this.canvas).mouseup(function() {
         });
 
         $(this.canvas).mousemove(function(e) {
@@ -82,14 +63,9 @@ define(function(require) {
             if (hoveredIntersection) {
                 hoveredIntersection.color = self.colors.hoveredIntersection;
             }
-            if (self.tempRoad) {
-                self.tempRoad.target = hoveredIntersection;
-            }
         });
 
         $(this.canvas).mouseout(function() {
-            self.mouseDownPos = null;
-            self.tempRoad = null;
             self.mousePos = null;
         });
     }
@@ -246,10 +222,8 @@ define(function(require) {
         this.world.cars.each(function(index, car) {
             self.drawCar(car);
         });
-        if (self.tempRoad) {
-            self.drawRoad(self.tempRoad, 0.4);
-        }
         this.toolIntersectionBuilder.draw(); // TODO: all tools
+        this.toolRoadbuilder.draw();
         this.graphics.restore();
     };
 

@@ -5,7 +5,7 @@ define(function(require) {
         Point = require("point"),
         Rect = require("rect");
 
-    function Tool(visualizer) {
+    function Tool(visualizer, autobind) {
         this.visualizer = visualizer;
         this.ctx = visualizer.ctx;
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -13,6 +13,9 @@ define(function(require) {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseOut = this.onMouseOut.bind(this);
         this.isBound = false;
+        if (autobind) {
+            this.bind();
+        }
     }
 
     Object.defineProperty(Tool.prototype, "canvas", {
