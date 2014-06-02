@@ -2,7 +2,6 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Intersection = require("intersection"),
         Point = require("point"),
         Rect = require("rect"),
         Road = require("road"),
