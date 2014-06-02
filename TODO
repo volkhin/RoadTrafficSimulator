@@ -3,7 +3,6 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 
 [ ] better deciding where to go on the junction
 [ ] draw control signals as arrows
-[ ] get rid of getters, replace with properties
 [ ] implement rules for turns (right -> right, left -> left)
 [ ] metric units for length and time
 [ ] number of lanes should be equal to the intersection length
@@ -18,6 +17,7 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [X] don’t go back on the junction
 [X] draw lines
 [X] flexible time intervals for the lights
+[X] get rid of getters, replace with properties
 [X] get rid of tempRoad
 [X] highlight junctions
 [X] id to objects and fix serialization (avoid references problems)

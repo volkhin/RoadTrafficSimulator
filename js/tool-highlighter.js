@@ -2,7 +2,8 @@ define(function(require) {
     "use strict";
 
     var Tool = require("tool"),
-        Rect = require("rect");
+        Rect = require("rect"),
+        settings = require("settings");
 
     function ToolHighlighter() {
         Tool.apply(this, arguments);
@@ -25,7 +26,7 @@ define(function(require) {
             intersection.color = null;
         });
         if (hoveredIntersection) {
-            hoveredIntersection.color = this.visualizer.colors.hoveredIntersection;
+            hoveredIntersection.color = settings.colors.hoveredIntersection;
         }
     };
 
@@ -36,7 +37,7 @@ define(function(require) {
     ToolHighlighter.prototype.draw = function() {
         if (this.mousePos) {
             var cell = new Rect(this.mousePos.x, this.mousePos.y, 1, 1);
-            this.visualizer.graphics.fillRect(cell, this.visualizer.colors.hoveredGrid, 0.5);
+            this.visualizer.graphics.fillRect(cell, settings.colors.hoveredGrid, 0.5);
         }
     };
 

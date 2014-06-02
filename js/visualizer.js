@@ -10,7 +10,8 @@ define(function(require) {
         ToolIntersectionBuilder = require("tool-intersection-builder"),
         ToolRoadBuilder = require("tool-road-builder"),
         ToolHighlighter = require("tool-highlighter"),
-        Zoomer = require("zoomer");
+        Zoomer = require("zoomer"),
+        settings = require("settings");
 
     function Visualizer(world) {
         this.world = world;
@@ -21,22 +22,6 @@ define(function(require) {
 
         this.carImage = new Image();
         this.carImage.src = "images/car.png";
-
-        // settings
-        this.colors = {
-            background: "#fff",
-            redLight: "hsl(0, 100%, 50%)",
-            greenLight: "hsl(120, 100%, 50%)",
-            intersection: "#666",
-            road: "#666",
-            roadMarking: "#eee",
-            car: "#333",
-            hoveredIntersection: "#3d4c53",
-            tempRoad: "#aaa",
-            grid1: "#fff",//"#70b7ba",
-            grid2: "#f9f9f9", //"#70b7ba",
-            hoveredGrid: "#f4e8e1",
-        };
 
         this.zoomer = new Zoomer(this.ctx, 20);
         this.graphics = new Graphics(this.ctx);
@@ -59,20 +44,8 @@ define(function(require) {
         });
     }
 
-    Visualizer.prototype.getPoint = function(e) {
-        var point = new Point(
-            e.pageX - this.canvas.offsetLeft,
-            e.pageY - this.canvas.offsetTop
-        );
-        return point;
-    };
-
-    Visualizer.prototype.getCell = function(e) {
-        return this.zoomer.toCellCoords(this.getPoint(e));
-    };
-
     Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
-        var color = this.colors.intersection;
+        var color = settings.colors.intersection;
         if (forcedColor) {
             color = forcedColor;
         } else if (intersection.color) {
@@ -87,7 +60,7 @@ define(function(require) {
     Visualizer.prototype.drawSignals = function(intersection) {
         // draw control signals
         this.ctx.save();
-        var lightsColors = [this.colors.redLight, this.colors.greenLight];
+        var lightsColors = [settings.colors.redLight, settings.colors.greenLight];
         for (var i = 0; i < intersection.roads.length; i++) {
             var road = intersection.roads[i];
             var segment, sideId;
@@ -123,7 +96,7 @@ define(function(require) {
 
         // draw the road
         this.graphics.polyline(s1.source, s1.target, s2.source, s2.target);
-        this.graphics.fill(this.colors.road, alpha);
+        this.graphics.fill(settings.colors.road, alpha);
 
         var i;
 
@@ -136,7 +109,7 @@ define(function(require) {
             self.ctx.lineWidth = 0.1;
             self.ctx.lineDashOffset = 1.5 * dashSize;
             self.ctx.setLineDash([dashSize]);
-            self.graphics.stroke(self.colors.roadMarking); 
+            self.graphics.stroke(settings.colors.roadMarking); 
         }
         self.ctx.restore();
     };
@@ -165,7 +138,7 @@ define(function(require) {
         var box = this.zoomer.getBoundingBox();
         for (var i = box.getLeft(); i <= box.getRight(); i++) {
             for (var j = box.getTop(); j <= box.getBottom(); j++) {
-                var color = ((i + j) % 2 === 0) ? this.colors.grid1 : this.colors.grid2;
+                var color = ((i + j) % 2 === 0) ? settings.colors.grid1 : settings.colors.grid2;
                 this.graphics.fillRect(new Rect(i, j, 1, 1), color);
             }
         }
@@ -186,7 +159,7 @@ define(function(require) {
 
     Visualizer.prototype.draw = function() {
         var self = this;
-        this.graphics.clear(this.colors.background);
+        this.graphics.clear(settings.colors.background);
         this.graphics.save();
         this.zoomer.transform();
         this.drawGrid();
