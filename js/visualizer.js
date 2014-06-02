@@ -30,18 +30,6 @@ define(function(require) {
         this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
         this.toolRoadbuilder = new ToolRoadBuilder(this, true);
         this.toolHighlighter = new ToolHighlighter(this, true);
-
-        $(this.canvas).mousedown(function() {
-        });
-
-        $(this.canvas).mouseup(function() {
-        });
-
-        $(this.canvas).mousemove(function() {
-        });
-
-        $(this.canvas).mouseout(function() {
-        });
     }
 
     Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
@@ -140,19 +128,6 @@ define(function(require) {
             for (var j = box.getTop(); j <= box.getBottom(); j++) {
                 var color = ((i + j) % 2 === 0) ? settings.colors.grid1 : settings.colors.grid2;
                 this.graphics.fillRect(new Rect(i, j, 1, 1), color);
-            }
-        }
-    };
-
-    Visualizer.prototype.getHoveredIntersection = function(cell) {
-        var cellRect = new Rect(cell.x, cell.y, 1, 1);
-        var intersections = this.world.intersections.all();
-        for (var key in intersections) {
-            if (intersections.hasOwnProperty(key)) {
-                var intersection = intersections[key];
-                if (intersection.rect.containsRect(cellRect)) {
-                    return intersection;
-                }
             }
         }
     };
