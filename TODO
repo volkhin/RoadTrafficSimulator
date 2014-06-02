@@ -1,13 +1,19 @@
 #!/bin/bash 
 path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $path $0; chmod +x $0; exit
 
-[ ] better deciding where to go on the junction
 [ ] draw control signals as arrows
+[ ] add constant green signal (to measure lane changing model quality)
+[ ] implement IDM
 [ ] implement rules for turns (right -> right, left -> left)
-[ ] metric units for length and time
-[ ] output statistics (num cars/roads/junctions, average speed/waiting time) etc
-[ ] realtime graphs of average speed, number of cars etc
+    [ ] pick lane on the current road to perform turn
+    [ ] choose left/forward/right direction and than pick lane
+[ ] show statistics (num cars/roads/junctions, average speed/waiting time) etc
+    [ ] implement methods to measure
+    [ ] text output
+    [ ] draw graphs
 [ ] scale time
+    [ ] metric units
+    [ ] implement GUI trackbar
 [X] OOP, classes, application
 [X] Trajectory class. Contains currentLine and nextLine, allow cars to occupy 2 lanes at once
 [X] change lanes in the middle of a road
