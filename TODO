@@ -4,9 +4,6 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [ ] draw control signals as arrows
 [ ] add constant green signal (to measure lane changing model quality)
 [ ] implement IDM
-[ ] implement rules for turns (right -> right, left -> left)
-    [ ] pick lane on the current road to perform turn
-    [ ] choose left/forward/right direction and than pick lane
 [ ] show statistics (num cars/roads/junctions, average speed/waiting time) etc
     [ ] implement methods to measure
     [ ] text output
@@ -14,6 +11,9 @@ path="/tmp/`md5 -q $0`"; (head -n3 $0; cat $0 | tail -n+4 | sort) > $path; mv $p
 [ ] scale time
     [ ] metric units
     [ ] implement GUI trackbar
+[X] implement rules for turns (right -> right, left -> left)
+    [X] pick lane on the current road to perform turn
+    [X] choose left/forward/right direction and than pick lane
 [X] OOP, classes, application
 [X] Trajectory class. Contains currentLine and nextLine, allow cars to occupy 2 lanes at once
 [X] change lanes in the middle of a road

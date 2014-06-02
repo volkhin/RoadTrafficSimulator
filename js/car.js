@@ -16,6 +16,7 @@ define(function(require) {
         this.acceleration = 0.02 / 20;
         this.trajectory = new Trajectory(this, lane, position);
         this.alive = true;
+        this.preferedLane = 0;
     }
 
     Object.defineProperty(Car.prototype, "coords", {
@@ -64,6 +65,15 @@ define(function(require) {
         } else {
             this.speed = 0;
         }
+        if (this.preferedLane &&
+            this.preferedLane !== this.trajectory.current.lane &&
+            !this.trajectory.isChangingLanes) {
+            if (this.turnNumber === 0) {
+                this.trajectory.changeLaneToLeft();
+            } else if (this.turnNumber === 2) {
+                this.trajectory.changeLaneToRight();
+            }
+        }
         this.trajectory.moveForward(this.speed);
         if (!this.trajectory.current.lane) {
             this.alive = false;
@@ -77,12 +87,10 @@ define(function(require) {
     });
 
     Car.prototype.pickNextLane = function() {
-        if (this.trajectory.next.lane) {
-            return this.trajectory.next.lane;
-        }
-
         var intersection = this.trajectory.getNextIntersection(),
-            previousIntersection = this.trajectory.getPreviousIntersection();
+            previousIntersection = this.trajectory.getPreviousIntersection(),
+            currentLane = this.trajectory.current.lane,
+            currentRoad = currentLane.road;
         var possibleRoads = intersection.roads.filter(function(x) {
             return x.target !== previousIntersection &&
                    x.source !== previousIntersection;
@@ -97,9 +105,20 @@ define(function(require) {
                 laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
                 // laneNumber = nextRoad.lanesNumber - 1;
             }
-            this.trajectory.next.lane = nextRoad.lanes[laneNumber];
-            this.trajectory.next.position = NaN;
-            return this.trajectory.next.lane;
+            this.nextLane = nextRoad.lanes[laneNumber];
+
+            var side1 = currentLane.targetSideId,
+                side2 = this.nextLane.sourceSideId;
+            this.turnNumber = (side2 - side1 - 1 + 4) % 4; // 0 - left, 1 - forward, 2 - right
+            if (this.turnNumber === 0) {
+                this.preferedLane = currentLane.leftmostAdjacent;
+            } else if (this.turnNumber === 2) {
+                this.preferedLane = currentLane.rightAdjacent;
+            } else {
+                this.preferedLane = null;
+            }
+
+            return this.nextLane;
         }
     };
 

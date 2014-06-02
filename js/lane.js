@@ -73,19 +73,16 @@ define(function(require) {
     };
 
     Lane.prototype.addCarPosition = function(carPosition) {
+        if (carPosition.id in this.carsPositions) {
+            throw Error("Car is already on this lane");
+        }
         this.carsPositions[carPosition.id] = carPosition;
     };
 
-    Lane.prototype._findCarIndex = function(car) {
-        for (var i = 0; i < this.carsPositions.length; i++) {
-            if (this.carsPositions[i].car === car) {
-                return i;
-            }
-        }
-        return -1;
-    };
-
     Lane.prototype.removeCar = function(carPosition) {
+        if (!(carPosition.id in this.carsPositions)) {
+            throw Error("Trying to delete non-existing car from the lane");
+        }
         delete this.carsPositions[carPosition.id];
     };
 

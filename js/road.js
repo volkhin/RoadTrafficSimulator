@@ -118,6 +118,8 @@ define(function(require) {
                 if (i > 0) {
                     this.lanes[i].rightAdjacent = this.lanes[i - 1];
                 }
+                this.lanes[i].leftmostAdjacent = this.lanes[this.forwardLanes - 1]
+                this.lanes[i].rightmostAdjacent = this.lanes[0];
             } else {
                 this.lanes[i].sourceSegment = targetSplits[i];
                 this.lanes[i].targetSegment = sourceSplits[i];
@@ -127,6 +129,8 @@ define(function(require) {
                 if (i + 1 < this.lanesNumber) {
                     this.lanes[i].rightAdjacent = this.lanes[i + 1];
                 }
+                this.lanes[i].leftmostAdjacent = this.lanes[this.forwardLanes]
+                this.lanes[i].rightmostAdjacent = this.lanes[this.lanesNumber - 1];
             }
         }
 

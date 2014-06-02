@@ -10,8 +10,6 @@ define(function(require) {
         this.current = new LanePosition(this.car, lane, position || 0);
         this.next = new LanePosition(this.car, null, NaN);
         this.temp = new LanePosition(this.car, null, NaN);
-        this.current.lane = lane;
-        this.current.position = position || 0;
         this.isChangingLanes = false;
     }
 
@@ -60,14 +58,13 @@ define(function(require) {
         return this.current.lane.sourceIntersection;
     };
 
-    Trajectory.prototype.canEnterIntersection = function() {
+    Trajectory.prototype.canEnterIntersection = function(nextLane) {
         //TODO: right turn is allowe donly form right lane
-        var sourceLane = this.current.lane,
-            nextLane = this.next.lane;
+        var sourceLane = this.current.lane;
         if (!nextLane) {
             // the car will be removed from the world
+            throw Error("It should have been processed before");
             return true;
-            // throw Error("It should have been processed before");
         }
         var intersection = sourceLane.targetIntersection;
         var side1 = sourceLane.targetSideId,
@@ -83,48 +80,69 @@ define(function(require) {
     Trajectory.prototype.moveForward = function(distance) {
         if (this.current.position + this.car.length >= this.current.lane.length &&
                 !this.isChangingLanes) {
-            if (this.canEnterIntersection()) {
-                this.next.position = 0;
-                this.startChangingLanes(true);
+            if (this.canEnterIntersection(this.car.nextLane)) {
+                this.startChangingLanes(this.car.nextLane, 0, true);
             } else {
                 // FIXME: car model should set appropriate acceleration itself
                 this.car.speed = 0;
                 distance = 0;
             }
         }
+
         //TODO: stop this random lane changing
         if (!this.isChangingLanes && _.random(1000) === 0) {
-            var nextLane = this.current.lane.leftAdjacent || this.current.lane.rightAdjacent;
-            var nextPosition = this.current.position + 5 * this.car.length;
-            if (nextLane && nextPosition < nextLane.length) {
-                this.next.lane = nextLane;
-                this.next.position = nextPosition;
-                this.startChangingLanes(false);
-            }
         }
+
         this.current.position += distance;
         this.next.position += distance;
         this.temp.position += distance;
+
         if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
             this.finishChangingLanes();
         }
-        if (this.current.lane && !this.next.lane) {
+        if (this.current.lane && !this.car.nextLane) {
             this.car.pickNextLane();
         }
     };
 
-    Trajectory.prototype.startChangingLanes = function(keepOldLine) {
+    Trajectory.prototype.changeLaneToLeft = function() {
+        var nextLane = this.current.lane.leftAdjacent;
+        if (!nextLane || this.isChangingLanes) {
+            return false;
+        }
+        var nextPosition = this.current.position + 5 * this.car.length;
+        if (nextLane && nextPosition < nextLane.length) {
+            this.startChangingLanes(nextLane, nextPosition, false);
+        }
+    };
+
+    Trajectory.prototype.changeLaneToRight = function() {
+        var nextLane = this.current.lane.rightAdjacent;
+        if (!nextLane || this.isChangingLanes) {
+            return false;
+        }
+        var nextPosition = this.current.position + 5 * this.car.length;
+        if (nextLane && nextPosition < nextLane.length) {
+            this.startChangingLanes(nextLane, nextPosition, false);
+        }
+    };
+
+    Trajectory.prototype.startChangingLanes = function(nextLane, nextPosition, keepOldLine) {
         if (this.isChangingLanes) {
             throw Error("Invalid call order: start/finish changing lanes");
         }
 
-        if (!this.next.lane) {
+        if (!nextLane) {
             // TODO: it shouldn't be here
+            throw Error("No next lane!");
             this.car.alive = false;
             return;
         }
 
         this.isChangingLanes = true;
+        this.next.lane = nextLane;
+        this.next.position = nextPosition;
+
         var p1 = this.current.lane.getPoint(this.current.position / this.current.lane.length),
             p2 = this.next.lane.getPoint(this.next.position / this.next.lane.length);
         var distance = p2.subtract(p1).length;
@@ -135,6 +153,8 @@ define(function(require) {
         if (!keepOldLine) {
             this.current.release();
         }
+
+        return true;
     };
 
     Trajectory.prototype.finishChangingLanes = function() {
@@ -142,9 +162,6 @@ define(function(require) {
             throw Error("Invalid call order: start/finish changing lanes");
         }
 
-        if (this.current.lane) {
-            this.current.lane.removeCar(this.car);
-        }
         this.isChangingLanes = false;
         this.current.lane = this.next.lane;
         this.current.position = this.next.position || 0;
@@ -152,6 +169,7 @@ define(function(require) {
         this.next.position = NaN;
         this.temp.lane = null;
         this.temp.position = NaN;
+        this.car.pickNextLane();
         return this.current.lane;
     };
 

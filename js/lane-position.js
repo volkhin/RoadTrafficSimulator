@@ -3,10 +3,10 @@ define(function() {
 
     function LanePosition(car, lane, position) {
         this.id = window.__nextId++;
+        this.free = true;
         this.car = car;
         this.lane = lane || null;
-        this.position = position || NaN;
-        this.free = true;
+        this.position = position;
     }
 
     Object.defineProperty(LanePosition.prototype, "lane", {
@@ -37,7 +37,7 @@ define(function() {
     };
 
     LanePosition.prototype.release = function() {
-        if (this.lane && this.lane.removeCar) {
+        if (!this.free && this.lane && this.lane.removeCar) {
             this.free = true;
             this.lane.removeCar(this);
         }
