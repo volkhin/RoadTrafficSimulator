@@ -1,8 +1,8 @@
 define(function(require) {
     "use strict";
 
-    var Point = require("point"),
-        Segment = require("segment");
+    var Point = require("geometry/point"),
+        Segment = require("geometry/segment");
 
     function Rect(arg0, arg1, arg2, arg3) {
         this.position = new Point(arg0, arg1);

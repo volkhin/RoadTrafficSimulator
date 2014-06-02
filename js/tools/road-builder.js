@@ -1,7 +1,7 @@
 define(function(require) {
     "use strict";
 
-    var Tool = require("tool"),
+    var Tool = require("tools/tool"),
         Road = require("road");
 
     function ToolRoadBuilder() {

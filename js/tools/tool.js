@@ -2,8 +2,8 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Point = require("point"),
-        Rect = require("rect");
+        Point = require("geometry/point"),
+        Rect = require("geometry/rect");
 
     function Tool(visualizer, autobind) {
         this.visualizer = visualizer;

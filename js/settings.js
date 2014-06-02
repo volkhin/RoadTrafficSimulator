@@ -1,4 +1,6 @@
 define(function() {
+    "use strict";
+
     var settings = {
         colors: {
             background: "#fff",

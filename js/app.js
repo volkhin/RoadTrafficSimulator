@@ -1,8 +1,7 @@
 define(function(require) {
     "use strict";
 
-    var $ = require("jquery"),
-        Visualizer = require("visualizer"),
+    var Visualizer = require("visualizer"),
         GUI = require("GUI"),
         World = require("World");
 

@@ -3,7 +3,7 @@ define(function(require) {
 
     var $ = require("jquery"),
         Lane = require("lane"),
-        Segment = require("segment");
+        Segment = require("geometry/segment");
 
     function Road(source, target) {
         this.id = window.__nextId++;

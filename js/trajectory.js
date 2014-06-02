@@ -3,7 +3,7 @@ define(function(require) {
 
     var _ = require("underscore"),
         LanePosition = require("lane-position"),
-        Curve = require("curve");
+        Curve = require("geometry/curve");
 
     function Trajectory(car, lane, position) {
         this.car = car;

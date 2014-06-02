@@ -2,14 +2,14 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Point = require("point"),
-        Rect = require("rect"),
+        Point = require("geometry/point"),
+        Rect = require("geometry/rect"),
         Graphics = require("graphics"),
-        ToolMover = require("tool-mover"),
-        ToolIntersectionMover = require("tool-intersection-mover"),
-        ToolIntersectionBuilder = require("tool-intersection-builder"),
-        ToolRoadBuilder = require("tool-road-builder"),
-        ToolHighlighter = require("tool-highlighter"),
+        ToolMover = require("tools/mover"),
+        ToolIntersectionMover = require("tools/intersection-mover"),
+        ToolIntersectionBuilder = require("tools/intersection-builder"),
+        ToolRoadBuilder = require("tools/road-builder"),
+        ToolHighlighter = require("tools/highlighter"),
         Zoomer = require("zoomer"),
         settings = require("settings");
 

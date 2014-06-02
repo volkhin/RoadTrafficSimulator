@@ -3,7 +3,7 @@ define(function(require) {
 
     var $ = require("jquery"),
         _ = require("underscore"),
-        Rect = require("rect");
+        Rect = require("geometry/rect");
 
     function Intersection(arg0) {
         this.id = window.__nextId++;

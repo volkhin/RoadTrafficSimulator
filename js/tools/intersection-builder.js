@@ -1,9 +1,9 @@
 define(function(require) {
     "use strict";
 
-    var Tool = require("tool"),
+    var Tool = require("tools/tool"),
         Intersection = require("intersection"),
-        Rect = require("rect");
+        Rect = require("geometry/rect");
 
     function ToolIntersectionBuilder() {
         Tool.apply(this, arguments);

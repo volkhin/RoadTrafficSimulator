@@ -1,8 +1,8 @@
 define(function(require) {
     "use strict";
 
-    var Point = require("point"),
-        Rect = require("rect");
+    var Point = require("geometry/point"),
+        Rect = require("geometry/rect");
 
     function Zoomer(ctx, defaultZoom) {
         this.ctx = ctx;

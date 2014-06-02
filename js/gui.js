@@ -2,7 +2,8 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Point = require("point"),
+        Point = require("geometry/point"),
+        Rect = require("geometry/rect"),
         Graphics = require("graphics");
 
     function Button(title, callback, rect) {

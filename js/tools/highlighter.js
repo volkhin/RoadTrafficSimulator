@@ -1,8 +1,8 @@
 define(function(require) {
     "use strict";
 
-    var Tool = require("tool"),
-        Rect = require("rect"),
+    var Tool = require("tools/tool"),
+        Rect = require("geometry/rect"),
         settings = require("settings");
 
     function ToolHighlighter() {

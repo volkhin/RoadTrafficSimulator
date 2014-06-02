@@ -6,7 +6,7 @@ require.config({
     },
 });
 
-require(function(require) {
+define(function(require) {
     "use strict"; 
 
     var $ = require("jquery"),

@@ -2,8 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        _ = require("underscore"),
-        Segment = require("segment");
+        Segment = require("geometry/segment");
 
     function Lane(sourceSegment, targetSegment, sourceIntersection,
             targetIntersection, road, direction) {
