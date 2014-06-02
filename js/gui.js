@@ -1,5 +1,9 @@
-define(["jquery", "point", "rect", "graphics"], function($, Point, Rect, Graphics) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery"),
+        Point = require("point"),
+        Graphics = require("graphics");
 
     function Button(title, callback, rect) {
         this.title = title;

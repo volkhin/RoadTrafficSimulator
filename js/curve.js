@@ -1,5 +1,7 @@
-define(["segment"], function(Segment) {
+define(function(require) {
     "use strict";
+
+    var Segment = require("segment");
 
     function Curve(source, target, controlPoint) {
         this.A = source;

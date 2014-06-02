@@ -1,5 +1,7 @@
-define(["jquery"], function($) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery");
 
     function Pool(factory, pool) {
         this.factory = factory;

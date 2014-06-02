@@ -1,5 +1,9 @@
-define(["jquery", "underscore", "rect"], function($, _, Rect) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery"),
+        _ = require("underscore"),
+        Rect = require("rect");
 
     function Intersection(arg0) {
         this.id = window.__nextId++;

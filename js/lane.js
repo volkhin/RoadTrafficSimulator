@@ -1,5 +1,9 @@
-define(["jquery", "underscore", "segment"], function($, _, Segment) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery"),
+        _ = require("underscore"),
+        Segment = require("segment");
 
     function Lane(sourceSegment, targetSegment, sourceIntersection,
             targetIntersection, road, direction) {

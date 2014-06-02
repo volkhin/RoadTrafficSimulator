@@ -1,5 +1,8 @@
-define(["underscore", "trajectory"], function(_, Trajectory) {
+define(function(require) {
     "use strict";
+
+    var _ = require("underscore"),
+        Trajectory = require("trajectory");
 
     function Car(lane, position) {
         this.id = window.__nextId++;

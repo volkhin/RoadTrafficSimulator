@@ -1,5 +1,9 @@
-define(["jquery", "lane", "segment"], function($, Lane, Segment) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery"),
+        Lane = require("lane"),
+        Segment = require("segment");
 
     function Road(source, target) {
         this.id = window.__nextId++;

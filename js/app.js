@@ -1,5 +1,10 @@
-define(["jquery", "visualizer", "gui", "world"], function($, Visualizer, GUI, World) {
+define(function(require) {
     "use strict";
+
+    var $ = require("jquery"),
+        Visualizer = require("visualizer"),
+        GUI = require("GUI"),
+        World = require("World");
 
     function App() {
         this.FPS = 30;
