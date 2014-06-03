@@ -87,6 +87,7 @@ define(function(require) {
     });
 
     Car.prototype.pickNextLane = function() {
+        this.nextLane = null;
         var intersection = this.trajectory.getNextIntersection(),
             previousIntersection = this.trajectory.getPreviousIntersection(),
             currentLane = this.trajectory.current.lane;
