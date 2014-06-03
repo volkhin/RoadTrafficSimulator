@@ -134,5 +134,15 @@ define(function(require) {
         }
     };
 
+    World.prototype.getInstantSpeed = function() {
+        var speeds = $.map(this.cars.all(), function(car) {
+            return car.speed;
+        });
+        if (speeds.length === 0) {
+            return 0;
+        }
+        return _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
+    };
+
     return World;
 });

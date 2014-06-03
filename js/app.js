@@ -13,6 +13,8 @@ define(function(require) {
         this.world = new World();
         this.world.load();
         this.visualizer = new Visualizer(this.world);
+        this.visualizer.start();
+
         this.gui = new GUI();
         this.gui.addButton(
             function() {
@@ -29,6 +31,9 @@ define(function(require) {
         this.gui.addButton("Save", this.world.save.bind(this.world));
         this.gui.addButton("Load", this.world.load.bind(this.world));
         this.gui.addButton("Clear", this.world.clear.bind(this.world));
+        this.gui.addButton(function() {
+            return "speed: " + self.world.getInstantSpeed().toFixed(2);
+        }, null);
         this.gui.addButton("Add car", this.world.addRandomCar.bind(this.world));
         this.gui.addButton("Add 10 cars", function() {
             for (var i = 0; i < 10; i++) {
@@ -52,8 +57,6 @@ define(function(require) {
             var state = self.visualizer.toolIntersectionMover.isBound ? "on" : "off";
             return "move-intersection(" + state + ")";
         }, this.visualizer.toolIntersectionMover.toggleState.bind(this.visualizer.toolIntersectionMover));
-
-        this.visualizer.start();
     };
 
     return App;
