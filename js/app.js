@@ -12,6 +12,7 @@ define(function(require) {
         var self = this;
         this.world = new World();
         this.world.load();
+        this.world.start();
         this.visualizer = new Visualizer(this.world);
         this.visualizer.start();
 
@@ -19,13 +20,26 @@ define(function(require) {
 
         this.gui.addButton(
             function() {
-                return self.visualizer.isRunning ? "Stop" : "Start";
+                return (self.visualizer.isRunning ? "Stop" : "Start") + " visualizer";
             },
             function() {
                 if (self.visualizer.isRunning) {
                     self.visualizer.stop.call(self.visualizer);
                 } else {
                     self.visualizer.start.call(self.visualizer);
+                }
+            }
+        );
+
+        this.gui.addButton(
+            function() {
+                return (self.world.isRunning ? "Stop" : "Start") + " world";
+            },
+            function() {
+                if (self.world.isRunning) {
+                    self.world.stop.call(self.world);
+                } else {
+                    self.world.start.call(self.world);
                 }
             }
         );

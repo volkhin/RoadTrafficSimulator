@@ -159,7 +159,6 @@ define(function(require) {
     };
 
     Visualizer.prototype.start = function() {
-        this.world.start();
         if (!this._interval) {
             this._interval = setInterval(this.draw.bind(this), 1000 / settings.fps);
             this.isRunning = true;
@@ -167,7 +166,6 @@ define(function(require) {
     };
 
     Visualizer.prototype.stop = function() {
-        this.world.stop();
         if (this._interval) {
             clearInterval(this._interval);
             this._interval = null;
