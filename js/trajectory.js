@@ -63,7 +63,7 @@ define(function(require) {
         if (!nextLane) {
             // the car will be removed from the world
             throw Error("It should have been processed before");
-            return true;
+            // return true;
         }
         var intersection = sourceLane.targetIntersection;
         var side1 = sourceLane.targetSideId,
@@ -128,10 +128,9 @@ define(function(require) {
         }
 
         if (!nextLane) {
-            // TODO: it shouldn't be here
             throw Error("No next lane!");
-            this.car.alive = false;
-            return;
+            // this.car.alive = false;
+            // return;
         }
 
         this.isChangingLanes = true;
