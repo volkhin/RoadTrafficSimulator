@@ -2,8 +2,8 @@ define(function(require) {
     "use strict";
 
     var Visualizer = require("visualizer"),
-        GUI = require("GUI"),
-        World = require("World");
+        GUI = require("gui"),
+        World = require("world");
 
     function App() {
     }
