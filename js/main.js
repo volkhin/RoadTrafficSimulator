@@ -2,7 +2,11 @@ require.config({
     baseUrl: "js",
     paths: {
         "jquery": "../lib/jquery.min",
+        "jquery-mousewheel": "../lib/jquery.mousewheel.min",
         "underscore": "../lib/underscore.min",
+    },
+    shim: {
+        "jquery-mousewheel": ["jquery"],
     },
 });
 

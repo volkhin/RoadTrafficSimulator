@@ -2,17 +2,21 @@ define(function(require) {
     "use strict";
 
     var Point = require("geometry/point"),
-        Rect = require("geometry/rect");
+        Rect = require("geometry/rect"),
+        Tool = require("tools/tool");
 
-    function Zoomer(ctx, defaultZoom) {
-        this.ctx = ctx;
+    function Zoomer(defaultZoom, visualizer) {
+        Tool.apply(this, Array.prototype.slice.call(arguments, 1));
+        this.ctx = visualizer.ctx;
         this.defaultZoom = defaultZoom;
-        this.width = ctx.canvas.width;
-        this.height = ctx.canvas.height;
+        this.width = this.ctx.canvas.width;
+        this.height = this.ctx.canvas.height;
         this.scale = 1.0;
-        this.screnCenter = new Point(this.width / 2, this.height / 2);
+        this.screenCenter = new Point(this.width / 2, this.height / 2);
         this.center = new Point(this.width / 2, this.height / 2);
     }
+
+    Zoomer.prototype = Object.create(Tool.prototype);
 
     Zoomer.prototype.toCellCoords = function(point) {
         var centerOffset = point.subtract(this.center);
@@ -42,27 +46,34 @@ define(function(require) {
         this.ctx.scale(this.defaultZoom, this.defaultZoom);
     };
 
-    Zoomer.prototype.zoom = function(k) {
+    Zoomer.prototype.zoom = function(k, center) {
         k = k || 1.0;
-        var offset = this.center.subtract(this.screnCenter);
-        this.center = this.screnCenter.add(offset.mult(k / this.scale));
+        var offset = this.center.subtract(center);
+        this.center = center.add(offset.mult(k / this.scale));
         this.scale = k;
     };
 
     Zoomer.prototype.zoomIn = function() {
-        this.zoom(2.0 * this.scale);
+        this.zoom(2.0 * this.scale, this.screenCenter);
     };
 
     Zoomer.prototype.zoomNormal = function() {
-        this.zoom(1.0);
+        this.zoom(1.0, this.screenCenter);
     };
 
     Zoomer.prototype.zoomOut = function() {
-        this.zoom(0.5 * this.scale);
+        this.zoom(0.5 * this.scale, this.screenCenter);
     };
 
     Zoomer.prototype.moveCenter = function(offset) {
         this.center = this.center.add(offset);
+    };
+
+    Zoomer.prototype.onMouseWheel = function(e) {
+        var offset = e.deltaY * e.deltaFactor;
+        var zoomFactor = Math.pow(2, 0.001 * offset);
+        this.zoom(this.scale * zoomFactor, this.getPoint(e));
+        e.preventDefault();
     };
 
     return Zoomer;

@@ -10,7 +10,7 @@ define(function(require) {
         ToolIntersectionBuilder = require("tools/intersection-builder"),
         ToolRoadBuilder = require("tools/road-builder"),
         ToolHighlighter = require("tools/highlighter"),
-        Zoomer = require("zoomer"),
+        Zoomer = require("tools/zoomer"),
         settings = require("settings");
 
     function Visualizer(world) {
@@ -24,7 +24,7 @@ define(function(require) {
         this.carImage = new Image();
         this.carImage.src = "images/car.png";
 
-        this.zoomer = new Zoomer(this.ctx, 20);
+        this.zoomer = new Zoomer(20, this, true);
         this.graphics = new Graphics(this.ctx);
         this.toolMover = new ToolMover(this, true);
         this.toolIntersectionMover = new ToolIntersectionMover(this, true);

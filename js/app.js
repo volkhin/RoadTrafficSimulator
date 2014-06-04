@@ -47,7 +47,7 @@ define(function(require) {
         this.gui.addButton("-", this.visualizer.zoomer.zoomOut.bind(this.visualizer.zoomer));
         this.gui.addButton(function() {
             return Math.floor(100 * self.visualizer.zoomer.scale) + "%";
-        }, this.visualizer.zoomer.zoom.bind(this.visualizer.zoomer, 1.0));
+        }, this.visualizer.zoomer.zoomNormal.bind(this.visualizer.zoomer));
         this.gui.addButton("+", this.visualizer.zoomer.zoomIn.bind(this.visualizer.zoomer));
         this.gui.addButton(function() {
             var state = self.visualizer.toolMover.isBound ? "on" : "off";

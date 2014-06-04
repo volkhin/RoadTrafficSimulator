@@ -4,6 +4,7 @@ define(function(require) {
     var $ = require("jquery"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect");
+    require("jquery-mousewheel");
 
     function Tool(visualizer, autobind) {
         this.visualizer = visualizer;
@@ -12,6 +13,7 @@ define(function(require) {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMouseWheel = this.onMouseWheel.bind(this);
         this.isBound = false;
         if (autobind) {
             this.bind();
@@ -30,6 +32,7 @@ define(function(require) {
         $(this.canvas).on("mouseup", this.onMouseUp);
         $(this.canvas).on("mousemove", this.onMouseMove);
         $(this.canvas).on("mouseout", this.onMouseOut);
+        $(this.canvas).on("mousewheel", this.onMouseWheel);
     };
 
     Tool.prototype.unbind = function() {
@@ -38,6 +41,7 @@ define(function(require) {
         $(this.canvas).off("mouseup", this.onMouseUp);
         $(this.canvas).off("mousemove", this.onMouseMove);
         $(this.canvas).off("mouseout", this.onMouseOut);
+        $(this.canvas).off("mousewheel", this.onMouseWheel);
     };
 
     Tool.prototype.toggleState = function() {
@@ -58,6 +62,9 @@ define(function(require) {
     };
 
     Tool.prototype.onMouseOut = function() {
+    };
+
+    Tool.prototype.onMouseWheel = function() {
     };
 
     Tool.prototype.draw = function() {
