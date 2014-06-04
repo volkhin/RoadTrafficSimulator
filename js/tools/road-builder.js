@@ -6,7 +6,9 @@ define(function(require) {
 
     function ToolRoadBuilder() {
         Tool.apply(this, arguments);
+        this.sourceIntersection = null;
         this.road = null;
+        this.dualRoad = null;
     }
 
     ToolRoadBuilder.prototype = Object.create(Tool.prototype);
@@ -15,36 +17,52 @@ define(function(require) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
         if (hoveredIntersection) {
-            this.road = new Road(hoveredIntersection, null);
+            this.sourceIntersection = hoveredIntersection;
         }
     };
 
-    ToolRoadBuilder.prototype.onMouseUp = function(e) {
+    ToolRoadBuilder.prototype.onMouseUp = function() {
         if (this.road) {
-            var cell = this.getCell(e);
-            var hoveredIntersection = this.getHoveredIntersection(cell);
-            if (hoveredIntersection && this.road.source.id !== hoveredIntersection.id) {
-                this.visualizer.world.addRoad(this.road);
-            }
-            this.road = null;
+            this.visualizer.world.addRoad(this.road);
         }
+        if (this.dualRoad) {
+            this.visualizer.world.addRoad(this.dualRoad);
+        }
+        this.road = null;
+        this.dualRoad = null;
+        this.sourceIntersection = null;
     };
 
     ToolRoadBuilder.prototype.onMouseMove = function(e) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
-        if (this.road) {
-            this.road.target = hoveredIntersection;
+        if (this.sourceIntersection && hoveredIntersection &&
+                this.sourceIntersection.id !== hoveredIntersection.id) {
+            if (this.road) {
+                this.road.target = hoveredIntersection;
+                this.dualRoad.source = hoveredIntersection;
+            } else {
+                this.road = new Road(this.sourceIntersection, hoveredIntersection);
+                this.dualRoad = new Road(hoveredIntersection, this.sourceIntersection);
+            }
+        } else {
+            this.road = null;
+            this.dualRoad = null;
         }
     };
 
     ToolRoadBuilder.prototype.onMouseOut = function() {
         this.road = null;
+        this.dualRoad = null;
+        this.sourceIntersection = null;
     };
 
     ToolRoadBuilder.prototype.draw = function() {
         if (this.road) {
             this.visualizer.drawRoad(this.road, 0.4);
+        }
+        if (this.dualRoad) {
+            this.visualizer.drawRoad(this.dualRoad, 0.4);
         }
     };
 

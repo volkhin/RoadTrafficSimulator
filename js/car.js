@@ -92,19 +92,13 @@ define(function(require) {
             previousIntersection = this.trajectory.getPreviousIntersection(),
             currentLane = this.trajectory.current.lane;
         var possibleRoads = intersection.roads.filter(function(x) {
+            // FIXME: only 1 statement is enough
             return x.target !== previousIntersection &&
                    x.source !== previousIntersection;
         });
         if (possibleRoads.length !== 0) {
             var nextRoad = _.sample(possibleRoads);
-            var laneNumber;
-            if (intersection === nextRoad.source) {
-                laneNumber = _.random(0, nextRoad.lanesNumber / 2 - 1);
-                // laneNumber = 0;
-            } else {
-                laneNumber = _.random(nextRoad.lanesNumber / 2, nextRoad.lanesNumber - 1);
-                // laneNumber = nextRoad.lanesNumber - 1;
-            }
+            var laneNumber = _.random(0, nextRoad.lanesNumber - 1);
             this.nextLane = nextRoad.lanes[laneNumber];
 
             var side1 = currentLane.targetSideId,

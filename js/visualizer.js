@@ -61,7 +61,6 @@ define(function(require) {
                 segment = road.sourceSide;
                 sideId = road.sourceSideId;
             }
-            segment = segment.subsegment(0, 0.5);
             var lights = intersection.state[sideId];
             this.ctx.lineWidth = 0.1;
             this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
@@ -79,29 +78,40 @@ define(function(require) {
             return;
         }
 
-        var s1 = road.source.rect.getSector(road.target.rect.getCenter()),
-            s2 = road.target.rect.getSector(road.source.rect.getCenter());
+        var sourceSide = road.sourceSide, targetSide = road.targetSide;
 
         var self = this;
 
         // draw the road
-        this.graphics.polyline(s1.source, s1.target, s2.source, s2.target);
+        this.graphics.polyline(sourceSide.source, sourceSide.target,
+                targetSide.source, targetSide.target);
         this.graphics.fill(settings.colors.road, alpha);
 
         var i;
 
         // draw interlanes
-        self.ctx.save();
-        for (i = 0; i < road.interlanes.length; i++) {
-            var line = road.interlanes[i];
+        this.ctx.save();
+        for (i = 0; i + 1 < road.lanes.length; i++) {
+            var line = road.lanes[i].getLeftBorder();
             var dashSize = 0.5;
             this.graphics.drawSegment(line);
-            self.ctx.lineWidth = 0.1;
-            self.ctx.lineDashOffset = 1.5 * dashSize;
-            self.ctx.setLineDash([dashSize]);
-            self.graphics.stroke(settings.colors.roadMarking); 
+            this.ctx.lineWidth = 0.1;
+            this.ctx.lineDashOffset = 1.5 * dashSize;
+            this.ctx.setLineDash([dashSize]);
+            this.graphics.stroke(settings.colors.roadMarking); 
         }
-        self.ctx.restore();
+        this.ctx.restore();
+
+        // draw road single lines
+        this.ctx.save();
+        this.ctx.lineWidth = 0.1;
+        var leftLine = road.leftmostLane.getLeftBorder();
+        this.graphics.drawSegment(leftLine);
+        this.graphics.stroke(settings.colors.roadMarking); 
+        var rightLine = road.rightmostLane.getRightBorder();
+        this.graphics.drawSegment(rightLine);
+        this.graphics.stroke(settings.colors.roadMarking); 
+        this.ctx.restore();
     };
 
     Visualizer.prototype.drawCar = function(car) {

@@ -2,8 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
-        Lane = require("lane"),
-        Segment = require("geometry/segment");
+        Lane = require("lane");
 
     function Road(source, target) {
         this.id = window.__nextId++;
@@ -11,7 +10,6 @@ define(function(require) {
         this.target = target;
         this.lanes = [];
         this.lanesNumber = undefined;
-        this.interlanes = [];
         this.update();
     }
 
@@ -31,16 +29,9 @@ define(function(require) {
         obj._source = obj._source.id;
         obj._target = obj._target.id;
         obj.lanes = []; // FIXME
-        obj.interlanes = [];
         delete obj.lanesNumber;
         return obj;
     };
-
-    Object.defineProperty(Road.prototype, "forwardLanes", {
-        get: function() {
-            return Math.floor((this.lanesNumber + 1) / 2);
-        },
-    });
 
     Object.defineProperty(Road.prototype, "length", {
         get: function() {
@@ -73,70 +64,47 @@ define(function(require) {
         },
     });
 
+    Object.defineProperty(Road.prototype, "leftmostLane", {
+        get: function() {
+            return this.lanes[this.lanesNumber - 1];
+        },
+    });
+
+    Object.defineProperty(Road.prototype, "rightmostLane", {
+        get: function() {
+            return this.lanes[0];
+        },
+    });
+
     Road.prototype.update = function() {
         if (!this.source || !this.target) {
-            // road is not ready to process - no source/junction intersections
-            // throw Error("Incomplete road"); // TODO: don't create such roads
-            return;
+            throw Error("Incomplete road");
         }
 
-        var i;
         this.sourceSideId = this.source.rect.getSectorId(this.target.rect.getCenter());
-        this.sourceSide = this.source.rect.getSide(this.sourceSideId);
+        this.sourceSide = this.source.rect.getSide(this.sourceSideId).subsegment(0.5, 1.0);
         this.targetSideId = this.target.rect.getSectorId(this.source.rect.getCenter());
-        this.targetSide = this.target.rect.getSide(this.targetSideId);
+        this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
         if (typeof this.lanesNumber === "undefined") {
-            this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length);
-            this.lanesNumber = 2 * Math.floor(this.lanesNumber / 2);
+            this.lanesNumber = Math.floor(
+                    Math.min(this.sourceSide.length, this.targetSide.length));
         }
         var sourceSplits = this.sourceSide.split(this.lanesNumber, true),
             targetSplits = this.targetSide.split(this.lanesNumber);
 
-        if (!this.lanes || this.lanes.length === 0) {
-            this.lanes = [];
-
-            for (i = 0; i < this.lanesNumber; i++) {
-                if (i < this.forwardLanes) {
-                    this.lanes.push(new Lane(
-                        sourceSplits[i], targetSplits[i], this.source, this.target, this, true
-                    ));
-                } else {
-                    this.lanes.push(new Lane(
-                        targetSplits[i], sourceSplits[i], this.target, this.source, this, false
-                    ));
-                }
-            }
-        }
-
-        for (i = 0; i < this.lanesNumber; i++) {
-            if (i < this.forwardLanes) {
+        for (var i = 0; i < this.lanesNumber; i++) {
+            if (!this.lanes[i]) {
+                this.lanes[i] = new Lane(
+                    sourceSplits[i], targetSplits[i], this.source, this.target, this
+                );
+            } else {
                 this.lanes[i].sourceSegment = sourceSplits[i];
                 this.lanes[i].targetSegment = targetSplits[i];
-                if (i + 1 < this.forwardLanes) {
-                    this.lanes[i].leftAdjacent = this.lanes[i + 1];
-                }
-                if (i > 0) {
-                    this.lanes[i].rightAdjacent = this.lanes[i - 1];
-                }
-                this.lanes[i].leftmostAdjacent = this.lanes[this.forwardLanes - 1];
-                this.lanes[i].rightmostAdjacent = this.lanes[0];
-            } else {
-                this.lanes[i].sourceSegment = targetSplits[i];
-                this.lanes[i].targetSegment = sourceSplits[i];
-                if (i > this.forwardLanes) {
-                    this.lanes[i].leftAdjacent = this.lanes[i - 1];
-                }
-                if (i + 1 < this.lanesNumber) {
-                    this.lanes[i].rightAdjacent = this.lanes[i + 1];
-                }
-                this.lanes[i].leftmostAdjacent = this.lanes[this.forwardLanes];
-                this.lanes[i].rightmostAdjacent = this.lanes[this.lanesNumber - 1];
             }
-        }
-
-        this.interlanes = [];
-        for (i = 0; i < this.lanesNumber - 1; i++) {
-            this.interlanes.push(new Segment(sourceSplits[i].source, targetSplits[i].target));
+            this.lanes[i].leftAdjacent = this.lanes[i + 1];
+            this.lanes[i].rightAdjacent = this.lanes[i - 1];
+            this.lanes[i].leftmostAdjacent = this.lanes[this.lanesNumber - 1];
+            this.lanes[i].rightmostAdjacent = this.lanes[0];
         }
     };
 

@@ -6,13 +6,12 @@ define(function(require) {
         Segment = require("geometry/segment");
 
     function Lane(sourceSegment, targetSegment, sourceIntersection,
-            targetIntersection, road, direction) {
+            targetIntersection, road) {
         this.sourceSegment = sourceSegment;
         this.targetSegment = targetSegment;
         this.sourceIntersection = sourceIntersection;
         this.targetIntersection = targetIntersection;
         this.road = road;
-        this.direction = direction;
         this.leftAdjacent = null;
         this.rightAdjacent = null;
         this.carsPositions = {};
@@ -41,13 +40,13 @@ define(function(require) {
 
     Object.defineProperty(Lane.prototype, "sourceSideId", {
         get: function() {
-            return this.direction ? this.road.sourceSideId : this.road.targetSideId;
+            return this.road.sourceSideId;
         },
     });
 
     Object.defineProperty(Lane.prototype, "targetSideId", {
         get: function() {
-            return this.direction ? this.road.targetSideId : this.road.sourceSideId;
+            return this.road.targetSideId;
         },
     });
 

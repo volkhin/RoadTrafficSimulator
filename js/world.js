@@ -76,7 +76,6 @@ define(function(require) {
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
         road.source.roads.push(road);
-        road.target.roads.push(road);
         road.update();
     };
 
