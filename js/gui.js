@@ -2,6 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
+        _ = require("underscore"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect"),
         Graphics = require("graphics");

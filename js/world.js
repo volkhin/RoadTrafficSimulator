@@ -1,8 +1,7 @@
 define(function(require) {
     "use strict";
 
-    var $ = require("jquery"),
-        _ = require("underscore"),
+    var _ = require("underscore"),
         Car = require("car"),
         Intersection = require("intersection"),
         Road = require("road"),
@@ -42,11 +41,11 @@ define(function(require) {
             this.clear();
             window.__nextId = data.__nextId || 1;
             var self = this;
-            $.each(data.intersections, function(index, intersection) {
+            _.each(data.intersections, function(intersection) {
                 intersection = Intersection.copy(intersection);
                 self.addIntersection(intersection);
             });
-            $.each(data.roads, function(index, road) {
+            _.each(data.roads, function(road) {
                 road = Road.copy(road);
                 self.addRoad(road);
             });
@@ -63,10 +62,10 @@ define(function(require) {
     World.prototype.onTick = function() {
         var self = this;
         this.ticks++;
-        this.intersections.each(function(index, intersection) {
+        _.each(this.intersections.all(), function(intersection) {
             intersection.onTick(self.ticks);
         });
-        this.cars.each(function(index, car) {
+        _.each(this.cars.all(), function(car) {
             car.move();
             if (!car.alive) {
                 self.cars.pop(car.id);
@@ -135,7 +134,7 @@ define(function(require) {
     };
 
     World.prototype.getInstantSpeed = function() {
-        var speeds = $.map(this.cars.all(), function(car) {
+        var speeds = _.map(this.cars.all(), function(car) {
             return car.speed;
         });
         if (speeds.length === 0) {

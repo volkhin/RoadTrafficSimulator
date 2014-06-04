@@ -1,7 +1,8 @@
 define(function(require) {
     "use strict";
 
-    var Tool = require("tools/tool"),
+    var _ = require("underscore"),
+        Tool = require("tools/tool"),
         Rect = require("geometry/rect"),
         settings = require("settings");
 
@@ -22,7 +23,7 @@ define(function(require) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
         this.mousePos = cell;
-        this.visualizer.world.intersections.each(function(index, intersection) {
+        _.each(this.visualizer.world.intersections.all(), function(intersection) {
             intersection.color = null;
         });
         if (hoveredIntersection) {

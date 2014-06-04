@@ -1,7 +1,5 @@
-define(function(require) {
+define(function() {
     "use strict";
-
-    var $ = require("jquery");
 
     function Pool(factory, pool) {
         this.factory = factory;
@@ -39,10 +37,6 @@ define(function(require) {
 
     Pool.prototype.all = function() {
         return this.objects;
-    };
-
-    Pool.prototype.each = function(callback) {
-        $.each(this.all(), callback);
     };
 
     Pool.prototype.clear = function() {

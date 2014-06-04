@@ -44,7 +44,7 @@ define(function(require) {
     Object.defineProperty(Intersection.prototype, "state", {
         get: function() {
             var stringState = this.states[this.stateNum % this.states.length];
-            return $.map(stringState, function(pattern) {
+            return _.map(stringState, function(pattern) {
                 var state = [0, 0, 0];
                 if (pattern.indexOf("L") > -1) {
                     state[0] = 1;
@@ -55,7 +55,7 @@ define(function(require) {
                 if (pattern.indexOf("R") > -1) {
                     state[2] = 1;
                 }
-                return [state];
+                return state;
             });
         },
     });
@@ -71,7 +71,7 @@ define(function(require) {
     };
 
     Intersection.prototype.update = function() {
-        $.each(this.roads, function(index, road) {
+        _.each(this.roads, function(road) {
             road.update();
         });
     };

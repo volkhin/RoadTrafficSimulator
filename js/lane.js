@@ -2,6 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
+        _ = require("underscore"),
         Segment = require("geometry/segment");
 
     function Lane(sourceSegment, targetSegment, sourceIntersection,
@@ -91,7 +92,7 @@ define(function(require) {
             throw Error("CarPosition belongs to another lane!");
         }
         var next = null, bestDistance = Infinity;
-        $.each(this.carsPositions, function(index, o) {
+        _.each(this.carsPositions, function(o) {
             var distance = o.position - carPosition.position;
             if (0 < distance && distance < bestDistance) {
                 bestDistance = distance;

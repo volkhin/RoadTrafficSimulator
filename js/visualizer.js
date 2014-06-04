@@ -2,6 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
+        _ = require("underscore"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect"),
         Graphics = require("graphics"),
@@ -139,16 +140,16 @@ define(function(require) {
         this.graphics.save();
         this.zoomer.transform();
         this.drawGrid();
-        this.world.intersections.each(function(index, intersection) {
+        _.each(this.world.intersections.all(), function(intersection) {
             self.drawIntersection(intersection, 0.9);
         });
-        this.world.roads.each(function(index, road) {
+        _.each(this.world.roads.all(), function(road) {
             self.drawRoad(road, 0.9);
         });
-        this.world.intersections.each(function(index, intersection) {
+        _.each(this.world.intersections.all(), function(intersection) {
             self.drawSignals(intersection);
         });
-        this.world.cars.each(function(index, car) {
+        _.each(this.world.cars.all(), function(car) {
             self.drawCar(car);
         });
         this.toolIntersectionBuilder.draw(); // TODO: all tools
