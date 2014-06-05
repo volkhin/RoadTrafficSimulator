@@ -127,10 +127,12 @@ define(function(require) {
 
     Visualizer.prototype.drawGrid = function() {
         var box = this.zoomer.getBoundingBox();
+        if (box.area >= 2000) {
+            return;
+        }
         for (var i = box.getLeft(); i <= box.getRight(); i++) {
             for (var j = box.getTop(); j <= box.getBottom(); j++) {
-                var color = ((i + j) % 2 === 0) ? settings.colors.grid1 : settings.colors.grid2;
-                this.graphics.fillRect(new Rect(i, j, 1, 1), color);
+                this.graphics.fillRect(new Rect(i, j, 0.05, 0.05), settings.colors.gridPoint);
             }
         }
     };

@@ -14,6 +14,12 @@ define(function(require) {
         return new Rect(rect.position.x, rect.position.y, rect.width, rect.height);
     };
 
+    Object.defineProperty(Rect.prototype, "area", {
+        get: function() {
+            return this.getWidth() * this.getHeight();
+        },
+    });
+
     Rect.prototype.setPosition = function() {
         var position = Object.create(Point.prototype);
         Point.apply(position, arguments);

@@ -11,6 +11,7 @@ define(function() {
             roadMarking: "#eee",
             hoveredIntersection: "#3d4c53",
             tempRoad: "#aaa",
+            gridPoint: "#70b7ba",
             grid1: "rgba(255, 255, 255, 0.5)",
             grid2: "rgba(220, 220, 220, 0.5)",
             hoveredGrid: "#f4e8e1",
