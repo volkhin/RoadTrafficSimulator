@@ -67,7 +67,7 @@ define(function(require) {
 
     Visualizer.prototype.drawRoad = function(road, alpha) {
         if (!road.source || !road.target) {
-            return;
+            throw Error("Invalid road");
         }
 
         var sourceSide = road.sourceSide, targetSide = road.targetSide;
@@ -85,7 +85,7 @@ define(function(require) {
             var line = road.lanes[i].getLeftBorder();
             var dashSize = 0.5;
             this.graphics.drawSegment(line);
-            this.ctx.lineWidth = 0.1;
+            this.ctx.lineWidth = 0.05;
             this.ctx.lineDashOffset = 1.5 * dashSize;
             this.ctx.setLineDash([dashSize]);
             this.graphics.stroke(settings.colors.roadMarking); 
@@ -94,7 +94,7 @@ define(function(require) {
 
         // draw road single lines
         this.ctx.save();
-        this.ctx.lineWidth = 0.1;
+        this.ctx.lineWidth = 0.05;
         var leftLine = road.leftmostLane.getLeftBorder();
         this.graphics.drawSegment(leftLine);
         this.graphics.stroke(settings.colors.roadMarking); 
