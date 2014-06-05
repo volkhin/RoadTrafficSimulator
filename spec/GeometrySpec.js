@@ -1,6 +1,10 @@
 /* global describe, it, xit, expect */
-require(["point", "rect", "segment"], function(Point, Rect, Segment) {
+define(function(require) {
     "use strict";
+
+    var Point = require("geometry/point"),
+        Rect = require("geometry/rect"),
+        Segment = require("geometry/segment");
 
     describe("Point", function() {
         it("can be constructed by (x;y)", function() {
