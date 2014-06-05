@@ -10,17 +10,17 @@ define(function(require) {
 
     ToolIntersectionMover.prototype = Object.create(Tool.prototype);
 
-    ToolIntersectionMover.prototype.onMouseDown = function(e) {
+    ToolIntersectionMover.prototype.mousedown = function(e) {
         if (e.altKey) {
             this.intersection = this.getHoveredIntersection(this.getCell(e));
         }
     };
 
-    ToolIntersectionMover.prototype.onMouseUp = function() {
+    ToolIntersectionMover.prototype.mouseup = function() {
         this.intersection = null;
     };
 
-    ToolIntersectionMover.prototype.onMouseMove = function(e) {
+    ToolIntersectionMover.prototype.mousemove = function(e) {
         if (this.intersection) {
             var cell = this.getCell(e);
             this.intersection.rect.setLeft(cell.x);
@@ -29,7 +29,7 @@ define(function(require) {
         }
     };
 
-    ToolIntersectionMover.prototype.onMouseOut = function() {
+    ToolIntersectionMover.prototype.mouseout = function() {
         this.intersection = null;
     };
 

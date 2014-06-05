@@ -13,13 +13,13 @@ define(function(require) {
 
     ToolHighlighter.prototype = Object.create(Tool.prototype);
 
-    ToolHighlighter.prototype.onMouseDown = function() {
+    ToolHighlighter.prototype.mousedown = function() {
     };
 
-    ToolHighlighter.prototype.onMouseUp = function() {
+    ToolHighlighter.prototype.mouseup = function() {
     };
 
-    ToolHighlighter.prototype.onMouseMove = function(e) {
+    ToolHighlighter.prototype.mousemove = function(e) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
         this.mousePos = cell;
@@ -31,7 +31,7 @@ define(function(require) {
         }
     };
 
-    ToolHighlighter.prototype.onMouseOut = function() {
+    ToolHighlighter.prototype.mouseout = function() {
         this.mousePos = null;
     };
 

@@ -13,7 +13,7 @@ define(function(require) {
 
     ToolRoadBuilder.prototype = Object.create(Tool.prototype);
 
-    ToolRoadBuilder.prototype.onMouseDown = function(e) {
+    ToolRoadBuilder.prototype.mousedown = function(e) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
         if (hoveredIntersection) {
@@ -21,7 +21,7 @@ define(function(require) {
         }
     };
 
-    ToolRoadBuilder.prototype.onMouseUp = function() {
+    ToolRoadBuilder.prototype.mouseup = function() {
         if (this.road) {
             this.visualizer.world.addRoad(this.road);
         }
@@ -33,7 +33,7 @@ define(function(require) {
         this.sourceIntersection = null;
     };
 
-    ToolRoadBuilder.prototype.onMouseMove = function(e) {
+    ToolRoadBuilder.prototype.mousemove = function(e) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
         if (this.sourceIntersection && hoveredIntersection &&
@@ -51,7 +51,7 @@ define(function(require) {
         }
     };
 
-    ToolRoadBuilder.prototype.onMouseOut = function() {
+    ToolRoadBuilder.prototype.mouseout = function() {
         this.road = null;
         this.dualRoad = null;
         this.sourceIntersection = null;

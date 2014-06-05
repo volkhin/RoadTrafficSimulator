@@ -69,7 +69,7 @@ define(function(require) {
         this.center = this.center.add(offset);
     };
 
-    Zoomer.prototype.onMouseWheel = function(e) {
+    Zoomer.prototype.mousewheel = function(e) {
         var offset = e.deltaY * e.deltaFactor;
         var zoomFactor = Math.pow(2, 0.001 * offset);
         this.zoom(this.scale * zoomFactor, this.getPoint(e));

@@ -10,15 +10,21 @@ define(function(require) {
 
     ToolMover.prototype = Object.create(Tool.prototype);
 
-    ToolMover.prototype.onMouseDown = function(e) {
-        this.startPosition = this.getPoint(e);
+    ToolMover.prototype.contextmenu = function() {
+        return false;
     };
 
-    ToolMover.prototype.onMouseUp = function() {
+    ToolMover.prototype.mousedown = function(e) {
+        if (e.ctrlKey) {
+            this.startPosition = this.getPoint(e);
+        }
+    };
+
+    ToolMover.prototype.mouseup = function() {
         this.startPosition = null;
     };
 
-    ToolMover.prototype.onMouseMove = function(e) {
+    ToolMover.prototype.mousemove = function(e) {
         if (this.startPosition) {
             var offset = this.getPoint(e).subtract(this.startPosition);
             this.visualizer.zoomer.moveCenter(offset);
@@ -26,7 +32,7 @@ define(function(require) {
         }
     };
 
-    ToolMover.prototype.onMouseOut = function() {
+    ToolMover.prototype.mouseout = function() {
         this.startPosition = null;
     };
 

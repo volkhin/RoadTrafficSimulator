@@ -40,15 +40,14 @@ define(function(require) {
         if (data) {
             this.clear();
             window.__nextId = data.__nextId || 1;
-            var self = this;
             _.each(data.intersections, function(intersection) {
                 intersection = Intersection.copy(intersection);
-                self.addIntersection(intersection);
-            });
+                this.addIntersection(intersection);
+            }, this);
             _.each(data.roads, function(road) {
                 road = Road.copy(road);
-                self.addRoad(road);
-            });
+                this.addRoad(road);
+            }, this);
             for (var i = 0; i < data.__numOfCars; i++) {
                 this.addRandomCar();
             }
@@ -60,17 +59,16 @@ define(function(require) {
     };
 
     World.prototype.onTick = function() {
-        var self = this;
         this.ticks++;
         _.each(this.intersections.all(), function(intersection) {
-            intersection.onTick(self.ticks);
-        });
+            intersection.onTick(this.ticks);
+        }, this);
         _.each(this.cars.all(), function(car) {
             car.move();
             if (!car.alive) {
-                self.cars.pop(car.id);
+                this.cars.pop(car.id);
             }
-        });
+        }, this);
     };
 
     World.prototype.addRoad = function(road) {

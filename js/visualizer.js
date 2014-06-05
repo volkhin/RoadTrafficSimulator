@@ -136,23 +136,22 @@ define(function(require) {
     };
 
     Visualizer.prototype.draw = function() {
-        var self = this;
         this.graphics.clear(settings.colors.background);
         this.graphics.save();
         this.zoomer.transform();
         this.drawGrid();
         _.each(this.world.intersections.all(), function(intersection) {
-            self.drawIntersection(intersection, 0.9);
-        });
+            this.drawIntersection(intersection, 0.9);
+        }, this);
         _.each(this.world.roads.all(), function(road) {
-            self.drawRoad(road, 0.9);
-        });
+            this.drawRoad(road, 0.9);
+        }, this);
         _.each(this.world.roads.all(), function(road) {
-            self.drawSignals(road);
-        });
+            this.drawSignals(road);
+        }, this);
         _.each(this.world.cars.all(), function(car) {
-            self.drawCar(car);
-        });
+            this.drawCar(car);
+        }, this);
         this.toolIntersectionBuilder.draw(); // TODO: all tools
         this.toolRoadbuilder.draw();
         this.toolHighlighter.draw();

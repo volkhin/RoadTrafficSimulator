@@ -2,18 +2,29 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
+        _ = require("underscore"),
         Point = require("geometry/point"),
         Rect = require("geometry/rect");
     require("jquery-mousewheel");
 
+    var METHODS = [
+        "click",
+        "mousedown",
+        "mouseup",
+        "mousemove",
+        "mouseout",
+        "mousewheel",
+        "contextmenu",
+    ];
+
     function Tool(visualizer, autobind) {
         this.visualizer = visualizer;
         this.ctx = visualizer.ctx;
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseOut = this.onMouseOut.bind(this);
-        this.onMouseWheel = this.onMouseWheel.bind(this);
+        _.each(METHODS, function(methodName) {
+            if (methodName in this) {
+                this[methodName] = this[methodName].bind(this);
+            }
+        }, this);
         this.isBound = false;
         if (autobind) {
             this.bind();
@@ -28,20 +39,20 @@ define(function(require) {
 
     Tool.prototype.bind = function() {
         this.isBound = true;
-        $(this.canvas).on("mousedown", this.onMouseDown);
-        $(this.canvas).on("mouseup", this.onMouseUp);
-        $(this.canvas).on("mousemove", this.onMouseMove);
-        $(this.canvas).on("mouseout", this.onMouseOut);
-        $(this.canvas).on("mousewheel", this.onMouseWheel);
+        _.each(METHODS, function(methodName) {
+            if (methodName in this) {
+                $(this.canvas).on(methodName, this[methodName]);
+            }
+        }, this);
     };
 
     Tool.prototype.unbind = function() {
         this.isBound = false;
-        $(this.canvas).off("mousedown", this.onMouseDown);
-        $(this.canvas).off("mouseup", this.onMouseUp);
-        $(this.canvas).off("mousemove", this.onMouseMove);
-        $(this.canvas).off("mouseout", this.onMouseOut);
-        $(this.canvas).off("mousewheel", this.onMouseWheel);
+        _.each(METHODS, function(methodName) {
+            if (methodName in this) {
+                $(this.canvas).off(methodName, this[methodName]);
+            }
+        }, this);
     };
 
     Tool.prototype.toggleState = function() {
@@ -50,21 +61,6 @@ define(function(require) {
         } else {
             this.bind();
         }
-    };
-
-    Tool.prototype.onMouseDown = function() {
-    };
-
-    Tool.prototype.onMouseUp = function() {
-    };
-
-    Tool.prototype.onMouseMove = function() {
-    };
-
-    Tool.prototype.onMouseOut = function() {
-    };
-
-    Tool.prototype.onMouseWheel = function() {
     };
 
     Tool.prototype.draw = function() {

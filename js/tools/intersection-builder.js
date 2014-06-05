@@ -13,7 +13,7 @@ define(function(require) {
 
     ToolIntersectionBuilder.prototype = Object.create(Tool.prototype);
 
-    ToolIntersectionBuilder.prototype.onMouseDown = function(e) {
+    ToolIntersectionBuilder.prototype.mousedown = function(e) {
         this.mouseDownPos = this.getCell(e);
         if (e.shiftKey) {
             var rect = new Rect(this.mouseDownPos.x, this.mouseDownPos.y, 1, 1);
@@ -21,7 +21,7 @@ define(function(require) {
         }
     };
 
-    ToolIntersectionBuilder.prototype.onMouseUp = function() {
+    ToolIntersectionBuilder.prototype.mouseup = function() {
         if (this.tempIntersection) {
             this.visualizer.world.addIntersection(this.tempIntersection);
             this.tempIntersection = null;
@@ -29,14 +29,14 @@ define(function(require) {
         this.mouseDownPos = null;
     };
 
-    ToolIntersectionBuilder.prototype.onMouseMove = function(e) {
+    ToolIntersectionBuilder.prototype.mousemove = function(e) {
         if (this.tempIntersection) {
             this.tempIntersection.rect = this.visualizer.zoomer.getBoundingBox(
                 this.mouseDownPos, this.getCell(e));
         }
     };
 
-    ToolIntersectionBuilder.prototype.onMouseOut = function() {
+    ToolIntersectionBuilder.prototype.mouseout = function() {
         this.tempIntersection = null;
         this.mouseDownPos = null;
     };
