@@ -33,6 +33,7 @@ define(function(require) {
         this.toolHighlighter = new ToolHighlighter(this, true);
         this._running = false;
         this.previousTime = 0;
+        this.timeFactor = 1.0;
     }
 
     Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
@@ -144,7 +145,7 @@ define(function(require) {
             delta = 100;
         }
         this.previousTime = time;
-        this.world.onTick(delta / 1000.0);
+        this.world.onTick(this.timeFactor * delta / 1000.0);
 
         this.graphics.clear(settings.colors.background);
         this.graphics.save();

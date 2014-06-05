@@ -1,4 +1,3 @@
-* [ ] dynamically add/remove cars
 * [ ] draw control signals as arrows
 * [ ] add constant green signal (to measure lane changing model quality)
 * [ ] implement IDM
@@ -6,9 +5,10 @@
 *     [ ] implement methods to measure
 *     [ ] text output
 *     [ ] draw graphs
-* [ ] scale time
-*     [ ] metric units
-*     [ ] implement GUI trackbar
+* [X] dynamically add/remove cars
+* [X] scale time
+*     [X] metric units
+*     [X] implement GUI trackbar
 * [X] implement rules for turns (right -> right, left -> left)
 *     [X] pick lane on the current road to perform turn
 *     [X] choose left/forward/right direction and than pick lane
