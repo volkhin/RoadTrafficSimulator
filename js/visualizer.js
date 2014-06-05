@@ -80,8 +80,6 @@ define(function(require) {
 
         var sourceSide = road.sourceSide, targetSide = road.targetSide;
 
-        var self = this;
-
         // draw the road
         this.graphics.polyline(sourceSide.source, sourceSide.target,
                 targetSide.source, targetSide.target);
