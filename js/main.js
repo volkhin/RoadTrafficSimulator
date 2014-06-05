@@ -4,9 +4,13 @@ require.config({
         "jquery": "../lib/jquery.min",
         "jquery-mousewheel": "../lib/jquery.mousewheel.min",
         "underscore": "../lib/underscore.min",
+        "dat": "../lib/dat-gui",
     },
     shim: {
         "jquery-mousewheel": ["jquery"],
+        "dat": {
+            exports: "dat",
+        },
     },
 });
 

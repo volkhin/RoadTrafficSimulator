@@ -15,7 +15,6 @@ define(function(require) {
         settings = require("settings");
 
     function Visualizer(world) {
-        this.isRunning = false;
         this.world = world;
         this.canvas = $("#canvas")[0];
         this.ctx = this.canvas.getContext("2d");
@@ -160,10 +159,23 @@ define(function(require) {
         this.graphics.restore();
     };
 
+
+    Object.defineProperty(Visualizer.prototype, "running", {
+        get: function() {
+            return this._interval !== null;
+        },
+        set: function(running) {
+            if (running === true) {
+                this.start();
+            } else if (running === false) {
+                this.stop();
+            }
+        },
+    });
+
     Visualizer.prototype.start = function() {
         if (!this._interval) {
             this._interval = setInterval(this.draw.bind(this), 1000 / settings.fps);
-            this.isRunning = true;
         }
     };
 
@@ -171,7 +183,6 @@ define(function(require) {
         if (this._interval) {
             clearInterval(this._interval);
             this._interval = null;
-            this.isRunning = false;
         }
     };
 

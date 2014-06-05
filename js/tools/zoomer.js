@@ -11,7 +11,7 @@ define(function(require) {
         this.defaultZoom = defaultZoom;
         this.width = this.ctx.canvas.width;
         this.height = this.ctx.canvas.height;
-        this.scale = 1.0;
+        this._scale = 1.0;
         this.screenCenter = new Point(this.width / 2, this.height / 2);
         this.center = new Point(this.width / 2, this.height / 2);
     }
@@ -46,11 +46,20 @@ define(function(require) {
         this.ctx.scale(this.defaultZoom, this.defaultZoom);
     };
 
+    Object.defineProperty(Zoomer.prototype, "scale", {
+        get: function() {
+            return this._scale;
+        },
+        set: function(scale) {
+            this.zoom(scale, this.screenCenter);
+        },
+    });
+
     Zoomer.prototype.zoom = function(k, center) {
         k = k || 1.0;
         var offset = this.center.subtract(center);
         this.center = center.add(offset.mult(k / this.scale));
-        this.scale = k;
+        this._scale = k;
     };
 
     Zoomer.prototype.zoomIn = function() {

@@ -10,7 +10,6 @@ define(function(require) {
 
     function World(o) {
         this.set(o);
-        this.isRunning = false;
     }
 
    World.prototype.set = function(o) {
@@ -107,6 +106,18 @@ define(function(require) {
         }
     };
 
+    Object.defineProperty(World.prototype, "carsNumber", {
+        get: function() {
+            return this.cars.length;
+        },
+        set: function(number) {
+            while (this.carsNumber < number) {
+                this.addRandomCar();
+            }
+            // TODO: delete cars
+        },
+    });
+
     World.prototype.removeAllCars = function() {
         // FIXME: actually remove cars
         // this.cars.each(function(index, car) {
@@ -115,10 +126,22 @@ define(function(require) {
         this.cars.clear();
     };
 
+    Object.defineProperty(World.prototype, "running", {
+        get: function() {
+            return this._interval !== null;
+        },
+        set: function(running) {
+            if (running === true) {
+                this.start();
+            } else if (running === false) {
+                this.stop();
+            }
+        },
+    });
+
     World.prototype.start = function() {
         if (!this._interval) {
             this._interval = setInterval(this.onTick.bind(this), 1000 / settings.fps);
-            this.isRunning = true;
         }
     };
 
@@ -126,19 +149,20 @@ define(function(require) {
         if (this._interval) {
             clearInterval(this._interval);
             this._interval = null;
-            this.isRunning = false;
         }
     };
 
-    World.prototype.getInstantSpeed = function() {
-        var speeds = _.map(this.cars.all(), function(car) {
-            return car.speed;
-        });
-        if (speeds.length === 0) {
-            return 0;
-        }
-        return _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
-    };
+    Object.defineProperty(World.prototype, "instantSpeed", {
+        get: function() {
+            var speeds = _.map(this.cars.all(), function(car) {
+                return car.speed;
+            });
+            if (speeds.length === 0) {
+                return 0.0;
+            }
+            return 1.0 * _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
+        },
+    });
 
     return World;
 });
