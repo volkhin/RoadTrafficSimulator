@@ -167,5 +167,17 @@ define(function(require) {
         return this.current.lane;
     };
 
+    Trajectory.prototype.release = function() {
+        if (this.current) {
+            this.current.release();
+        }
+        if (this.next) {
+            this.next.release();
+        }
+        if (this.temp) {
+            this.temp.release();
+        }
+    };
+
     return Trajectory;
 });

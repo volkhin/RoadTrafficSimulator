@@ -31,6 +31,9 @@ define(function() {
     Pool.prototype.pop = function(obj) {
         var id = obj.id || obj;
         var result = this.objects[id];
+        if (typeof result.release === "function") {
+            result.release();
+        }
         delete this.objects[id];
         return result;
     };

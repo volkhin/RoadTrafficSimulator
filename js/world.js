@@ -67,7 +67,7 @@ define(function(require) {
         _.each(this.cars.all(), function(car) {
             car.move(delta);
             if (!car.alive) {
-                this.cars.pop(car.id);
+                this.removeCar(car);
             }
         }, this);
     };
@@ -91,6 +91,10 @@ define(function(require) {
         return this.cars.get(id);
     };
 
+    World.prototype.removeCar = function(car) {
+        this.cars.pop(car);
+    };
+
     World.prototype.addIntersection = function(intersection) {
         this.intersections.put(intersection);
     };
@@ -109,6 +113,11 @@ define(function(require) {
         }
     };
 
+    World.prototype.removeRandomCar = function() {
+        var car = _.sample(this.cars.all());
+        this.removeCar(car);
+    };
+
     Object.defineProperty(World.prototype, "carsNumber", {
         get: function() {
             return this.cars.length;
@@ -117,16 +126,16 @@ define(function(require) {
             while (this.carsNumber < number) {
                 this.addRandomCar();
             }
-            // TODO: delete cars
+            while (this.carsNumber > number) {
+                this.removeRandomCar();
+            }
         },
     });
 
     World.prototype.removeAllCars = function() {
-        // FIXME: actually remove cars
-        // this.cars.each(function(index, car) {
-            // car.moveToLane(null);
-        // });
-        this.cars.clear();
+        while(this.cars.length) {
+            this.removeRandomCar();
+        }
     };
 
     Object.defineProperty(World.prototype, "instantSpeed", {

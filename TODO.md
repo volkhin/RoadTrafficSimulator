@@ -1,3 +1,4 @@
+* [ ] dynamically add/remove cars
 * [ ] draw control signals as arrows
 * [ ] add constant green signal (to measure lane changing model quality)
 * [ ] implement IDM

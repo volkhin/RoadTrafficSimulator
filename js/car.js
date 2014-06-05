@@ -116,5 +116,9 @@ define(function(require) {
         }
     };
 
+    Car.prototype.release = function() {
+        this.trajectory.release();
+    };
+
     return Car;
 });
