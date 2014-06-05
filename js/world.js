@@ -74,12 +74,16 @@ define(function(require) {
 
     World.prototype.refreshCars = function() {
         while (this.cars.length < this.carsNumber) {
-            this.addRandomCar();
+            if (!this.addRandomCar()) {
+                break;
+            }
         }
         while (this.cars.length > this.carsNumber) {
-            this.removeRandomCar();
+            if (!this.removeRandomCar()) {
+                break;
+            }
         }
-    }
+    };
 
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
@@ -130,18 +134,18 @@ define(function(require) {
             if (lane) {
                 this.addCar(new Car(lane));
             }
+            return true;
         }
+        return false;
     };
 
     World.prototype.removeRandomCar = function() {
         var car = _.sample(this.cars.all());
-        this.removeCar(car);
-    };
-
-    World.prototype.removeAllCars = function() {
-        while(this.cars.length) {
-            this.removeRandomCar();
+        if (car) {
+            this.removeCar(car);
+            return true;
         }
+        return false;
     };
 
     Object.defineProperty(World.prototype, "instantSpeed", {
