@@ -12,8 +12,8 @@ define(function(require) {
         this.width = 0.3;
         this.length = 0.7;
         this.safeDistance = 1.5 * this.length;
-        this.maxSpeed = (4 + Math.random()) / 5 / 20; // 0.04 - 0.05
-        this.acceleration = 0.02 / 20;
+        this.maxSpeed = (4 + Math.random())/5 * 4.5;
+        this.acceleration = 1.0;
         this.trajectory = new Trajectory(this, lane, position);
         this.alive = true;
         this.preferedLane = 0;
@@ -58,10 +58,10 @@ define(function(require) {
         },
     });
 
-    Car.prototype.move = function() {
+    Car.prototype.move = function(delta) {
         if (this.trajectory.getDistanceToNextCar() > this.safeDistance) { // FIXME
             // enough room to move forward
-            this.speed += this.acceleration;
+            this.speed += this.acceleration * delta;
         } else {
             this.speed = 0;
         }
@@ -74,7 +74,7 @@ define(function(require) {
                 this.trajectory.changeLaneToRight();
             }
         }
-        this.trajectory.moveForward(this.speed);
+        this.trajectory.moveForward(this.speed * delta);
         if (!this.trajectory.current.lane) {
             this.alive = false;
         }

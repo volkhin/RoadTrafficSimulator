@@ -3,7 +3,8 @@ define(function(require) {
 
     var Visualizer = require("visualizer"),
         DAT = require("dat"),
-        World = require("world");
+        World = require("world"),
+        settings = require("settings");
 
     function App() {
     }
@@ -11,7 +12,6 @@ define(function(require) {
     App.prototype.init = function() {
         this.world = new World();
         this.world.load();
-        this.world.start();
         this.visualizer = new Visualizer(this.world);
         this.visualizer.start();
 
@@ -19,11 +19,11 @@ define(function(require) {
         this.gui.add(this.world, "save");
         this.gui.add(this.world, "load");
         this.gui.add(this.world, "clear");
-        this.gui.add(this.visualizer, "running").name("visualize").listen();
-        this.gui.add(this.world, "running").name("simulate").listen();
+        this.gui.add(this.visualizer, "running").listen();
         this.gui.add(this.visualizer.zoomer, "scale", 0.1, 2).listen();
-        this.gui.add(this.world, "carsNumber").min(0).step(1).listen();
+        this.gui.add(this.world, "carsNumber").min(0).max(100).step(1).listen();
         this.gui.add(this.world, "instantSpeed").step(0.00001).listen();
+        this.gui.add(settings, "fps", 1, 100).listen();
     };
 
     return App;

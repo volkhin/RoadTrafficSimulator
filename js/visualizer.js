@@ -31,6 +31,8 @@ define(function(require) {
         this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
         this.toolRoadbuilder = new ToolRoadBuilder(this, true);
         this.toolHighlighter = new ToolHighlighter(this, true);
+        this._running = false;
+        this.previousTime = 0;
     }
 
     Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
@@ -136,7 +138,14 @@ define(function(require) {
         }
     };
 
-    Visualizer.prototype.draw = function() {
+    Visualizer.prototype.draw = function(time) {
+        var delta = (time - this.previousTime) || 0;
+        if (delta > 100) {
+            delta = 100;
+        }
+        this.previousTime = time;
+        this.world.onTick(delta / 1000.0);
+
         this.graphics.clear(settings.colors.background);
         this.graphics.save();
         this.zoomer.transform();
@@ -157,12 +166,16 @@ define(function(require) {
         this.toolRoadbuilder.draw();
         this.toolHighlighter.draw();
         this.graphics.restore();
+
+        if (this.running) {
+            window.requestAnimationFrame(this.draw.bind(this));
+        }
     };
 
 
     Object.defineProperty(Visualizer.prototype, "running", {
         get: function() {
-            return this._interval !== null;
+            return this._running;
         },
         set: function(running) {
             if (running === true) {
@@ -174,16 +187,14 @@ define(function(require) {
     });
 
     Visualizer.prototype.start = function() {
-        if (!this._interval) {
-            this._interval = setInterval(this.draw.bind(this), 1000 / settings.fps);
+        if (!this._running) {
+            this._running = true;
+            this.draw();
         }
     };
 
     Visualizer.prototype.stop = function() {
-        if (this._interval) {
-            clearInterval(this._interval);
-            this._interval = null;
-        }
+        this._running = false;
     };
 
     return Visualizer;

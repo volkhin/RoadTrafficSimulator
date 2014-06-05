@@ -5,8 +5,7 @@ define(function(require) {
         Car = require("car"),
         Intersection = require("intersection"),
         Road = require("road"),
-        Pool = require("pool"),
-        settings = require("settings");
+        Pool = require("pool");
 
     function World(o) {
         this.set(o);
@@ -57,13 +56,16 @@ define(function(require) {
         this.set({});
     };
 
-    World.prototype.onTick = function() {
+    World.prototype.onTick = function(delta) {
+        if (delta > 1) {
+            throw Error("delta can't be more than 1");
+        }
         this.ticks++;
         _.each(this.intersections.all(), function(intersection) {
             intersection.onTick(this.ticks);
         }, this);
         _.each(this.cars.all(), function(car) {
-            car.move();
+            car.move(delta);
             if (!car.alive) {
                 this.cars.pop(car.id);
             }
@@ -73,6 +75,7 @@ define(function(require) {
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
         road.source.roads.push(road);
+        road.target.inRoads.push(road);
         road.update();
     };
 
@@ -124,32 +127,6 @@ define(function(require) {
             // car.moveToLane(null);
         // });
         this.cars.clear();
-    };
-
-    Object.defineProperty(World.prototype, "running", {
-        get: function() {
-            return this._interval !== null;
-        },
-        set: function(running) {
-            if (running === true) {
-                this.start();
-            } else if (running === false) {
-                this.stop();
-            }
-        },
-    });
-
-    World.prototype.start = function() {
-        if (!this._interval) {
-            this._interval = setInterval(this.onTick.bind(this), 1000 / settings.fps);
-        }
-    };
-
-    World.prototype.stop = function() {
-        if (this._interval) {
-            clearInterval(this._interval);
-            this._interval = null;
-        }
     };
 
     Object.defineProperty(World.prototype, "instantSpeed", {
