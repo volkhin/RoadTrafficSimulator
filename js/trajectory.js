@@ -79,7 +79,9 @@ define(function(require) {
     Trajectory.prototype.moveForward = function(distance) {
         if (this.current.position + this.car.length >= this.current.lane.length &&
                 !this.isChangingLanes) {
-            if (this.canEnterIntersection(this.car.nextLane)) {
+            if (!this.car.nextLane) {
+                this.car.alive = false;
+            } else if (this.canEnterIntersection(this.car.nextLane)) {
                 this.startChangingLanes(this.car.nextLane, 0, true);
             } else {
                 // FIXME: car model should set appropriate acceleration itself

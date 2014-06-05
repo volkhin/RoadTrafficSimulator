@@ -75,9 +75,6 @@ define(function(require) {
             }
         }
         this.trajectory.moveForward(this.speed * delta);
-        if (!this.trajectory.current.lane) {
-            this.alive = false;
-        }
     };
 
     Object.defineProperty(Car.prototype, "direction", {
