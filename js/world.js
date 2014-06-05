@@ -15,10 +15,11 @@ define(function(require) {
         if (o === undefined) {
             o = {};
         }
-        this.intersections= new Pool(Intersection, o.intersections);
+        this.intersections = new Pool(Intersection, o.intersections);
         this.roads = new Pool(Road, o.roads);
         this.cars = new Pool(Car, o.cars);
         this.ticks = o.ticks || 0;
+        this.carsNumber = 0;
         window.__nextId = o.__nextId || 1;
     };
 
@@ -26,7 +27,7 @@ define(function(require) {
         var data = {
             intersections: this.intersections,
             roads: this.roads,
-            __numOfCars: this.cars.length,
+            carsNumber: this.carsNumber,
             __nextId: window.__nextId,
         };
         localStorage.world = JSON.stringify(data);
@@ -38,6 +39,7 @@ define(function(require) {
         if (data) {
             this.clear();
             window.__nextId = data.__nextId || 1;
+            this.carsNumber = data.carsNumber || 0;
             _.each(data.intersections, function(intersection) {
                 intersection = Intersection.copy(intersection);
                 this.addIntersection(intersection);
@@ -46,9 +48,6 @@ define(function(require) {
                 road = Road.copy(road);
                 this.addRoad(road);
             }, this);
-            for (var i = 0; i < data.__numOfCars; i++) {
-                this.addRandomCar();
-            }
         }
     };
 
@@ -61,6 +60,7 @@ define(function(require) {
             throw Error("delta can't be more than 1");
         }
         this.ticks++;
+        this.refreshCars();
         _.each(this.intersections.all(), function(intersection) {
             intersection.onTick(this.ticks);
         }, this);
@@ -71,6 +71,15 @@ define(function(require) {
             }
         }, this);
     };
+
+    World.prototype.refreshCars = function() {
+        while (this.cars.length < this.carsNumber) {
+            this.addRandomCar();
+        }
+        while (this.cars.length > this.carsNumber) {
+            this.removeRandomCar();
+        }
+    }
 
     World.prototype.addRoad = function(road) {
         this.roads.put(road);
@@ -104,7 +113,18 @@ define(function(require) {
     };
 
     World.prototype.addRandomCar = function() {
-        var road = _.sample(this.roads.all());
+        // pick intersection with the only one road
+        var road = null;
+        /* var singleRoadIntersections = _.filter(this.intersections.all(), function(intersection) {
+            return intersection.roads.length === 1;
+        }, this);
+        if (singleRoadIntersections.length) {
+            var intersection = _.sample(singleRoadIntersections);
+            road = intersection.roads[0];
+        } */
+        if (road === null) {
+            road = _.sample(this.roads.all());
+        }
         if (road) {
             var lane = _.sample(road.lanes);
             if (lane) {
@@ -117,20 +137,6 @@ define(function(require) {
         var car = _.sample(this.cars.all());
         this.removeCar(car);
     };
-
-    Object.defineProperty(World.prototype, "carsNumber", {
-        get: function() {
-            return this.cars.length;
-        },
-        set: function(number) {
-            while (this.carsNumber < number) {
-                this.addRandomCar();
-            }
-            while (this.carsNumber > number) {
-                this.removeRandomCar();
-            }
-        },
-    });
 
     World.prototype.removeAllCars = function() {
         while(this.cars.length) {
