@@ -47,29 +47,22 @@ define(function(require) {
         this.graphics.fillRect(rect, color, alpha);
     };
 
-    Visualizer.prototype.drawSignals = function(intersection) {
+    Visualizer.prototype.drawSignals = function(road) {
         // draw control signals
         this.ctx.save();
         var lightsColors = [settings.colors.redLight, settings.colors.greenLight];
-        for (var i = 0; i < intersection.roads.length; i++) {
-            var road = intersection.roads[i];
-            var segment, sideId;
-            if (road.target === intersection) {
-                segment = road.targetSide;
-                sideId = road.targetSideId;
-            } else {
-                segment = road.sourceSide;
-                sideId = road.sourceSideId;
-            }
-            var lights = intersection.state[sideId];
-            this.ctx.lineWidth = 0.1;
-            this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
-            this.graphics.stroke(lightsColors[lights[0]]);
-            this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
-            this.graphics.stroke(lightsColors[lights[1]]);
-            this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
-            this.graphics.stroke(lightsColors[lights[2]]);
-        }
+        var intersection = road.target;
+        var segment = road.targetSide;
+        var sideId = road.targetSideId;
+        var lights = intersection.state[sideId];
+
+        this.ctx.lineWidth = 0.1;
+        this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
+        this.graphics.stroke(lightsColors[lights[0]]);
+        this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
+        this.graphics.stroke(lightsColors[lights[1]]);
+        this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
+        this.graphics.stroke(lightsColors[lights[2]]);
         this.ctx.restore();
     };
 
@@ -154,8 +147,8 @@ define(function(require) {
         _.each(this.world.roads.all(), function(road) {
             self.drawRoad(road, 0.9);
         });
-        _.each(this.world.intersections.all(), function(intersection) {
-            self.drawSignals(intersection);
+        _.each(this.world.roads.all(), function(road) {
+            self.drawSignals(road);
         });
         _.each(this.world.cars.all(), function(car) {
             self.drawCar(car);
