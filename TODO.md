@@ -1,3 +1,4 @@
+* [ ] bind events in onMouseDown event, do not use alt and ctrl
 * [ ] draw control signals as arrows
 * [ ] add constant green signal (to measure lane changing model quality)
 * [ ] implement IDM
