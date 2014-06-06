@@ -61,7 +61,8 @@ define(function(require) {
     Car.prototype.move = function(delta) {
         if (this.trajectory.getDistanceToNextCar() > this.safeDistance) { // FIXME
             // enough room to move forward
-            this.speed += this.acceleration * delta;
+            this.speed += this.acceleration * delta *
+                (1.0 - Math.pow(this.speed / this.maxSpeed, 4));
         } else {
             this.speed = 0;
         }
