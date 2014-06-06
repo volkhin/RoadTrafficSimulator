@@ -89,9 +89,7 @@ define(function(require) {
             previousIntersection = this.trajectory.getPreviousIntersection(),
             currentLane = this.trajectory.current.lane;
         var possibleRoads = intersection.roads.filter(function(x) {
-            // FIXME: only 1 statement is enough
-            return x.target !== previousIntersection &&
-                   x.source !== previousIntersection;
+            return x.target !== previousIntersection;
         });
         if (possibleRoads.length !== 0) {
             var nextRoad = _.sample(possibleRoads);
