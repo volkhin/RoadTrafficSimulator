@@ -36,17 +36,13 @@ define(function(require) {
     this.timeFactor = 1.0;
   }
 
-  Visualizer.prototype.drawIntersection = function(intersection, alpha, forcedColor) {
-    var color = settings.colors.intersection;
-    if (forcedColor) {
-      color = forcedColor;
-    } else if (intersection.color) {
+  Visualizer.prototype.drawIntersection = function(intersection, alpha, color) {
+    if (intersection.color) {
       color = intersection.color;
+    } else {
+      color = settings.colors.intersection;
     }
-    var rect = intersection.rect;
-
-    // draw intersection
-    this.graphics.fillRect(rect, color, alpha);
+    this.graphics.fillRect(intersection.rect, color, alpha);
   };
 
   Visualizer.prototype.drawSignals = function(road) {
@@ -110,10 +106,10 @@ define(function(require) {
   Visualizer.prototype.drawCar = function(car) {
     var angle = car.direction;
     var center = car.coords;
-    var rect = (new Rect(0, 0, 1.1 * car.length, 1.7 * car.width))
-            .setCenter(new Point(0, 0));
-    var boundRect = (new Rect(0, 0, car.length, car.width))
-            .setCenter(new Point(0, 0));
+    var rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
+    rect.center = new Point(0, 0);
+    var boundRect = new Rect(0, 0, car.length, car.width);
+    rect.center = new Point(0, 0);
 
     this.graphics.save();
     this.ctx.translate(center.x, center.y);
@@ -132,9 +128,10 @@ define(function(require) {
     if (box.area >= 2000) {
       return;
     }
-    for (var i = box.getLeft(); i <= box.getRight(); i++) {
-      for (var j = box.getTop(); j <= box.getBottom(); j++) {
-        this.graphics.fillRect(new Rect(i, j, 0.05, 0.05), settings.colors.gridPoint);
+    for (var i = box.left; i <= box.right; i++) {
+      for (var j = box.top; j <= box.bottom; j++) {
+        var rect = new Rect(i, j, 0.05, 0.05);
+        this.graphics.fillRect(rect, settings.colors.gridPoint);
       }
     }
   };

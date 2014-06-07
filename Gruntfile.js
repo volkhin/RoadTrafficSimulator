@@ -74,4 +74,5 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['jshint', 'jasmine']);
   grunt.registerTask('test', ['jshint', 'jasmine']);
+  grunt.registerTask('closure', ['closureLint', 'closureFixStyle']);
 };

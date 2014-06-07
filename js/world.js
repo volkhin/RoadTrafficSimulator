@@ -121,7 +121,8 @@ define(function(require) {
   World.prototype.addRandomCar = function() {
     // pick intersection with the only one road
     var road = null;
-    /* var singleRoadIntersections = _.filter(this.intersections.all(), function(intersection) {
+    /* var singleRoadIntersections = _.filter(this.intersections.all(),
+        function(intersection) {
             return intersection.roads.length === 1;
         }, this);
         if (singleRoadIntersections.length) {
@@ -158,7 +159,7 @@ define(function(require) {
       if (speeds.length === 0) {
         return 0.0;
       }
-      return 1.0 * _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
+      return _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
     }
   });
 

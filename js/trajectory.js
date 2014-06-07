@@ -68,7 +68,8 @@ define(function(require) {
     var intersection = sourceLane.targetIntersection;
     var side1 = sourceLane.targetSideId,
             side2 = nextLane.sourceSideId;
-    var turnNumber = (side2 - side1 - 1 + 4) % 4; // 0 - left, 1 - forward, 2 - right
+    // 0 - left, 1 - forward, 2 - right
+    var turnNumber = (side2 - side1 - 1 + 4) % 4;
     if (side1 === side2) {
       throw Error('No U-turn are allowed');
       // turnNumber = 0; // same as left turn
@@ -124,7 +125,8 @@ define(function(require) {
     }
   };
 
-  Trajectory.prototype.startChangingLanes = function(nextLane, nextPosition, keepOldLine) {
+  Trajectory.prototype.startChangingLanes = function(
+      nextLane, nextPosition, keepOldLine) {
     if (this.isChangingLanes) {
       throw Error('Invalid call order: start/finish changing lanes');
     }
@@ -139,10 +141,11 @@ define(function(require) {
     this.next.lane = nextLane;
     this.next.position = nextPosition;
 
-    var p1 = this.current.lane.getPoint(this.current.position / this.current.lane.length),
-            p2 = this.next.lane.getPoint(this.next.position / this.next.lane.length);
+    var p1 = this.current.lane.getPoint(this.current.relativePosition),
+        p2 = this.next.lane.getPoint(this.next.relativePosition);
     var distance = p2.subtract(p1).length;
-    var control = p1.add(this.current.lane.middleLine.vector.normalize().mult(distance / 2));
+    var direction = this.current.lane.middleLine.vector.normalize();
+    var control = p1.add(direction.mult(distance / 2));
     this.temp.lane = new Curve(p1, p2, control);
     this.temp.position = 0;
     this.next.position -= this.temp.lane.length;

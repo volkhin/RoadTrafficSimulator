@@ -1,6 +1,6 @@
 {
     "maxerr": 30,
-    "maxlen": 100,
+    "maxlen": 80,
     "indent": 4,
     "maxparams": 6,
     "maxdepth": 4,

@@ -29,6 +29,12 @@ define(function() {
     }
   });
 
+  Object.defineProperty(LanePosition.prototype, 'relativePosition', {
+    get: function() {
+      return this.position / this.lane.length;
+    }
+  });
+
   LanePosition.prototype.acquire = function() {
     if (this.lane && this.lane.addCarPosition) {
       this.free = false;

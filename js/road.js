@@ -57,10 +57,12 @@ define(function(require) {
       throw Error('Incomplete road');
     }
 
-    this.sourceSideId = this.source.rect.getSectorId(this.target.rect.getCenter());
-    this.sourceSide = this.source.rect.getSide(this.sourceSideId).subsegment(0.5, 1.0);
-    this.targetSideId = this.target.rect.getSectorId(this.source.rect.getCenter());
-    this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
+    this.sourceSideId = this.source.rect .getSectorId(this.target.rect.center);
+    this.sourceSide = this.source.rect.getSide(this.sourceSideId)
+      .subsegment(0.5, 1.0);
+    this.targetSideId = this.target.rect .getSectorId(this.source.rect.center);
+    this.targetSide = this.target.rect.getSide(this.targetSideId)
+      .subsegment(0, 0.5);
     if (typeof this.lanesNumber === 'undefined') {
       this.lanesNumber = Math.floor(
           Math.min(this.sourceSide.length, this.targetSide.length));

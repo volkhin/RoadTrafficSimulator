@@ -6,9 +6,11 @@ define(function() {
     this.target = target;
   }
 
-  Segment.prototype.getCenter = function() {
-    return this.getPoint(0.5);
-  };
+  Object.defineProperty(Segment.prototype, 'center', {
+    get: function() {
+      return this.getPoint(0.5);
+    }
+  });
 
   Segment.prototype.split = function(n, reverse) {
     var splits = [];

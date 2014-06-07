@@ -36,7 +36,8 @@ define(function(require) {
 
   Object.defineProperty(Car.prototype, 'relativePosition', {
     get: function() {
-      return this.trajectory.current.position / this.trajectory.current.lane.length;
+      var current = this.trajectory.current;
+      return current.position / current.lane.length;
     },
     set: function(relativePosition) {
       this.trajectory.current.position =
@@ -99,7 +100,8 @@ define(function(require) {
 
       var side1 = currentLane.targetSideId,
           side2 = this.nextLane.sourceSideId;
-      this.turnNumber = (side2 - side1 - 1 + 4) % 4; // 0 - left, 1 - forward, 2 - right
+      // 0 - left, 1 - forward, 2 - right
+      this.turnNumber = (side2 - side1 - 1 + 4) % 4;
       if (this.turnNumber === 0) {
         this.preferedLane = currentLane.leftmostAdjacent;
       } else if (this.turnNumber === 2) {

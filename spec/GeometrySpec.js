@@ -54,23 +54,23 @@ define(function(require) {
 
     it('has getters and setters', function() {
       var rect = new Rect(1, 2, 3, 4);
-      expect(rect.getLeft()).toBe(1);
-      expect(rect.getRight()).toBe(4);
-      expect(rect.getTop()).toBe(2);
-      expect(rect.getBottom()).toBe(6);
-      expect(rect.getWidth()).toBe(3);
-      expect(rect.getHeight()).toBe(4);
-      expect(rect.getCenter()).toEqual(new Point(2.5, 4));
+      expect(rect.left).toBe(1);
+      expect(rect.right).toBe(4);
+      expect(rect.top).toBe(2);
+      expect(rect.bottom).toBe(6);
+      expect(rect.width).toBe(3);
+      expect(rect.height).toBe(4);
+      expect(rect.center).toEqual(new Point(2.5, 4));
 
-      rect.setLeft(5);
-      rect.setTop(6);
-      rect.setWidth(7);
-      rect.setHeight(8);
+      rect.left = 5;
+      rect.top = 6;
+      rect.width = 7;
+      rect.height = 8;
 
-      expect(rect.getLeft()).toBe(5);
-      expect(rect.getTop()).toBe(6);
-      expect(rect.getWidth()).toBe(7);
-      expect(rect.getHeight()).toBe(8);
+      expect(rect.left).toBe(5);
+      expect(rect.top).toBe(6);
+      expect(rect.width).toBe(7);
+      expect(rect.height).toBe(8);
     });
 
     it('check if it contains the point', function() {
@@ -92,7 +92,7 @@ define(function(require) {
         new Point(4, 6),
         new Point(1, 6)
       ];
-      expect(rect.getVertices()).toEqual(expected);
+      expect(rect.vertices).toEqual(expected);
     });
 
     it('returns its sides in CW', function() {
@@ -129,7 +129,7 @@ define(function(require) {
 
     it('return center point', function() {
       var segment = new Segment(new Point(1, 2), new Point(3, 4));
-      expect(segment.getCenter()).toEqual(new Point(2, 3));
+      expect(segment.center).toEqual(new Point(2, 3));
     });
 
     it('splits into n parts', function() {

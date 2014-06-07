@@ -31,10 +31,7 @@ define(function(require) {
 
   Object.defineProperty(Lane.prototype, 'middleLine', {
     get: function() {
-      return new Segment(
-          this.sourceSegment.getCenter(),
-          this.targetSegment.getCenter()
-      );
+      return new Segment(this.sourceSegment.center, this.targetSegment.center);
     }
   });
 
