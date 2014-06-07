@@ -1,29 +1,29 @@
 define(function(require) {
-    "use strict";
+  'use strict';
 
-    var Visualizer = require("visualizer"),
-        DAT = require("dat"),
-        World = require("world");
+  var Visualizer = require('visualizer'),
+      DAT = require('dat'),
+      World = require('world');
 
-    function App() {
-    }
+  function App() {
+  }
 
-    App.prototype.init = function() {
-        this.world = new World();
-        this.world.load();
-        this.visualizer = new Visualizer(this.world);
-        this.visualizer.start();
+  App.prototype.init = function() {
+    this.world = new World();
+    this.world.load();
+    this.visualizer = new Visualizer(this.world);
+    this.visualizer.start();
 
-        this.gui = new DAT.GUI();
-        this.gui.add(this.world, "save");
-        this.gui.add(this.world, "load");
-        this.gui.add(this.world, "clear");
-        this.gui.add(this.visualizer, "running").listen();
-        this.gui.add(this.visualizer.zoomer, "scale", 0.1, 2).listen();
-        this.gui.add(this.visualizer, "timeFactor", 0.1, 10).listen();
-        this.gui.add(this.world, "carsNumber").min(0).max(200).step(1).listen();
-        this.gui.add(this.world, "instantSpeed").step(0.00001).listen();
-    };
+    this.gui = new DAT.GUI();
+    this.gui.add(this.world, 'save');
+    this.gui.add(this.world, 'load');
+    this.gui.add(this.world, 'clear');
+    this.gui.add(this.visualizer, 'running').listen();
+    this.gui.add(this.visualizer.zoomer, 'scale', 0.1, 2).listen();
+    this.gui.add(this.visualizer, 'timeFactor', 0.1, 10).listen();
+    this.gui.add(this.world, 'carsNumber').min(0).max(200).step(1).listen();
+    this.gui.add(this.world, 'instantSpeed').step(0.00001).listen();
+  };
 
-    return App;
+  return App;
 });

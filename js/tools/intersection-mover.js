@@ -1,39 +1,39 @@
 define(function(require) {
-    "use strict";
+  'use strict';
 
-    var Tool = require("tools/tool");
+  var Tool = require('tools/tool');
 
-    function ToolIntersectionMover() {
-        Tool.apply(this, arguments);
-        this.intersection = null;
+  function ToolIntersectionMover() {
+    Tool.apply(this, arguments);
+    this.intersection = null;
+  }
+
+  ToolIntersectionMover.prototype = Object.create(Tool.prototype);
+
+  ToolIntersectionMover.prototype.mousedown = function(e) {
+    var intersection = this.getHoveredIntersection(this.getCell(e));
+    if (intersection) {
+      this.intersection = intersection;
+      e.stopImmediatePropagation();
     }
+  };
 
-    ToolIntersectionMover.prototype = Object.create(Tool.prototype);
+  ToolIntersectionMover.prototype.mouseup = function() {
+    this.intersection = null;
+  };
 
-    ToolIntersectionMover.prototype.mousedown = function(e) {
-        var intersection = this.getHoveredIntersection(this.getCell(e));
-        if (intersection) {
-            this.intersection = intersection;
-            e.stopImmediatePropagation();
-        }
-    };
+  ToolIntersectionMover.prototype.mousemove = function(e) {
+    if (this.intersection) {
+      var cell = this.getCell(e);
+      this.intersection.rect.setLeft(cell.x);
+      this.intersection.rect.setTop(cell.y);
+      this.intersection.update(); // FIXME: should be done automatically
+    }
+  };
 
-    ToolIntersectionMover.prototype.mouseup = function() {
-        this.intersection = null;
-    };
+  ToolIntersectionMover.prototype.mouseout = function() {
+    this.intersection = null;
+  };
 
-    ToolIntersectionMover.prototype.mousemove = function(e) {
-        if (this.intersection) {
-            var cell = this.getCell(e);
-            this.intersection.rect.setLeft(cell.x);
-            this.intersection.rect.setTop(cell.y);
-            this.intersection.update(); // FIXME: should be done automatically
-        }
-    };
-
-    ToolIntersectionMover.prototype.mouseout = function() {
-        this.intersection = null;
-    };
-
-    return ToolIntersectionMover;
+  return ToolIntersectionMover;
 });
