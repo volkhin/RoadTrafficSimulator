@@ -16,8 +16,9 @@ define(function(require) {
     ToolRoadBuilder.prototype.mousedown = function(e) {
         var cell = this.getCell(e);
         var hoveredIntersection = this.getHoveredIntersection(cell);
-        if (hoveredIntersection) {
+        if (e.shiftKey && hoveredIntersection) {
             this.sourceIntersection = hoveredIntersection;
+            e.stopImmediatePropagation();
         }
     };
 

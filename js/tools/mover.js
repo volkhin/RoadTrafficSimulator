@@ -15,9 +15,9 @@ define(function(require) {
     };
 
     ToolMover.prototype.mousedown = function(e) {
-        if (e.ctrlKey) {
-            this.startPosition = this.getPoint(e);
-        }
+        console.log("mover");
+        this.startPosition = this.getPoint(e);
+        e.stopImmediatePropagation();
     };
 
     ToolMover.prototype.mouseup = function() {

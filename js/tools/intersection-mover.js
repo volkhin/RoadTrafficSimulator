@@ -11,8 +11,10 @@ define(function(require) {
     ToolIntersectionMover.prototype = Object.create(Tool.prototype);
 
     ToolIntersectionMover.prototype.mousedown = function(e) {
-        if (e.altKey) {
-            this.intersection = this.getHoveredIntersection(this.getCell(e));
+        var intersection = this.getHoveredIntersection(this.getCell(e));
+        if (intersection) {
+            this.intersection = intersection;
+            e.stopImmediatePropagation();
         }
     };
 

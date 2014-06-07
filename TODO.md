@@ -1,4 +1,3 @@
-* [ ] bind events in onMouseDown event, do not use alt and ctrl
 * [ ] draw control signals as arrows
 * [ ] add constant green signal (to measure lane changing model quality)
 * [ ] implement IDM
@@ -6,6 +5,7 @@
 *     [ ] implement methods to measure
 *     [ ] text output
 *     [ ] draw graphs
+* [X] bind events in onMouseDown event, do not use alt and ctrl
 * [X] dynamically add/remove cars
 * [X] scale time
 *     [X] metric units

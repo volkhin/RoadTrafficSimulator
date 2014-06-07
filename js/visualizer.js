@@ -26,11 +26,11 @@ define(function(require) {
 
         this.zoomer = new Zoomer(20, this, true);
         this.graphics = new Graphics(this.ctx);
-        this.toolMover = new ToolMover(this, true);
-        this.toolIntersectionMover = new ToolIntersectionMover(this, true);
-        this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
         this.toolRoadbuilder = new ToolRoadBuilder(this, true);
+        this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
         this.toolHighlighter = new ToolHighlighter(this, true);
+        this.toolIntersectionMover = new ToolIntersectionMover(this, true);
+        this.toolMover = new ToolMover(this, true);
         this._running = false;
         this.previousTime = 0;
         this.timeFactor = 1.0;

@@ -18,6 +18,7 @@ define(function(require) {
         if (e.shiftKey) {
             var rect = new Rect(this.mouseDownPos.x, this.mouseDownPos.y, 1, 1);
             this.tempIntersection = new Intersection(rect);
+            e.stopImmediatePropagation();
         }
     };
 
