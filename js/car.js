@@ -16,7 +16,8 @@ define(function(require) {
     this.acceleration = 1.0;
     this.trajectory = new Trajectory(this, lane, position);
     this.alive = true;
-    this.preferedLane = 0;
+    this.preferedLane = null;
+    this.turnNumber = null;
   }
 
   Object.defineProperty(Car.prototype, 'coords', {
@@ -68,8 +69,8 @@ define(function(require) {
       this.speed = 0;
     }
     if (this.preferedLane &&
-            this.preferedLane !== this.trajectory.current.lane &&
-            !this.trajectory.isChangingLanes) {
+        this.preferedLane !== this.trajectory.current.lane &&
+        !this.trajectory.isChangingLanes) {
       if (this.turnNumber === 0) {
         this.trajectory.changeLaneToLeft();
       } else if (this.turnNumber === 2) {
@@ -86,32 +87,40 @@ define(function(require) {
   });
 
   Car.prototype.pickNextLane = function() {
+    if (this.nextLane) {
+      throw Error('Next lane is alreaddy chosen');
+    }
+
     this.nextLane = null;
     var intersection = this.trajectory.getNextIntersection(),
-            previousIntersection = this.trajectory.getPreviousIntersection(),
-            currentLane = this.trajectory.current.lane;
+        previousIntersection = this.trajectory.getPreviousIntersection(),
+        currentLane = this.trajectory.current.lane;
     var possibleRoads = intersection.roads.filter(function(x) {
       return x.target !== previousIntersection;
     });
-    if (possibleRoads.length !== 0) {
-      var nextRoad = _.sample(possibleRoads);
-      var laneNumber = _.random(0, nextRoad.lanesNumber - 1);
-      this.nextLane = nextRoad.lanes[laneNumber];
 
-      var side1 = currentLane.targetSideId,
-          side2 = this.nextLane.sourceSideId;
-      // 0 - left, 1 - forward, 2 - right
-      this.turnNumber = (side2 - side1 - 1 + 4) % 4;
-      if (this.turnNumber === 0) {
-        this.preferedLane = currentLane.leftmostAdjacent;
-      } else if (this.turnNumber === 2) {
-        this.preferedLane = currentLane.rightAdjacent;
-      } else {
-        this.preferedLane = null;
-      }
-
-      return this.nextLane;
+    if (possibleRoads.length === 0) {
+      return null;
     }
+
+    var nextRoad = _.sample(possibleRoads);
+    var laneNumber = _.random(0, nextRoad.lanesNumber - 1);
+    this.nextLane = nextRoad.lanes[laneNumber];
+
+    if (!this.nextLane) {
+      throw Error('Can not pick next lane!');
+    }
+
+    this.turnNumber = currentLane.getTurnDirection(this.nextLane);
+    if (this.turnNumber === 0) {
+      this.preferedLane = currentLane.leftmostAdjacent;
+    } else if (this.turnNumber === 2) {
+      this.preferedLane = currentLane.rightAdjacent;
+    } else {
+      this.preferedLane = null;
+    }
+
+    return this.nextLane;
   };
 
   Car.prototype.release = function() {

@@ -5,15 +5,14 @@ define(function(require) {
       _ = require('underscore'),
       Segment = require('geometry/segment');
 
-  function Lane(sourceSegment, targetSegment, sourceIntersection,
-      targetIntersection, road) {
+  function Lane(sourceSegment, targetSegment, road) {
     this.sourceSegment = sourceSegment;
     this.targetSegment = targetSegment;
-    this.sourceIntersection = sourceIntersection;
-    this.targetIntersection = targetIntersection;
     this.road = road;
     this.leftAdjacent = null;
     this.rightAdjacent = null;
+    this.leftmostAdjacent = null;
+    this.rightmostAdjacent = null;
     this.carsPositions = {};
   }
 
@@ -46,6 +45,17 @@ define(function(require) {
       return this.road.targetSideId;
     }
   });
+
+  Lane.prototype.getTurnDirection = function(other) {
+    if (this.road.target !== other.road.source) {
+      throw Error('Invalid lanes');
+    }
+    var side1 = this.targetSideId,
+        side2 = other.sourceSideId;
+    // 0 - left, 1 - forward, 2 - right
+    var turnNumber = (side2 - side1 - 1 + 4) % 4;
+    return turnNumber;
+  };
 
   Lane.prototype.getLeftBorder = function() {
     return new Segment(
