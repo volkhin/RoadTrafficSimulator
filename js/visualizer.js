@@ -109,7 +109,7 @@ define(function(require) {
     var rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
     rect.center = new Point(0, 0);
     var boundRect = new Rect(0, 0, car.length, car.width);
-    rect.center = new Point(0, 0);
+    boundRect.center = new Point(0, 0);
 
     this.graphics.save();
     this.ctx.translate(center.x, center.y);

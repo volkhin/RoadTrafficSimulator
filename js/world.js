@@ -1,20 +1,18 @@
 define(function(require) {
   'use strict';
 
-  var _ = require('underscore'),
+  var $ = require('jquery'),
+      _ = require('underscore'),
       Car = require('car'),
       Intersection = require('intersection'),
       Road = require('road'),
       Pool = require('pool');
 
-  function World(o) {
-    this.set(o);
+  function World() {
   }
 
   World.prototype.set = function(o) {
-    if (o === undefined) {
-      o = {};
-    }
+    o = o || {};
     this.intersections = new Pool(Intersection, o.intersections);
     this.roads = new Pool(Road, o.roads);
     this.cars = new Pool(Car, o.cars);
@@ -24,12 +22,9 @@ define(function(require) {
   };
 
   World.prototype.save = function() {
-    var data = {
-      intersections: this.intersections,
-      roads: this.roads,
-      carsNumber: this.carsNumber,
-      __nextId: window.__nextId
-    };
+    var data = $.extend({}, this);
+    data.nextId = window.__nextId;
+    delete data.cars;
     localStorage.world = JSON.stringify(data);
   };
 
@@ -38,7 +33,7 @@ define(function(require) {
     data = data && JSON.parse(data);
     if (data) {
       this.clear();
-      window.__nextId = data.__nextId || 1;
+      window.__nextId = data.nextId || 1;
       this.carsNumber = data.carsNumber || 0;
       _.each(data.intersections, function(intersection) {
         intersection = Intersection.copy(intersection);
