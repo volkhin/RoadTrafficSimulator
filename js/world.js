@@ -46,6 +46,8 @@ define(function(require) {
             }, this);
             _.each(data.roads, function(road) {
                 road = Road.copy(road);
+                road.source = this.getIntersection(road.source);
+                road.target = this.getIntersection(road.target);
                 this.addRoad(road);
             }, this);
         }

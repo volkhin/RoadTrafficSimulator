@@ -1,17 +1,24 @@
 define(function(require) {
     "use strict";
 
-    var Point = require("geometry/point"),
+    var $ = require("jquery"),
+        Point = require("geometry/point"),
         Segment = require("geometry/segment");
 
     function Rect(arg0, arg1, arg2, arg3) {
-        this.position = new Point(arg0, arg1);
+        this.x = arg0;
+        this.y = arg1;
         this.width = arg2 || 0;
         this.height = arg3 || 0;
     }
 
     Rect.copy = function(rect) {
-        return new Rect(rect.position.x, rect.position.y, rect.width, rect.height);
+        return new Rect(rect.x, rect.y, rect.width, rect.height);
+    };
+
+    Rect.prototype.toJSON = function() {
+        var obj = $.extend({}, this);
+        return obj;
     };
 
     Object.defineProperty(Rect.prototype, "area", {
@@ -20,28 +27,27 @@ define(function(require) {
         },
     });
 
-    Rect.prototype.setPosition = function() {
-        var position = Object.create(Point.prototype);
-        Point.apply(position, arguments);
-        this.position = position;
-        return this;
-    };
-
-    Rect.prototype.getPosition = function() {
-        return this.position;
-    };
+    /* Object.defineProperty(Rect.prototype, "position", {
+        get: function() {
+            return new Point(this.x, this.y);
+        },
+        set: function(position) {
+            this.x = position.x;
+            this.y = position.y;
+        },
+    }); */
 
     Rect.prototype.setLeft = function(x) {
-        this.position.x = x;
+        this.x = x;
         return this;
     };
 
     Rect.prototype.getLeft = function() {
-        return this.position.x;
+        return this.x;
     };
 
     Rect.prototype.setRight = function(x) {
-        this.position.x = x - this.getWidth();
+        this.x = x - this.getWidth();
         return this;
     };
 
@@ -50,16 +56,16 @@ define(function(require) {
     };
 
     Rect.prototype.setTop = function(y) {
-        this.position.y = y;
+        this.y = y;
         return this;
     };
 
     Rect.prototype.getTop = function() {
-        return this.position.y;
+        return this.y;
     };
 
     Rect.prototype.setBottom = function(y) {
-        this.position.y = y - this.getHeight();
+        this.y = y - this.getHeight();
         return this;
     };
 
@@ -86,13 +92,13 @@ define(function(require) {
     };
 
     Rect.prototype.setCenter = function(point) {
-        this.position.x = point.x - this.width / 2;
-        this.position.y = point.y - this.height / 2;
+        this.x = point.x - this.width / 2;
+        this.y = point.y - this.height / 2;
         return this;
     };
 
     Rect.prototype.getCenter = function() {
-        return this.position.add(new Point(this.width / 2, this.height/ 2));
+        return new Point(this.x + this.width / 2, this.y + this.height / 2);
     };
 
     Rect.prototype.containsPoint = function(point) {
@@ -115,7 +121,7 @@ define(function(require) {
 
     Rect.prototype.getVertices = function() {
         // returns vertices in CW order starting with the top-left
-        var x = this.position.x, y = this.position.y;
+        var x = this.x, y = this.y;
         return [
             new Point(x, y),
             new Point(x + this.getWidth(), y),

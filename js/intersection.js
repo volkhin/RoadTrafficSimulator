@@ -11,7 +11,6 @@ define(function(require) {
         this.roads = [];
         this.inRoads = [];
         this.stateNum = 0;
-        this.stateNum = 0;
         this.flipInterval = _.random(50, 100);
     }
 
@@ -19,15 +18,14 @@ define(function(require) {
         intersection.rect = Rect.copy(intersection.rect);
         var result = Object.create(Intersection.prototype);
         result = $.extend(result, intersection);
+        result.roads = [];
+        result.inRoads = [];
         return result;
     };
 
     Intersection.prototype.toJSON = function() {
         var obj = $.extend({}, this);
-        obj.roads = [];
-        obj.inRoads = [];
-        delete obj.statesStrings;
-        delete obj.states;
+        obj = _.pick(obj, ["id", "rect", "stateNum", "flipInterval"]);
         return obj;
     };
 

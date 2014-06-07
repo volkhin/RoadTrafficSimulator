@@ -15,7 +15,6 @@ define(function(require) {
     };
 
     ToolMover.prototype.mousedown = function(e) {
-        console.log("mover");
         this.startPosition = this.getPoint(e);
         e.stopImmediatePropagation();
     };

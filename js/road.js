@@ -2,6 +2,7 @@ define(function(require) {
     "use strict";
 
     var $ = require("jquery"),
+        _ = require("underscore"),
         Lane = require("lane");
 
     function Road(source, target) {
@@ -14,22 +15,17 @@ define(function(require) {
     }
 
     Road.copy = function(road) {
-        if (typeof road._source === "number") {
-            road._source = window.app.world.getIntersection(road._source);
-        }
-        if (typeof road._target === "number") {
-            road._target = window.app.world.getIntersection(road._target);
-        }
         var result = Object.create(Road.prototype);
-        return $.extend(result, road);
+        $.extend(result, road);
+        result.lanes = result.lanes || [];
+        return result;
     };
 
     Road.prototype.toJSON = function() {
         var obj = $.extend({}, this);
-        obj._source = obj._source.id;
-        obj._target = obj._target.id;
-        obj.lanes = []; // FIXME
-        delete obj.lanesNumber;
+        obj.source = obj.source.id;
+        obj.target = obj.target.id;
+        obj = _.pick(obj, ["id", "source", "target"]);
         return obj;
     };
 
@@ -41,26 +37,6 @@ define(function(require) {
                 return b.subtract(a).length;
             }
             return NaN;
-        },
-    });
-
-    Object.defineProperty(Road.prototype, "source", {
-        get: function() {
-            return this._source;
-        },
-
-        set: function(source) {
-            this._source = source;
-        },
-    });
-
-    Object.defineProperty(Road.prototype, "target", {
-        get: function() {
-            return this._target;
-        },
-
-        set: function(target) {
-            this._target = target;
         },
     });
 

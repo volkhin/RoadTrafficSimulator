@@ -71,9 +71,6 @@ define(function(require) {
             expect(rect.getTop()).toBe(6);
             expect(rect.getWidth()).toBe(7);
             expect(rect.getHeight()).toBe(8);
-
-            rect.setPosition(new Point(9, 10));
-            expect(rect.getPosition()).toEqual(new Point(9, 10));
         });
 
         it("check if it contains the point", function() {
