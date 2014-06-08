@@ -59,7 +59,7 @@ define(function(require) {
     this.ticks++;
     this.refreshCars();
     _.each(this.intersections.all(), function(intersection) {
-      intersection.onTick(this.ticks);
+      intersection.controlSignals.onTick(delta);
     }, this);
     _.each(this.cars.all(), function(car) {
       car.move(delta);

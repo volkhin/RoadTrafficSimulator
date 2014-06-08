@@ -3,7 +3,8 @@ define(function(require) {
 
   var Visualizer = require('visualizer'),
       DAT = require('dat'),
-      World = require('world');
+      World = require('world'),
+      settings = require('settings');
 
   function App() {
   }
@@ -23,6 +24,7 @@ define(function(require) {
     this.gui.add(this.visualizer, 'timeFactor', 0.1, 10).listen();
     this.gui.add(this.world, 'carsNumber').min(0).max(200).step(1).listen();
     this.gui.add(this.world, 'instantSpeed').step(0.00001).listen();
+    this.gui.add(settings, 'lightsFlipInterval', 0, 10, 0.01).listen();
   };
 
   return App;

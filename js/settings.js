@@ -16,7 +16,8 @@ define(function() {
       grid2: 'rgba(220, 220, 220, 0.5)',
       hoveredGrid: '#f4e8e1'
     },
-    fps: 30
+    fps: 30,
+    lightsFlipInterval: 1
   };
 
   return settings;

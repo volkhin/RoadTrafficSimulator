@@ -52,7 +52,7 @@ define(function(require) {
     var intersection = road.target;
     var segment = road.targetSide;
     var sideId = road.targetSideId;
-    var lights = intersection.state[sideId];
+    var lights = intersection.controlSignals.state[sideId];
 
     this.ctx.lineWidth = 0.1;
     this.graphics.drawSegment(segment.subsegment(0.7, 1.0));

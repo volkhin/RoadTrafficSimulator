@@ -76,7 +76,8 @@ define(function(require) {
     if (turnNumber === 2 && sourceLane !== sourceLane.rightmostAdjacent) {
       throw Error('Right turns are allowed only from the right lane');
     }
-    return intersection.state[sourceLane.road.targetSideId][turnNumber];
+    var sideId = sourceLane.road.targetSideId;
+    return intersection.controlSignals.state[sideId][turnNumber];
   };
 
   Trajectory.prototype.moveForward = function(distance) {

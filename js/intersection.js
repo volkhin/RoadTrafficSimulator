@@ -3,6 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
+      ControlSignals = require('control-signals'),
       Rect = require('geometry/rect');
 
   function Intersection(arg0) {
@@ -10,8 +11,7 @@ define(function(require) {
     this.rect = arg0;
     this.roads = [];
     this.inRoads = [];
-    this.stateNum = 0;
-    this.flipInterval = _.random(50, 100);
+    this.controlSignals = new ControlSignals();
   }
 
   Intersection.copy = function(intersection) {
@@ -20,54 +20,14 @@ define(function(require) {
     result = $.extend(result, intersection);
     result.roads = [];
     result.inRoads = [];
+    result.controlSignals = new ControlSignals();
     return result;
   };
 
   Intersection.prototype.toJSON = function() {
     var obj = $.extend({}, this);
-    obj = _.pick(obj, ['id', 'rect', 'stateNum', 'flipInterval']);
+    obj = _.pick(obj, ['id', 'rect']);
     return obj;
-  };
-
-  Intersection.prototype.states = [
-    ['L', '', 'L', ''],
-    ['FR', '', 'FR', ''],
-    ['', 'L', '', 'L'],
-    ['', 'FR', '', 'FR']
-  ];
-
-  Intersection.STATE = {
-    RED: 0,
-    GREEN: 1
-  };
-
-  Object.defineProperty(Intersection.prototype, 'state', {
-    get: function() {
-      var stringState = this.states[this.stateNum % this.states.length];
-      return _.map(stringState, function(pattern) {
-        var state = [0, 0, 0];
-        if (pattern.indexOf('L') > -1) {
-          state[0] = 1;
-        }
-        if (pattern.indexOf('F') > -1) {
-          state[1] = 1;
-        }
-        if (pattern.indexOf('R') > -1) {
-          state[2] = 1;
-        }
-        return state;
-      });
-    }
-  });
-
-  Intersection.prototype.flip = function() {
-    this.stateNum++;
-  };
-
-  Intersection.prototype.onTick = function(ticks) {
-    if (ticks % this.flipInterval === 0) {
-      this.flip();
-    }
   };
 
   Intersection.prototype.update = function() {
