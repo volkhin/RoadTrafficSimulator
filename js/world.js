@@ -9,6 +9,7 @@ define(function(require) {
       Pool = require('pool');
 
   function World() {
+    this.set({});
   }
 
   World.prototype.set = function(o) {
