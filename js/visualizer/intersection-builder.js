@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var Tool = require('tools/tool'),
+  var Tool = require('visualizer/tool'),
       Intersection = require('intersection'),
       Rect = require('geometry/rect');
 

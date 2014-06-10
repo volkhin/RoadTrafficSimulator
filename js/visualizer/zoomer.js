@@ -3,7 +3,7 @@ define(function(require) {
 
   var Point = require('geometry/point'),
       Rect = require('geometry/rect'),
-      Tool = require('tools/tool');
+      Tool = require('visualizer/tool');
 
   function Zoomer(defaultZoom, visualizer) {
     Tool.apply(this, Array.prototype.slice.call(arguments, 1));

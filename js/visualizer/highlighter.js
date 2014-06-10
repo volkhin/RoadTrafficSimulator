@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var _ = require('underscore'),
-      Tool = require('tools/tool'),
+      Tool = require('visualizer/tool'),
       Rect = require('geometry/rect'),
       settings = require('settings');
 

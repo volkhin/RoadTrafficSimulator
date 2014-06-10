@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var Visualizer = require('visualizer'),
+  var Visualizer = require('visualizer/visualizer'),
       DAT = require('dat'),
       World = require('world'),
       settings = require('settings');

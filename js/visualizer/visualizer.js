@@ -5,13 +5,13 @@ define(function(require) {
       _ = require('underscore'),
       Point = require('geometry/point'),
       Rect = require('geometry/rect'),
-      Graphics = require('graphics'),
-      ToolMover = require('tools/mover'),
-      ToolIntersectionMover = require('tools/intersection-mover'),
-      ToolIntersectionBuilder = require('tools/intersection-builder'),
-      ToolRoadBuilder = require('tools/road-builder'),
-      ToolHighlighter = require('tools/highlighter'),
-      Zoomer = require('tools/zoomer'),
+      Graphics = require('visualizer/graphics'),
+      ToolMover = require('visualizer/mover'),
+      ToolIntersectionMover = require('visualizer/intersection-mover'),
+      ToolIntersectionBuilder = require('visualizer/intersection-builder'),
+      ToolRoadBuilder = require('visualizer/road-builder'),
+      ToolHighlighter = require('visualizer/highlighter'),
+      Zoomer = require('visualizer/zoomer'),
       settings = require('settings');
 
   function Visualizer(world) {

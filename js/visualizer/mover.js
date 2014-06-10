@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var Tool = require('tools/tool');
+  var Tool = require('visualizer/tool');
 
   function ToolMover() {
     Tool.apply(this, arguments);
