@@ -1,7 +1,8 @@
-define(function() {
+(function() {
   'use strict';
+  var settings;
 
-  var settings = {
+  define(settings = {
     colors: {
       background: '#fff',
       redLight: 'hsl(0, 100%, 50%)',
@@ -18,7 +19,6 @@ define(function() {
     },
     fps: 30,
     lightsFlipInterval: 1
-  };
+  });
 
-  return settings;
-});
+}).call(this);
