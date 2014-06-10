@@ -1,39 +1,49 @@
-define(function(require) {
+(function() {
   'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  var Tool = require('visualizer/tool');
+  define(function(require) {
+    var Tool, ToolIntersectionMover;
+    Tool = require('visualizer/tool');
+    return ToolIntersectionMover = (function(_super) {
+      __extends(ToolIntersectionMover, _super);
 
-  function ToolIntersectionMover() {
-    Tool.apply(this, arguments);
-    this.intersection = null;
-  }
+      function ToolIntersectionMover() {
+        ToolIntersectionMover.__super__.constructor.apply(this, arguments);
+        this.intersection = null;
+      }
 
-  ToolIntersectionMover.prototype = Object.create(Tool.prototype);
+      ToolIntersectionMover.prototype.mousedown = function(e) {
+        var intersection;
+        intersection = this.getHoveredIntersection(this.getCell(e));
+        if (intersection) {
+          this.intersection = intersection;
+          return e.stopImmediatePropagation();
+        }
+      };
 
-  ToolIntersectionMover.prototype.mousedown = function(e) {
-    var intersection = this.getHoveredIntersection(this.getCell(e));
-    if (intersection) {
-      this.intersection = intersection;
-      e.stopImmediatePropagation();
-    }
-  };
+      ToolIntersectionMover.prototype.mouseup = function() {
+        return this.intersection = null;
+      };
 
-  ToolIntersectionMover.prototype.mouseup = function() {
-    this.intersection = null;
-  };
+      ToolIntersectionMover.prototype.mousemove = function(e) {
+        var cell;
+        if (this.intersection) {
+          cell = this.getCell(e);
+          this.intersection.rect.left(cell.x);
+          this.intersection.rect.top(cell.y);
+          return this.intersection.update();
+        }
+      };
 
-  ToolIntersectionMover.prototype.mousemove = function(e) {
-    if (this.intersection) {
-      var cell = this.getCell(e);
-      this.intersection.rect.left(cell.x);
-      this.intersection.rect.top(cell.y);
-      this.intersection.update(); // FIXME: should be done automatically
-    }
-  };
+      ToolIntersectionMover.prototype.mouseout = function() {
+        return this.intersection = null;
+      };
 
-  ToolIntersectionMover.prototype.mouseout = function() {
-    this.intersection = null;
-  };
+      return ToolIntersectionMover;
 
-  return ToolIntersectionMover;
-});
+    })(Tool);
+  });
+
+}).call(this);

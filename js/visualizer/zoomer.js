@@ -57,7 +57,7 @@
         y2 = cell2.y;
         _ref = [Math.min(x1, x2), Math.max(x1, x2)], x1 = _ref[0], x2 = _ref[1];
         _ref1 = [Math.min(y1, y2), Math.max(y1, y2)], y1 = _ref1[0], y2 = _ref1[1];
-        return new Rect(x1, y1, x2 - x1, y2 - y1);
+        return new Rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
       };
 
       Zoomer.prototype.transform = function() {

@@ -1,46 +1,51 @@
-define(function(require) {
+(function() {
   'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  var _ = require('underscore'),
-      Tool = require('visualizer/tool'),
-      Rect = require('geom/rect'),
-      settings = require('settings');
+  define(function(require) {
+    var Rect, Tool, ToolHighlighter, settings;
+    Tool = require('visualizer/tool');
+    Rect = require('geom/rect');
+    settings = require('settings');
+    return ToolHighlighter = (function(_super) {
+      __extends(ToolHighlighter, _super);
 
-  function ToolHighlighter() {
-    Tool.apply(this, arguments);
-    this.mousePos = null;
-  }
+      function ToolHighlighter() {
+        ToolHighlighter.__super__.constructor.apply(this, arguments);
+        this.mousePos = null;
+      }
 
-  ToolHighlighter.prototype = Object.create(Tool.prototype);
+      ToolHighlighter.prototype.mousemove = function(e) {
+        var cell, hoveredIntersection, id, intersection, _ref;
+        cell = this.getCell(e);
+        hoveredIntersection = this.getHoveredIntersection(cell);
+        this.mousePos = cell;
+        _ref = this.visualizer.world.intersections.all();
+        for (id in _ref) {
+          intersection = _ref[id];
+          intersection.color = null;
+        }
+        if (hoveredIntersection != null) {
+          return hoveredIntersection.color = settings.colors.hoveredIntersection;
+        }
+      };
 
-  ToolHighlighter.prototype.mousedown = function() {
-  };
+      ToolHighlighter.prototype.mouseout = function() {
+        return this.mousePos = null;
+      };
 
-  ToolHighlighter.prototype.mouseup = function() {
-  };
+      ToolHighlighter.prototype.draw = function() {
+        var cell;
+        if (this.mousePos) {
+          cell = new Rect(this.mousePos.x, this.mousePos.y, 1, 1);
+          return this.visualizer.graphics.fillRect(cell, settings.colors.hoveredGrid, 0.5);
+        }
+      };
 
-  ToolHighlighter.prototype.mousemove = function(e) {
-    var cell = this.getCell(e);
-    var hoveredIntersection = this.getHoveredIntersection(cell);
-    this.mousePos = cell;
-    _.each(this.visualizer.world.intersections.all(), function(intersection) {
-      intersection.color = null;
-    });
-    if (hoveredIntersection) {
-      hoveredIntersection.color = settings.colors.hoveredIntersection;
-    }
-  };
+      return ToolHighlighter;
 
-  ToolHighlighter.prototype.mouseout = function() {
-    this.mousePos = null;
-  };
+    })(Tool);
+  });
 
-  ToolHighlighter.prototype.draw = function() {
-    if (this.mousePos) {
-      var cell = new Rect(this.mousePos.x, this.mousePos.y, 1, 1);
-      this.visualizer.graphics.fillRect(cell, settings.colors.hoveredGrid, 0.5);
-    }
-  };
-
-  return ToolHighlighter;
-});
+}).call(this);

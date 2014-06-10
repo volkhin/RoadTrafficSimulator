@@ -34,7 +34,7 @@ define (require) ->
       y2 = cell2.y
       [x1, x2] = [Math.min(x1, x2), Math.max(x1, x2)]
       [y1, y2] = [Math.min(y1, y2), Math.max(y1, y2)]
-      new Rect x1, y1, x2-x1, y2-y1
+      new Rect x1, y1, x2-x1+1, y2-y1+1
 
     transform: ->
       @ctx.translate @center.x, @center.y

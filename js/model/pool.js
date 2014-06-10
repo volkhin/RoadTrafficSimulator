@@ -1,56 +1,61 @@
-define(function() {
+(function() {
   'use strict';
-
-  function Pool(factory, pool) {
-    this.factory = factory;
-    this.objects = {};
-    pool = pool || {};
-    pool.objects = pool.objects || {};
-    for (var key in pool.objects) {
-      if (pool.objects.hasOwnProperty(key)) {
-        this.objects[key] = factory.copy(pool.objects[key]);
+  define(function() {
+    var Pool;
+    return Pool = (function() {
+      function Pool(factory, pool) {
+        var k, v, _ref;
+        this.factory = factory;
+        this.objects = {};
+        if ((pool != null) && (pool.objects != null)) {
+          _ref = pool.objects;
+          for (k in _ref) {
+            v = _ref[k];
+            this.objects[k] = this.factory.copy(v);
+          }
+        }
       }
-    }
-  }
 
-  Pool.prototype.toJSON = function() {
-    return this.objects;
-  };
+      Pool.prototype.toJSON = function() {
+        return this.objects;
+      };
 
-  Pool.prototype.get = function(id) {
-    return this.objects[id];
-  };
+      Pool.prototype.get = function(id) {
+        return this.objects[id];
+      };
 
-  Pool.prototype.put = function(obj) {
-    if (!obj instanceof Object) {
-      throw Error(obj + ' is not an object!');
-    }
-    this.objects[obj.id] = obj;
-  };
+      Pool.prototype.put = function(obj) {
+        return this.objects[obj.id] = obj;
+      };
 
-  Pool.prototype.pop = function(obj) {
-    var id = obj.id || obj;
-    var result = this.objects[id];
-    if (typeof result.release === 'function') {
-      result.release();
-    }
-    delete this.objects[id];
-    return result;
-  };
+      Pool.prototype.pop = function(obj) {
+        var id, result, _ref;
+        id = (_ref = obj.id) != null ? _ref : obj;
+        result = this.objects[id];
+        if (typeof result.release === 'function') {
+          result.release();
+        }
+        delete this.objects[id];
+        return result;
+      };
 
-  Pool.prototype.all = function() {
-    return this.objects;
-  };
+      Pool.prototype.all = function() {
+        return this.objects;
+      };
 
-  Pool.prototype.clear = function() {
-    this.objects = {};
-  };
+      Pool.prototype.clear = function() {
+        return this.objects = {};
+      };
 
-  Object.defineProperty(Pool.prototype, 'length', {
-    get: function() {
-      return Object.keys(this.objects).length;
-    }
+      Pool.property('length', {
+        get: function() {
+          return Object.keys(this.objects).length;
+        }
+      });
+
+      return Pool;
+
+    })();
   });
 
-  return Pool;
-});
+}).call(this);

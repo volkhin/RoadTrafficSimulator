@@ -5,8 +5,8 @@ define (require) ->
   Road = require 'model/road'
 
   class ToolRoadBuilder extends Tool
-    constructor: (args...) ->
-      super args...
+    constructor: ->
+      super arguments...
       @sourceIntersection = null
       @road = null
       @dualRoad = null

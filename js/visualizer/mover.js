@@ -1,39 +1,48 @@
-define(function(require) {
+(function() {
   'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  var Tool = require('visualizer/tool');
+  define(function(require) {
+    var Mover, Tool;
+    Tool = require('visualizer/tool');
+    return Mover = (function(_super) {
+      __extends(Mover, _super);
 
-  function ToolMover() {
-    Tool.apply(this, arguments);
-    this.startPosition = null;
-  }
+      function Mover() {
+        Mover.__super__.constructor.apply(this, arguments);
+        this.startPosition = null;
+      }
 
-  ToolMover.prototype = Object.create(Tool.prototype);
+      Mover.prototype.contextmenu = function() {
+        return false;
+      };
 
-  ToolMover.prototype.contextmenu = function() {
-    return false;
-  };
+      Mover.prototype.mousedown = function(e) {
+        this.startPosition = this.getPoint(e);
+        return e.stopImmediatePropagation();
+      };
 
-  ToolMover.prototype.mousedown = function(e) {
-    this.startPosition = this.getPoint(e);
-    e.stopImmediatePropagation();
-  };
+      Mover.prototype.mouseup = function() {
+        return this.startPosition = null;
+      };
 
-  ToolMover.prototype.mouseup = function() {
-    this.startPosition = null;
-  };
+      Mover.prototype.mousemove = function(e) {
+        var offset;
+        if (this.startPosition) {
+          offset = this.getPoint(e).subtract(this.startPosition);
+          this.visualizer.zoomer.moveCenter(offset);
+          return this.startPosition = this.getPoint(e);
+        }
+      };
 
-  ToolMover.prototype.mousemove = function(e) {
-    if (this.startPosition) {
-      var offset = this.getPoint(e).subtract(this.startPosition);
-      this.visualizer.zoomer.moveCenter(offset);
-      this.startPosition = this.getPoint(e);
-    }
-  };
+      Mover.prototype.mouseout = function() {
+        return this.startPosition = null;
+      };
 
-  ToolMover.prototype.mouseout = function() {
-    this.startPosition = null;
-  };
+      return Mover;
 
-  return ToolMover;
-});
+    })(Tool);
+  });
+
+}).call(this);

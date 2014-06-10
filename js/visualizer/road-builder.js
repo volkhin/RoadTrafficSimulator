@@ -1,8 +1,7 @@
 (function() {
   'use strict';
   var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(function(require) {
     var Road, Tool, ToolRoadBuilder;
@@ -12,9 +11,7 @@
       __extends(ToolRoadBuilder, _super);
 
       function ToolRoadBuilder() {
-        var args;
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        ToolRoadBuilder.__super__.constructor.apply(this, args);
+        ToolRoadBuilder.__super__.constructor.apply(this, arguments);
         this.sourceIntersection = null;
         this.road = null;
         this.dualRoad = null;
