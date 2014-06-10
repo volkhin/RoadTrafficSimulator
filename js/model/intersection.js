@@ -4,7 +4,7 @@ define(function(require) {
   var $ = require('jquery'),
       _ = require('underscore'),
       ControlSignals = require('model/control-signals'),
-      Rect = require('geometry/rect');
+      Rect = require('geom/rect');
 
   function Intersection(arg0) {
     this.id = window.__nextId++;

@@ -3,7 +3,7 @@ define(function(require) {
 
   var Tool = require('visualizer/tool'),
       Intersection = require('model/intersection'), // TODO: decouple
-      Rect = require('geometry/rect');
+      Rect = require('geom/rect');
 
   function ToolIntersectionBuilder() {
     Tool.apply(this, arguments);

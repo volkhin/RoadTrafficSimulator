@@ -4,7 +4,7 @@ define(function(require) {
   var $ = require('jquery'),
       _ = require('underscore'),
       Point = require('geom/point'),
-      Rect = require('geometry/rect');
+      Rect = require('geom/rect');
   require('jquery-mousewheel');
 
   var METHODS = [

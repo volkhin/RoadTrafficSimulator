@@ -3,7 +3,7 @@ define(function(require) {
 
   var _ = require('underscore'),
       Tool = require('visualizer/tool'),
-      Rect = require('geometry/rect'),
+      Rect = require('geom/rect'),
       settings = require('settings');
 
   function ToolHighlighter() {

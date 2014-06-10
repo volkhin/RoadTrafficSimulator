@@ -4,7 +4,7 @@ define(function(require) {
   var $ = require('jquery'),
       _ = require('underscore'),
       Point = require('geom/point'),
-      Rect = require('geometry/rect'),
+      Rect = require('geom/rect'),
       Graphics = require('visualizer/graphics'),
       ToolMover = require('visualizer/mover'),
       ToolIntersectionMover = require('visualizer/intersection-mover'),
@@ -108,9 +108,9 @@ define(function(require) {
     var angle = car.direction();
     var center = car.coords;
     var rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
-    rect.center = new Point(0, 0);
+    rect.center(new Point(0, 0))
     var boundRect = new Rect(0, 0, car.length, car.width);
-    boundRect.center = new Point(0, 0);
+    boundRect.center(new Point(0, 0))
 
     this.graphics.save();
     this.ctx.translate(center.x, center.y);
@@ -126,10 +126,10 @@ define(function(require) {
 
   Visualizer.prototype.drawGrid = function() {
     var box = this.zoomer.getBoundingBox();
-    if (box.area >= 2000) {
+    if (box.area() >= 2000) {
       return;
     }
-    for (var i = box.left; i <= box.right; i++) {
+    for (var i = box.left; i <= box.left + box.width; i++) {
       for (var j = box.top; j <= box.bottom; j++) {
         var rect = new Rect(i, j, 0.05, 0.05);
         this.graphics.fillRect(rect, settings.colors.gridPoint);

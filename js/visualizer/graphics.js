@@ -13,12 +13,12 @@ define(function() {
     if (alpha) {
       this.ctx.globalAlpha = alpha;
     }
-    this.ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+    this.ctx.fillRect(rect.left(), rect.top(), rect.width(), rect.height());
     this.ctx.globalAlpha = oldAlpha;
   };
 
   Graphics.prototype.drawImage = function(image, rect) {
-    this.ctx.drawImage(image, rect.left, rect.top, rect.width, rect.height);
+    this.ctx.drawImage(image, rect.left(), rect.top(), rect.width(), rect.height());
   };
 
   Graphics.prototype.clear = function(color) {

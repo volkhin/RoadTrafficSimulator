@@ -3,7 +3,7 @@ define(function(require) {
   'use strict';
 
   var Point = require('geom/point'),
-      Rect = require('geometry/rect'),
+      Rect = require('geom/rect'),
       Segment = require('geom/segment');
 
   describe('Point', function() {
@@ -47,23 +47,23 @@ define(function(require) {
 
     it('has getters and setters', function() {
       var rect = new Rect(1, 2, 3, 4);
-      expect(rect.left).toBe(1);
-      expect(rect.right).toBe(4);
-      expect(rect.top).toBe(2);
-      expect(rect.bottom).toBe(6);
-      expect(rect.width).toBe(3);
-      expect(rect.height).toBe(4);
-      expect(rect.center).toEqual(new Point(2.5, 4));
+      expect(rect.left()).toBe(1);
+      expect(rect.right()).toBe(4);
+      expect(rect.top()).toBe(2);
+      expect(rect.bottom()).toBe(6);
+      expect(rect.width()).toBe(3);
+      expect(rect.height()).toBe(4);
+      expect(rect.center()).toEqual(new Point(2.5, 4));
 
-      rect.left = 5;
-      rect.top = 6;
-      rect.width = 7;
-      rect.height = 8;
+      rect.left(5)
+      rect.top(6);
+      rect.width(7);
+      rect.height(8);
 
-      expect(rect.left).toBe(5);
-      expect(rect.top).toBe(6);
-      expect(rect.width).toBe(7);
-      expect(rect.height).toBe(8);
+      expect(rect.left()).toBe(5);
+      expect(rect.top()).toBe(6);
+      expect(rect.width()).toBe(7);
+      expect(rect.height()).toBe(8);
     });
 
     it('check if it contains the point', function() {
@@ -85,7 +85,7 @@ define(function(require) {
         new Point(4, 6),
         new Point(1, 6)
       ];
-      expect(rect.vertices).toEqual(expected);
+      expect(rect.getVertices()).toEqual(expected);
     });
 
     it('returns its sides in CW', function() {

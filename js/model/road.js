@@ -57,10 +57,10 @@ define(function(require) {
       throw Error('Incomplete road');
     }
 
-    this.sourceSideId = this.source.rect.getSectorId(this.target.rect.center);
+    this.sourceSideId = this.source.rect.getSectorId(this.target.rect.center());
     this.sourceSide = this.source.rect.getSide(this.sourceSideId)
       .subsegment(0.5, 1.0);
-    this.targetSideId = this.target.rect .getSectorId(this.source.rect.center);
+    this.targetSideId = this.target.rect .getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId)
       .subsegment(0, 0.5);
     if (!this.lanesNumber) {
@@ -68,7 +68,7 @@ define(function(require) {
           Math.min(this.sourceSide.length(), this.targetSide.length()));
     }
     var sourceSplits = this.sourceSide.split(this.lanesNumber, true),
-            targetSplits = this.targetSide.split(this.lanesNumber);
+        targetSplits = this.targetSide.split(this.lanesNumber);
 
     var i;
     if (!this.lanes || this.lanes.length < this.lanesNumber) {

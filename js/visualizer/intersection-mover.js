@@ -25,8 +25,8 @@ define(function(require) {
   ToolIntersectionMover.prototype.mousemove = function(e) {
     if (this.intersection) {
       var cell = this.getCell(e);
-      this.intersection.rect.left = cell.x;
-      this.intersection.rect.top = cell.y;
+      this.intersection.rect.left(cell.x);
+      this.intersection.rect.top(cell.y);
       this.intersection.update(); // FIXME: should be done automatically
     }
   };

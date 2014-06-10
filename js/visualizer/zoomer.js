@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var Point = require('geom/point'),
-      Rect = require('geometry/rect'),
+      Rect = require('geom/rect'),
       Tool = require('visualizer/tool');
 
   function Zoomer(defaultZoom, visualizer) {
