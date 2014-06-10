@@ -80,11 +80,9 @@ define(function(require) {
     this.trajectory.moveForward(this.speed * delta);
   };
 
-  Object.defineProperty(Car.prototype, 'direction', {
-    get: function() {
-      return this.trajectory.direction;
-    }
-  });
+  Car.prototype.direction = function() {
+    return this.trajectory.direction;
+  };
 
   Car.prototype.pickNextLane = function() {
     if (this.nextLane) {

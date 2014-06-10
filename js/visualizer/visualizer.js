@@ -105,7 +105,7 @@ define(function(require) {
   };
 
   Visualizer.prototype.drawCar = function(car) {
-    var angle = car.direction;
+    var angle = car.direction();
     var center = car.coords;
     var rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
     rect.center = new Point(0, 0);

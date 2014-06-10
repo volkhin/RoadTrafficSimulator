@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var Segment = require('geometry/segment');
+  var Segment = require('geom/segment');
 
   function Curve(source, target, controlPoint) {
     this.A = source;
@@ -15,10 +15,10 @@ define(function(require) {
   Object.defineProperty(Curve.prototype, 'length', {
     get: function() {
       if (!this.O) {
-        return this.AB.length;
+        return this.AB.length();
       }
       // FIXME: it's not the real length
-      return this.AB.length;
+      return this.AB.length();
     }
   });
 
@@ -33,11 +33,11 @@ define(function(require) {
 
   Curve.prototype.getDirection = function(a) {
     if (!this.O) {
-      return this.AB.direction;
+      return this.AB.direction();
     }
     var p0 = this.AO.getPoint(a),
             p1 = this.OB.getPoint(a);
-    return (new Segment(p0, p1)).direction;
+    return (new Segment(p0, p1)).direction();
   };
 
   return Curve;

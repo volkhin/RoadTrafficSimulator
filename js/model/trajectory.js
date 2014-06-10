@@ -154,8 +154,8 @@ define(function(require) {
 
     var p1 = this.current.lane.getPoint(this.current.relativePosition),
         p2 = this.next.lane.getPoint(this.next.relativePosition);
-    var distance = p2.subtract(p1).length;
-    var direction = this.current.lane.middleLine.vector.normalize();
+    var distance = p2.subtract(p1).length();
+    var direction = this.current.lane.middleLine.vector().normalize();
     var control = p1.add(direction.mult(distance / 2));
     this.temp.lane = new Curve(p1, p2, control);
     this.temp.position = 0;

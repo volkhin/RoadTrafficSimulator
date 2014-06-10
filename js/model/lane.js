@@ -3,7 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
-      Segment = require('geometry/segment');
+      Segment = require('geom/segment');
 
   function Lane(sourceSegment, targetSegment, road) {
     this.sourceSegment = sourceSegment;
@@ -24,13 +24,13 @@ define(function(require) {
 
   Object.defineProperty(Lane.prototype, 'length', {
     get: function() {
-      return this.middleLine.length;
+      return this.middleLine.length();
     }
   });
 
   Object.defineProperty(Lane.prototype, 'middleLine', {
     get: function() {
-      return new Segment(this.sourceSegment.center, this.targetSegment.center);
+      return new Segment(this.sourceSegment.center(), this.targetSegment.center());
     }
   });
 
@@ -72,7 +72,7 @@ define(function(require) {
   };
 
   Lane.prototype.getDirection = function() {
-    return this.middleLine.direction;
+    return this.middleLine.direction();
   };
 
   Lane.prototype.getPoint = function(a) {

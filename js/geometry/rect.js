@@ -3,7 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       Point = require('geom/point'),
-      Segment = require('geometry/segment');
+      Segment = require('geom/segment');
 
   function Rect(arg0, arg1, arg2, arg3) {
     this.x = arg0;
