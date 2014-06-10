@@ -5720,7 +5720,6 @@ require.config({
 
 require(['jquery', 'app'], function($, App) {
   
-
   $(document).ready(function() {
     window.app = new App();
     window.app.init();

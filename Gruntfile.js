@@ -2,7 +2,7 @@
 module.exports = function(grunt) {
   'use strict';
 
-  var sources = ['*.js', 'js/**/*.js', 'spec/**/*.js'];
+  var sources = ['Gruntfile.js', 'js/**/*.js', 'spec/**/*.js'];
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: sources,
+        files: sources.concat(['coffee/**/*.coffee']),
         tasks: ['default'],
         options: {
           spawn: false
@@ -62,6 +62,19 @@ module.exports = function(grunt) {
         src: sources,
         command: 'fixjsstyle'
       }
+    },
+    coffee: {
+      compile: {
+        expand: true,
+        flatten: false,
+        cwd: 'coffee',
+        dest: 'js',
+        src: ['**/*.coffee'],
+        ext: '.js'
+      }
+    },
+    coffeelint: {
+      app: 'coffee/**/*.coffee'
     }
   });
 
@@ -69,9 +82,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-closure-linter');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-coffeelint');
 
-  grunt.registerTask('default', ['jshint', 'jasmine', 'requirejs']);
+  grunt.registerTask('default', ['coffeelint', 'coffee', 'jasmine']);
   grunt.registerTask('test', ['jshint', 'jasmine']);
   grunt.registerTask('closure', ['closureLint', 'closureFixStyle']);
 };

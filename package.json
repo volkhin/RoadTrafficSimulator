@@ -10,7 +10,11 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "coffee-script": "^1.7.1",
     "grunt-closure-linter": "^0.1.4",
+    "grunt-coffeelint": "0.0.10",
+    "grunt-contrib-coffee": "^0.10.1",
+    "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-jasmine": "<0.6",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
