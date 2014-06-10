@@ -3,7 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
-      ControlSignals = require('control-signals'),
+      ControlSignals = require('model/control-signals'),
       Rect = require('geometry/rect');
 
   function Intersection(arg0) {

@@ -3,7 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
-      Lane = require('lane');
+      Lane = require('model/lane');
 
   function Road(source, target) {
     this.id = window.__nextId++;

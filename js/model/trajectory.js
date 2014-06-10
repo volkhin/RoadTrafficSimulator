@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var LanePosition = require('lane-position'),
+  var LanePosition = require('model/lane-position'),
       Curve = require('geometry/curve');
 
   function Trajectory(car, lane, position) {

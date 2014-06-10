@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var Tool = require('visualizer/tool'),
-      Intersection = require('intersection'),
+      Intersection = require('model/intersection'), // TODO: decouple
       Rect = require('geometry/rect');
 
   function ToolIntersectionBuilder() {

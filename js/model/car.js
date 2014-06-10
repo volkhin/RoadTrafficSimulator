@@ -3,7 +3,7 @@ define(function(require) {
 
   var _ = require('underscore');
 
-  var Trajectory = require('trajectory');
+  var Trajectory = require('model/trajectory');
 
   function Car(lane, position) {
     this.id = window.__nextId++;

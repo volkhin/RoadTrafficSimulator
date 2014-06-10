@@ -16,7 +16,8 @@ define(function(require) {
 
   function Visualizer(world) {
     this.world = world;
-    this.canvas = $('#canvas')[0];
+    this.$canvas = $('#canvas');
+    this.canvas = this.$canvas[0];
     this.ctx = this.canvas.getContext('2d');
     this.width = this.canvas.width;
     this.height = this.canvas.height;

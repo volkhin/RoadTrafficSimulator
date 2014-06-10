@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var Tool = require('visualizer/tool'),
-      Road = require('road');
+      Road = require('model/road'); // TODO: decouple
 
   function ToolRoadBuilder() {
     Tool.apply(this, arguments);

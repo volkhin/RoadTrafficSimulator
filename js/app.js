@@ -3,7 +3,7 @@ define(function(require) {
 
   var Visualizer = require('visualizer/visualizer'),
       DAT = require('dat'),
-      World = require('world'),
+      World = require('model/world'),
       settings = require('settings');
 
   function App() {

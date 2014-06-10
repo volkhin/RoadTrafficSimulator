@@ -3,10 +3,10 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
-      Car = require('car'),
-      Intersection = require('intersection'),
-      Road = require('road'),
-      Pool = require('pool');
+      Car = require('model/car'),
+      Intersection = require('model/intersection'),
+      Road = require('model/road'),
+      Pool = require('model/pool');
 
   function World() {
     this.set({});
