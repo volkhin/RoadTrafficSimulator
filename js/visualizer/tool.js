@@ -3,7 +3,7 @@ define(function(require) {
 
   var $ = require('jquery'),
       _ = require('underscore'),
-      Point = require('geometry/point'),
+      Point = require('geom/point'),
       Rect = require('geometry/rect');
   require('jquery-mousewheel');
 

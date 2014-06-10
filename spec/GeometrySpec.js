@@ -2,7 +2,7 @@
 define(function(require) {
   'use strict';
 
-  var Point = require('geometry/point'),
+  var Point = require('geom/point'),
       Rect = require('geometry/rect'),
       Segment = require('geometry/segment');
 
@@ -11,13 +11,6 @@ define(function(require) {
       var point = new Point(1, 2);
       expect(point.x).toBe(1);
       expect(point.y).toBe(2);
-    });
-
-    it('can be constructed from another point', function() {
-      var point = new Point(23, 231);
-      var secondPoint = new Point(point);
-      expect(secondPoint.x).toBe(23);
-      expect(secondPoint.y).toBe(231);
     });
 
     xit('throws an error on wrong arguments in constructor', function() {

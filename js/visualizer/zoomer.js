@@ -1,7 +1,7 @@
 define(function(require) {
   'use strict';
 
-  var Point = require('geometry/point'),
+  var Point = require('geom/point'),
       Rect = require('geometry/rect'),
       Tool = require('visualizer/tool');
 

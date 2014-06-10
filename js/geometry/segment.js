@@ -29,13 +29,13 @@ define(function() {
 
   Object.defineProperty(Segment.prototype, 'length', {
     get: function() {
-      return this.vector.length;
+      return this.vector.length();
     }
   });
 
   Object.defineProperty(Segment.prototype, 'direction', {
     get: function() {
-      return this.vector.direction;
+      return this.vector.direction();
     }
   });
 

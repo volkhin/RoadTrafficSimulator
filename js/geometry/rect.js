@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var $ = require('jquery'),
-      Point = require('geometry/point'),
+      Point = require('geom/point'),
       Segment = require('geometry/segment');
 
   function Rect(arg0, arg1, arg2, arg3) {
