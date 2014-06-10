@@ -1,6 +1,7 @@
 'use strict'
 
 define (require) ->
+  require 'helpers'
   Visualizer = require 'visualizer/visualizer'
   DAT = require 'dat'
   World = require 'model/world'

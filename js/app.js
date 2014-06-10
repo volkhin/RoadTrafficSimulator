@@ -2,6 +2,7 @@
   'use strict';
   define(function(require) {
     var App, DAT, Visualizer, World, settings;
+    require('helpers');
     Visualizer = require('visualizer/visualizer');
     DAT = require('dat');
     World = require('model/world');

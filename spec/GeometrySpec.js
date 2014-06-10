@@ -2,6 +2,7 @@
 define(function(require) {
   'use strict';
 
+  require('helpers');
   var Point = require('geom/point'),
       Rect = require('geom/rect'),
       Segment = require('geom/segment');

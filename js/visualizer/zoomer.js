@@ -1,89 +1,97 @@
-define(function(require) {
+(function() {
   'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
-  var Point = require('geom/point'),
-      Rect = require('geom/rect'),
-      Tool = require('visualizer/tool');
+  define(function(require) {
+    var Point, Rect, Tool, Zoomer;
+    Point = require('geom/point');
+    Rect = require('geom/rect');
+    Tool = require('visualizer/tool');
+    return Zoomer = (function(_super) {
+      __extends(Zoomer, _super);
 
-  function Zoomer(defaultZoom, visualizer) {
-    Tool.apply(this, Array.prototype.slice.call(arguments, 1));
-    this.ctx = visualizer.ctx;
-    this.defaultZoom = defaultZoom;
-    this.width = this.ctx.canvas.width;
-    this.height = this.ctx.canvas.height;
-    this._scale = 1.0;
-    this.screenCenter = new Point(this.width / 2, this.height / 2);
-    this.center = new Point(this.width / 2, this.height / 2);
-  }
+      function Zoomer() {
+        var args, defaultZoom, visualizer;
+        defaultZoom = arguments[0], visualizer = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+        this.defaultZoom = defaultZoom;
+        this.visualizer = visualizer;
+        Zoomer.__super__.constructor.apply(this, [this.visualizer].concat(__slice.call(args)));
+        this.ctx = this.visualizer.ctx;
+        this.width = this.ctx.canvas.width;
+        this.height = this.ctx.canvas.height;
+        this._scale = 1;
+        this.screenCenter = new Point(this.width / 2, this.height / 2);
+        this.center = new Point(this.width / 2, this.height / 2);
+      }
 
-  Zoomer.prototype = Object.create(Tool.prototype);
+      Zoomer.property('scale', {
+        get: function() {
+          return this._scale;
+        },
+        set: function(scale) {
+          return this.zoom(scale, this.screenCenter);
+        }
+      });
 
-  Zoomer.prototype.toCellCoords = function(point) {
-    var centerOffset = point.subtract(this.center);
-    var scaledOffset = centerOffset.divide(this.scale);
-    var result = new Point(
-        Math.floor(scaledOffset.x / this.defaultZoom),
-        Math.floor(scaledOffset.y / this.defaultZoom)
-        );
-    return result;
-  };
+      Zoomer.prototype.toCellCoords = function(point) {
+        var centerOffset, x, y;
+        centerOffset = point.subtract(this.center).divide(this.scale);
+        x = Math.floor(centerOffset.x / this.defaultZoom);
+        y = Math.floor(centerOffset.y / this.defaultZoom);
+        return new Point(x, y);
+      };
 
-  Zoomer.prototype.getBoundingBox = function(cell1, cell2) {
-    cell1 = cell1 || this.toCellCoords(new Point(0, 0));
-    cell2 = cell2 || this.toCellCoords(new Point(this.width, this.height));
-    var x1 = cell1.x, y1 = cell1.y,
-            x2 = cell2.x, y2 = cell2.y;
-    var left = Math.min(x1, x2),
-            right = Math.max(x1, x2) + 1,
-            top = Math.min(y1, y2),
-            bottom = Math.max(y1, y2) + 1;
-    return new Rect(left, top, right - left, bottom - top);
-  };
+      Zoomer.prototype.getBoundingBox = function(cell1, cell2) {
+        var x1, x2, y1, y2, _ref, _ref1;
+        if (cell1 == null) {
+          cell1 = this.toCellCoords(new Point(0, 0));
+        }
+        if (cell2 == null) {
+          cell2 = this.toCellCoords(new Point(this.width, this.height));
+        }
+        x1 = cell1.x;
+        y1 = cell1.y;
+        x2 = cell2.x;
+        y2 = cell2.y;
+        _ref = [Math.min(x1, x2), Math.max(x1, x2)], x1 = _ref[0], x2 = _ref[1];
+        _ref1 = [Math.min(y1, y2), Math.max(y1, y2)], y1 = _ref1[0], y2 = _ref1[1];
+        return new Rect(x1, y1, x2 - x1, y2 - y1);
+      };
 
-  Zoomer.prototype.transform = function() {
-    this.ctx.translate(this.center.x, this.center.y);
-    this.ctx.scale(this.scale, this.scale);
-    this.ctx.scale(this.defaultZoom, this.defaultZoom);
-  };
+      Zoomer.prototype.transform = function() {
+        var k;
+        this.ctx.translate(this.center.x, this.center.y);
+        k = this.scale * this.defaultZoom;
+        return this.ctx.scale(k, k);
+      };
 
-  Object.defineProperty(Zoomer.prototype, 'scale', {
-    get: function() {
-      return this._scale;
-    },
-    set: function(scale) {
-      this.zoom(scale, this.screenCenter);
-    }
+      Zoomer.prototype.zoom = function(k, zoomCenter) {
+        var offset;
+        if (k == null) {
+          k = 1;
+        }
+        offset = this.center.subtract(zoomCenter);
+        this.center = zoomCenter.add(offset.mult(k / this._scale));
+        return this._scale = k;
+      };
+
+      Zoomer.prototype.moveCenter = function(offset) {
+        return this.center = this.center.add(offset);
+      };
+
+      Zoomer.prototype.mousewheel = function(e) {
+        var offset, zoomFactor;
+        offset = e.deltaY * e.deltaFactor;
+        zoomFactor = Math.pow(2, 0.001 * offset);
+        this.zoom(this.scale * zoomFactor, this.getPoint(e));
+        return e.preventDefault();
+      };
+
+      return Zoomer;
+
+    })(Tool);
   });
 
-  Zoomer.prototype.zoom = function(k, center) {
-    k = k || 1.0;
-    var offset = this.center.subtract(center);
-    this.center = center.add(offset.mult(k / this.scale));
-    this._scale = k;
-  };
-
-  Zoomer.prototype.zoomIn = function() {
-    this.zoom(2.0 * this.scale, this.screenCenter);
-  };
-
-  Zoomer.prototype.zoomNormal = function() {
-    this.zoom(1.0, this.screenCenter);
-  };
-
-  Zoomer.prototype.zoomOut = function() {
-    this.zoom(0.5 * this.scale, this.screenCenter);
-  };
-
-  Zoomer.prototype.moveCenter = function(offset) {
-    this.center = this.center.add(offset);
-  };
-
-  Zoomer.prototype.mousewheel = function(e) {
-    var offset = e.deltaY * e.deltaFactor;
-    var zoomFactor = Math.pow(2, 0.001 * offset);
-    this.zoom(this.scale * zoomFactor, this.getPoint(e));
-    e.preventDefault();
-  };
-
-  return Zoomer;
-});
+}).call(this);

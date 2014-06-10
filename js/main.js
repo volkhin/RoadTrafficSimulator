@@ -14,10 +14,13 @@ require.config({
   }
 });
 
-require(['jquery', 'app'], function($, App) { 
+(function() {
   'use strict';
-  $(document).ready(function() {
-    window.app = new App();
-    window.app.init();
+
+  require(['jquery', 'app'], function($, App) { 
+    $(document).ready(function() {
+      window.app = new App();
+      window.app.init();
+    });
   });
-});
+})()
