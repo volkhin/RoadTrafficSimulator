@@ -14,11 +14,8 @@ require.config({
   }
 });
 
-define(function(require) {
+require(['jquery', 'app'], function($, App) {
   'use strict';
-
-  var $ = require('jquery'),
-      App = require('app');
 
   $(document).ready(function() {
     window.app = new App();

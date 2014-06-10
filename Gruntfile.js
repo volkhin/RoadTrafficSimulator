@@ -9,11 +9,11 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          baseUrl: './js',
-          mainConfigFile: './js/main.js',
+          baseUrl: 'js',
+          mainConfigFile: 'js/main.js',
           name: 'main',
-          out: './dist/app.js',
-          optimize: 'none'
+          out: 'dist/main.js',
+          optimize: 'none',
         }
       }
     },
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: sources,
-        tasks: ['jshint', 'jasmine'],
+        tasks: ['default'],
         options: {
           spawn: false
         }
@@ -69,10 +69,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-closure-linter');
 
-  grunt.registerTask('default', ['jshint', 'jasmine']);
+  grunt.registerTask('default', ['jshint', 'jasmine', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jasmine']);
   grunt.registerTask('closure', ['closureLint', 'closureFixStyle']);
 };
