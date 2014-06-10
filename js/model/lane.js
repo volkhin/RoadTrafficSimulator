@@ -22,11 +22,9 @@ define(function(require) {
     return obj;
   };
 
-  Object.defineProperty(Lane.prototype, 'length', {
-    get: function() {
-      return this.middleLine.length();
-    }
-  });
+  Lane.prototype.length = function() {
+    return this.middleLine.length();
+  };
 
   Object.defineProperty(Lane.prototype, 'middleLine', {
     get: function() {

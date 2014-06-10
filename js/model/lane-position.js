@@ -31,7 +31,7 @@ define(function() {
 
   Object.defineProperty(LanePosition.prototype, 'relativePosition', {
     get: function() {
-      return this.position / this.lane.length;
+      return this.position / this.lane.length();
     }
   });
 

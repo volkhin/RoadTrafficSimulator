@@ -38,11 +38,11 @@ define(function(require) {
   Object.defineProperty(Car.prototype, 'relativePosition', {
     get: function() {
       var current = this.trajectory.current;
-      return current.position / current.lane.length;
+      return current.position / current.lane.length();
     },
     set: function(relativePosition) {
       this.trajectory.current.position =
-          relativePosition * this.trajectory.current.lane.length;
+          relativePosition * this.trajectory.current.lane.length();
     }
   });
 

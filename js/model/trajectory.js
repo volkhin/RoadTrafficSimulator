@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var LanePosition = require('model/lane-position'),
-      Curve = require('geometry/curve');
+      Curve = require('geom/curve');
 
   function Trajectory(car, lane, position) {
     this.car = car;
@@ -26,7 +26,7 @@ define(function(require) {
 
   Object.defineProperty(Trajectory.prototype, 'relativePosition', {
     get: function() {
-      return this.absolutePosition / this.lane.length;
+      return this.absolutePosition / this.lane.length();
     }
   });
 
@@ -81,7 +81,7 @@ define(function(require) {
   };
 
   Trajectory.prototype.moveForward = function(distance) {
-    if (this.current.position + this.car.length >= this.current.lane.length &&
+    if (this.current.position + this.car.length >= this.current.lane.length() &&
         !this.isChangingLanes) {
       if (!this.car.nextLane) {
         this.car.alive = false;
@@ -102,7 +102,7 @@ define(function(require) {
     this.next.position += distance;
     this.temp.position += distance;
 
-    if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
+    if (this.isChangingLanes && this.temp.position >= this.temp.lane.length()) {
       this.finishChangingLanes();
     }
     if (this.current.lane && !this.isChangingLanes && !this.car.nextLane) {
@@ -116,7 +116,7 @@ define(function(require) {
       return false;
     }
     var nextPosition = this.current.position + 5 * this.car.length;
-    if (nextLane && nextPosition < this.current.lane.length) {
+    if (nextLane && nextPosition < this.current.lane.length()) {
       this.startChangingLanes(nextLane, nextPosition, false);
     } else {
       throw Error('Too late to change lanes');
@@ -129,7 +129,7 @@ define(function(require) {
       return false;
     }
     var nextPosition = this.current.position + 5 * this.car.length;
-    if (nextLane && nextPosition < this.current.lane.length) {
+    if (nextLane && nextPosition < this.current.lane.length()) {
       this.startChangingLanes(nextLane, nextPosition, false);
     } else {
       throw Error('Too late to change lanes');
@@ -159,7 +159,7 @@ define(function(require) {
     var control = p1.add(direction.mult(distance / 2));
     this.temp.lane = new Curve(p1, p2, control);
     this.temp.position = 0;
-    this.next.position -= this.temp.lane.length;
+    this.next.position -= this.temp.lane.length();
     if (!keepOldLine) {
       this.current.release();
     }
