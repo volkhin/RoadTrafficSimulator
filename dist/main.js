@@ -1,8 +1,10 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
-var App, DAT, Visualizer, World, settings;
+var $, DAT, Visualizer, World, settings;
 
 require('./helpers.coffee');
+
+$ = require('jquery');
 
 Visualizer = require('./visualizer/visualizer.coffee');
 
@@ -12,32 +14,26 @@ World = require('./model/world.coffee');
 
 settings = require('./settings.coffee');
 
-module.exports = App = (function() {
-  function App() {}
-
-  App.prototype.init = function() {
-    this.world = new World;
-    this.world.load();
-    this.visualizer = new Visualizer(this.world);
-    this.visualizer.start();
-    this.gui = new DAT.GUI;
-    this.gui.add(this.world, 'save');
-    this.gui.add(this.world, 'load');
-    this.gui.add(this.world, 'clear');
-    this.gui.add(this.visualizer, 'running').listen();
-    this.gui.add(this.visualizer.zoomer, 'scale', 0.1, 2).listen();
-    this.gui.add(this.visualizer, 'timeFactor', 0.1, 10).listen();
-    this.gui.add(this.world, 'carsNumber').min(0).max(200).step(1).listen();
-    this.gui.add(this.world, 'instantSpeed').step(0.00001).listen();
-    return this.gui.add(settings, 'lightsFlipInterval', 0, 10, 0.01).listen();
-  };
-
-  return App;
-
-})();
+$(document).ready(function() {
+  var gui, visualizer, world;
+  world = new World;
+  world.load();
+  visualizer = new Visualizer(world);
+  visualizer.start();
+  gui = new DAT.GUI;
+  gui.add(world, 'save');
+  gui.add(world, 'load');
+  gui.add(world, 'clear');
+  gui.add(visualizer, 'running').listen();
+  gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen();
+  gui.add(visualizer, 'timeFactor', 0.1, 10).listen();
+  gui.add(world, 'carsNumber').min(0).max(200).step(1).listen();
+  gui.add(world, 'instantSpeed').step(0.00001).listen();
+  return gui.add(settings, 'lightsFlipInterval', 0, 10, 0.01).listen();
+});
 
 
-},{"./helpers.coffee":6,"./model/world.coffee":16,"./settings.coffee":17,"./visualizer/visualizer.coffee":25,"dat-gui":27}],2:[function(require,module,exports){
+},{"./helpers.coffee":6,"./model/world.coffee":15,"./settings.coffee":16,"./visualizer/visualizer.coffee":24,"dat-gui":26,"jquery":30}],2:[function(require,module,exports){
 'use strict';
 var Curve, Segment;
 
@@ -256,7 +252,7 @@ module.exports = Rect = (function() {
 })();
 
 
-},{"./point.coffee":3,"./segment.coffee":5,"jquery":31}],5:[function(require,module,exports){
+},{"./point.coffee":3,"./segment.coffee":5,"jquery":30}],5:[function(require,module,exports){
 'use strict';
 var Segment;
 
@@ -330,20 +326,6 @@ Function.prototype.property = function(prop, desc) {
 
 
 },{}],7:[function(require,module,exports){
-'use strict';
-var $, App;
-
-$ = require('jquery');
-
-App = require('./app.coffee');
-
-$(document).ready(function() {
-  window.app = new App;
-  return window.app.init();
-});
-
-
-},{"./app.coffee":1,"jquery":31}],8:[function(require,module,exports){
 'use strict';
 var Car, Trajectory, _;
 
@@ -476,7 +458,7 @@ module.exports = Car = (function() {
 })();
 
 
-},{"./trajectory.coffee":15,"underscore":32}],9:[function(require,module,exports){
+},{"./trajectory.coffee":14,"underscore":31}],8:[function(require,module,exports){
 'use strict';
 var ControlSignals, settings,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -550,7 +532,7 @@ module.exports = ControlSignals = (function() {
 })();
 
 
-},{"../settings.coffee":17}],10:[function(require,module,exports){
+},{"../settings.coffee":16}],9:[function(require,module,exports){
 'use strict';
 var $, ControlSignals, Intersection, Rect;
 
@@ -609,7 +591,7 @@ module.exports = Intersection = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"./control-signals.coffee":9,"jquery":31}],11:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"./control-signals.coffee":8,"jquery":30}],10:[function(require,module,exports){
 'use strict';
 var LanePosition;
 
@@ -675,7 +657,7 @@ module.exports = LanePosition = (function() {
 })();
 
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 var $, Lane, Segment;
 
@@ -800,7 +782,7 @@ module.exports = Lane = (function() {
 })();
 
 
-},{"../geom/segment.coffee":5,"jquery":31}],13:[function(require,module,exports){
+},{"../geom/segment.coffee":5,"jquery":30}],12:[function(require,module,exports){
 'use strict';
 var Pool;
 
@@ -860,7 +842,7 @@ module.exports = Pool = (function() {
 })();
 
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 var $, Lane, Road, _;
 
@@ -956,7 +938,7 @@ module.exports = Road = (function() {
 })();
 
 
-},{"./lane.coffee":12,"jquery":31,"underscore":32}],15:[function(require,module,exports){
+},{"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
 'use strict';
 var Curve, LanePosition, Trajectory;
 
@@ -1156,7 +1138,7 @@ module.exports = Trajectory = (function() {
 })();
 
 
-},{"../geom/curve.coffee":2,"./lane-position.coffee":11}],16:[function(require,module,exports){
+},{"../geom/curve.coffee":2,"./lane-position.coffee":10}],15:[function(require,module,exports){
 'use strict';
 var $, Car, Intersection, Pool, Road, World, _;
 
@@ -1337,7 +1319,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"./car.coffee":8,"./intersection.coffee":10,"./pool.coffee":13,"./road.coffee":14,"jquery":31,"underscore":32}],17:[function(require,module,exports){
+},{"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {
@@ -1359,7 +1341,7 @@ module.exports = {
 };
 
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 var Graphics,
   __slice = [].slice;
@@ -1453,7 +1435,7 @@ module.exports = Graphics = (function() {
 })();
 
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 var Rect, Tool, ToolHighlighter, settings,
   __hasProp = {}.hasOwnProperty,
@@ -1505,7 +1487,7 @@ module.exports = ToolHighlighter = (function(_super) {
 })(Tool);
 
 
-},{"../geom/rect.coffee":4,"../settings.coffee":17,"./tool.coffee":24}],20:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
 'use strict';
 var Intersection, Rect, Tool, ToolIntersectionBuilder,
   __hasProp = {}.hasOwnProperty,
@@ -1568,7 +1550,7 @@ module.exports = ToolIntersectionBuilder = (function(_super) {
 })(Tool);
 
 
-},{"../geom/rect.coffee":4,"../model/intersection.coffee":10,"./tool.coffee":24}],21:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
 'use strict';
 var Tool, ToolIntersectionMover,
   __hasProp = {}.hasOwnProperty,
@@ -1616,7 +1598,7 @@ module.exports = ToolIntersectionMover = (function(_super) {
 })(Tool);
 
 
-},{"./tool.coffee":24}],22:[function(require,module,exports){
+},{"./tool.coffee":23}],21:[function(require,module,exports){
 'use strict';
 var Mover, Tool,
   __hasProp = {}.hasOwnProperty,
@@ -1663,7 +1645,7 @@ module.exports = Mover = (function(_super) {
 })(Tool);
 
 
-},{"./tool.coffee":24}],23:[function(require,module,exports){
+},{"./tool.coffee":23}],22:[function(require,module,exports){
 'use strict';
 var Road, Tool, ToolRoadBuilder,
   __hasProp = {}.hasOwnProperty,
@@ -1738,7 +1720,7 @@ module.exports = ToolRoadBuilder = (function(_super) {
 })(Tool);
 
 
-},{"../model/road.coffee":14,"./tool.coffee":24}],24:[function(require,module,exports){
+},{"../model/road.coffee":13,"./tool.coffee":23}],23:[function(require,module,exports){
 'use strict';
 var $, METHODS, Point, Rect, Tool, _;
 
@@ -1833,7 +1815,7 @@ module.exports = Tool = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"jquery":31,"jquery-mousewheel":30,"underscore":32}],25:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
 var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
 
@@ -2051,7 +2033,7 @@ module.exports = Visualizer = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../settings.coffee":17,"./graphics.coffee":18,"./highlighter.coffee":19,"./intersection-builder.coffee":20,"./intersection-mover.coffee":21,"./mover.coffee":22,"./road-builder.coffee":23,"./zoomer.coffee":26,"jquery":31,"underscore":32}],26:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
 var Point, Rect, Tool, Zoomer,
   __hasProp = {}.hasOwnProperty,
@@ -2149,10 +2131,10 @@ module.exports = Zoomer = (function(_super) {
 })(Tool);
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"./tool.coffee":24}],27:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"./tool.coffee":23}],26:[function(require,module,exports){
 module.exports = require('./vendor/dat.gui')
 module.exports.color = require('./vendor/dat.color')
-},{"./vendor/dat.color":28,"./vendor/dat.gui":29}],28:[function(require,module,exports){
+},{"./vendor/dat.color":27,"./vendor/dat.gui":28}],27:[function(require,module,exports){
 /**
  * dat-gui JavaScript Controller Library
  * http://code.google.com/p/dat-gui
@@ -2908,7 +2890,7 @@ dat.color.math = (function () {
 })(),
 dat.color.toString,
 dat.utils.common);
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * dat-gui JavaScript Controller Library
  * http://code.google.com/p/dat-gui
@@ -6569,7 +6551,7 @@ dat.dom.CenteredDiv = (function (dom, common) {
 dat.utils.common),
 dat.dom.dom,
 dat.utils.common);
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*! Copyright (c) 2013 Brandon Aaron (http://brandon.aaron.sh)
  * Licensed under the MIT License (LICENSE.txt).
  *
@@ -6791,7 +6773,7 @@ dat.utils.common);
 
 }));
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/
@@ -15983,7 +15965,7 @@ return jQuery;
 
 }));
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -17328,4 +17310,4 @@ return jQuery;
   }
 }).call(this);
 
-},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26])
+},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25])
