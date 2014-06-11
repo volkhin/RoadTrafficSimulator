@@ -17,12 +17,12 @@ define ->
       get: -> @position/@lane.length()
 
     acquire: ->
-      if @lane and @lane.addCarPosition?
+      if @lane?.addCarPosition?
         @free = false
         @lane.addCarPosition @
 
     release: ->
-      if not @free and @lane and @lane.removeCar
+      if not @free and @lane?.removeCar
         @free = true
         @lane.removeCar @
 

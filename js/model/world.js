@@ -1,163 +1,176 @@
-define(function(require) {
+(function() {
   'use strict';
-
-  var $ = require('jquery'),
-      _ = require('underscore'),
-      Car = require('model/car'),
-      Intersection = require('model/intersection'),
-      Road = require('model/road'),
-      Pool = require('model/pool');
-
-  function World() {
-    this.set({});
-  }
-
-  World.prototype.set = function(o) {
-    o = o || {};
-    this.intersections = new Pool(Intersection, o.intersections);
-    this.roads = new Pool(Road, o.roads);
-    this.cars = new Pool(Car, o.cars);
-    this.ticks = o.ticks || 0;
-    this.carsNumber = 0;
-    window.__nextId = o.__nextId || 1;
-  };
-
-  World.prototype.save = function() {
-    var data = $.extend({}, this);
-    data.nextId = window.__nextId;
-    delete data.cars;
-    localStorage.world = JSON.stringify(data);
-  };
-
-  World.prototype.load = function() {
-    var data = localStorage.world;
-    data = data && JSON.parse(data);
-    if (data) {
-      this.clear();
-      window.__nextId = data.nextId || 1;
-      this.carsNumber = data.carsNumber || 0;
-      _.each(data.intersections, function(intersection) {
-        intersection = Intersection.copy(intersection);
-        this.addIntersection(intersection);
-      }, this);
-      _.each(data.roads, function(road) {
-        road = Road.copy(road);
-        road.source = this.getIntersection(road.source);
-        road.target = this.getIntersection(road.target);
-        this.addRoad(road);
-      }, this);
-    }
-  };
-
-  World.prototype.clear = function() {
-    this.set({});
-  };
-
-  World.prototype.onTick = function(delta) {
-    if (delta > 1) {
-      throw Error('delta can\'t be more than 1');
-    }
-    this.ticks++;
-    this.refreshCars();
-    _.each(this.intersections.all(), function(intersection) {
-      intersection.controlSignals.onTick(delta);
-    }, this);
-    _.each(this.cars.all(), function(car) {
-      car.move(delta);
-      if (!car.alive) {
-        this.removeCar(car);
+  define(function(require) {
+    var $, Car, Intersection, Pool, Road, World, _;
+    $ = require('jquery');
+    _ = require('underscore');
+    Car = require('model/car');
+    Intersection = require('model/intersection');
+    Road = require('model/road');
+    Pool = require('model/pool');
+    return World = (function() {
+      function World() {
+        this.set({});
       }
-    }, this);
-  };
 
-  World.prototype.refreshCars = function() {
-    while (this.cars.length < this.carsNumber) {
-      if (!this.addRandomCar()) {
-        break;
-      }
-    }
-    while (this.cars.length > this.carsNumber) {
-      if (!this.removeRandomCar()) {
-        break;
-      }
-    }
-  };
-
-  World.prototype.addRoad = function(road) {
-    this.roads.put(road);
-    road.source.roads.push(road);
-    road.target.inRoads.push(road);
-    road.update();
-  };
-
-  World.prototype.getRoad = function(id) {
-    return this.roads.get(id);
-  };
-
-  World.prototype.addCar = function(car) {
-    this.cars.put(car);
-  };
-
-  World.prototype.getCar = function(id) {
-    return this.cars.get(id);
-  };
-
-  World.prototype.removeCar = function(car) {
-    this.cars.pop(car);
-  };
-
-  World.prototype.addIntersection = function(intersection) {
-    this.intersections.put(intersection);
-  };
-
-  World.prototype.getIntersection = function(id) {
-    return this.intersections.get(id);
-  };
-
-  World.prototype.addRandomCar = function() {
-    // pick intersection with the only one road
-    var road = null;
-    /* var singleRoadIntersections = _.filter(this.intersections.all(),
-        function(intersection) {
-            return intersection.roads.length === 1;
-        }, this);
-        if (singleRoadIntersections.length) {
-            var intersection = _.sample(singleRoadIntersections);
-            road = intersection.roads[0];
-        } */
-    if (road === null) {
-      road = _.sample(this.roads.all());
-    }
-    if (road) {
-      var lane = _.sample(road.lanes);
-      if (lane) {
-        this.addCar(new Car(lane));
-      }
-      return true;
-    }
-    return false;
-  };
-
-  World.prototype.removeRandomCar = function() {
-    var car = _.sample(this.cars.all());
-    if (car) {
-      this.removeCar(car);
-      return true;
-    }
-    return false;
-  };
-
-  Object.defineProperty(World.prototype, 'instantSpeed', {
-    get: function() {
-      var speeds = _.map(this.cars.all(), function(car) {
-        return car.speed;
+      World.property('instantSpeed', {
+        get: function() {
+          var speeds;
+          speeds = _.map(this.cars.all(), function(car) {
+            return car.speed;
+          });
+          if (speeds.length === 0) {
+            return 0;
+          }
+          return (_.reduce(speeds, function(a, b) {
+            return a + b;
+          })) / speeds.length;
+        }
       });
-      if (speeds.length === 0) {
-        return 0.0;
-      }
-      return _.reduce(speeds, function(a, b) { return a + b; }) / speeds.length;
-    }
+
+      World.prototype.set = function(obj) {
+        if (obj == null) {
+          obj = {};
+        }
+        this.intersections = new Pool(Intersection, obj.intersections);
+        this.roads = new Pool(Road, obj.roads);
+        this.cars = new Pool(Car, obj.cars);
+        this.carsNumber = 0;
+        return window.__nextId = obj.__nextId || 1;
+      };
+
+      World.prototype.save = function() {
+        var data;
+        data = $.extend({}, this);
+        data.nextId = window.__nextId;
+        delete data.cars;
+        return localStorage.world = JSON.stringify(data);
+      };
+
+      World.prototype.load = function() {
+        var data, id, intersection, road, _ref, _ref1, _results;
+        data = localStorage.world;
+        data = data && JSON.parse(data);
+        if (data == null) {
+          return;
+        }
+        this.clear();
+        window.__nextId = data.nextId || 1;
+        this.carsNumber = data.carsNumber || 0;
+        _ref = data.intersections;
+        for (id in _ref) {
+          intersection = _ref[id];
+          this.addIntersection(Intersection.copy(intersection));
+        }
+        _ref1 = data.roads;
+        _results = [];
+        for (id in _ref1) {
+          road = _ref1[id];
+          road = Road.copy(road);
+          road.source = this.getIntersection(road.source);
+          road.target = this.getIntersection(road.target);
+          _results.push(this.addRoad(road));
+        }
+        return _results;
+      };
+
+      World.prototype.clear = function() {
+        return this.set({});
+      };
+
+      World.prototype.onTick = function(delta) {
+        var car, id, intersection, _ref, _ref1, _results;
+        if (delta > 1) {
+          throw Error('delta > 1');
+        }
+        this.refreshCars();
+        _ref = this.intersections.all();
+        for (id in _ref) {
+          intersection = _ref[id];
+          intersection.controlSignals.onTick(delta);
+        }
+        _ref1 = this.cars.all();
+        _results = [];
+        for (id in _ref1) {
+          car = _ref1[id];
+          car.move(delta);
+          if (!car.alive) {
+            _results.push(this.removeCar(car));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+
+      World.prototype.refreshCars = function() {
+        var _results;
+        if (this.roads.length === 0) {
+          this.carsNumber = 0;
+        }
+        while (this.cars.length < this.carsNumber) {
+          this.addRandomCar();
+        }
+        _results = [];
+        while (this.cars.length > this.carsNumber) {
+          _results.push(this.removeRandomCar());
+        }
+        return _results;
+      };
+
+      World.prototype.addRoad = function(road) {
+        this.roads.put(road);
+        road.source.roads.push(road);
+        road.target.inRoads.push(road);
+        return road.update();
+      };
+
+      World.prototype.getRoad = function(id) {
+        return this.roads.get(id);
+      };
+
+      World.prototype.addCar = function(car) {
+        return this.cars.put(car);
+      };
+
+      World.prototype.getCar = function(id) {
+        return this.cars.get(id);
+      };
+
+      World.prototype.removeCar = function(car) {
+        return this.cars.pop(car);
+      };
+
+      World.prototype.addIntersection = function(intersection) {
+        return this.intersections.put(intersection);
+      };
+
+      World.prototype.getIntersection = function(id) {
+        return this.intersections.get(id);
+      };
+
+      World.prototype.addRandomCar = function() {
+        var lane, road;
+        road = _.sample(this.roads.all());
+        if (road != null) {
+          lane = _.sample(road.lanes);
+          if (lane != null) {
+            return this.addCar(new Car(lane));
+          }
+        }
+      };
+
+      World.prototype.removeRandomCar = function() {
+        var car;
+        car = _.sample(this.cars.all());
+        if (car != null) {
+          return this.removeCar(car);
+        }
+      };
+
+      return World;
+
+    })();
   });
 
-  return World;
-});
+}).call(this);

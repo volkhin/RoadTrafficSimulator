@@ -29,14 +29,16 @@
       });
 
       LanePosition.prototype.acquire = function() {
-        if (this.lane && (this.lane.addCarPosition != null)) {
+        var _ref;
+        if (((_ref = this.lane) != null ? _ref.addCarPosition : void 0) != null) {
           this.free = false;
           return this.lane.addCarPosition(this);
         }
       };
 
       LanePosition.prototype.release = function() {
-        if (!this.free && this.lane && this.lane.removeCar) {
+        var _ref;
+        if (!this.free && ((_ref = this.lane) != null ? _ref.removeCar : void 0)) {
           this.free = true;
           return this.lane.removeCar(this);
         }
