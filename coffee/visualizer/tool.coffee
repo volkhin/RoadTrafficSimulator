@@ -4,7 +4,7 @@ $ = require 'jquery'
 _ = require 'underscore'
 Point = require '../geom/point.coffee'
 Rect = require '../geom/rect.coffee'
-require 'jquery-mousewheel'
+require('jquery-mousewheel') $
 
 METHODS = [
   'click',

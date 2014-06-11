@@ -2,9 +2,10 @@
 
 module.exports =
   class LanePosition
-    constructor: (@car, @_lane, @position) ->
+    constructor: (@car, lane, @position) ->
       @id = window.__nextId++
       @free = true
+      @lane = lane
 
     @property 'lane',
       get: -> @_lane

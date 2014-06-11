@@ -32,5 +32,7 @@ module.exports = (grunt) ->
           'dist/main.js': ['coffee/**/*.coffee']
         options:
           transform: ['coffeeify']
+          bundleOptions:
+            debug: false
 
   grunt.registerTask 'default', ['coffeelint', 'browserify']

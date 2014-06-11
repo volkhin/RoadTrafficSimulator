@@ -614,12 +614,12 @@ module.exports = Intersection = (function() {
 var LanePosition;
 
 module.exports = LanePosition = (function() {
-  function LanePosition(car, _lane, position) {
+  function LanePosition(car, lane, position) {
     this.car = car;
-    this._lane = _lane;
     this.position = position;
     this.id = window.__nextId++;
     this.free = true;
+    this.lane = lane;
   }
 
   LanePosition.property('lane', {
@@ -1750,7 +1750,7 @@ Point = require('../geom/point.coffee');
 
 Rect = require('../geom/rect.coffee');
 
-require('jquery-mousewheel');
+require('jquery-mousewheel')($);
 
 METHODS = ['click', 'mousedown', 'mouseup', 'mousemove', 'mouseout', 'mousewheel', 'contextmenu'];
 
