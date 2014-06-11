@@ -1,9 +1,9 @@
 'use strict'
 
-define (require) ->
-  LanePosition = require 'model/lane-position'
-  Curve = require 'geom/curve'
+LanePosition = require './lane-position.coffee'
+Curve = require '../geom/curve.coffee'
 
+module.exports =
   class Trajectory
     constructor: (@car, lane, position) ->
       position ?= 0

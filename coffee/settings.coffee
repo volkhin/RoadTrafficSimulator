@@ -1,6 +1,6 @@
 'use strict'
 
-define settings =
+module.exports =
   colors:
     background: '#fff'
     redLight: 'hsl(0, 100%, 50%)'

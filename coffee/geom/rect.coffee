@@ -1,10 +1,10 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  Point = require 'geom/point'
-  Segment = require 'geom/segment'
+$ = require 'jquery'
+Point = require './point.coffee'
+Segment = require './segment.coffee'
 
+module.exports =
   class Rect
     constructor: (@x, @y, @_width = 0, @_height = 0) ->
 

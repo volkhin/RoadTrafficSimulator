@@ -1,9 +1,9 @@
 'use strict'
 
-define (require) ->
-  Tool = require 'visualizer/tool'
-  Road = require 'model/road'
+Tool = require './tool.coffee'
+Road = require '../model/road.coffee'
 
+module.exports =
   class ToolRoadBuilder extends Tool
     constructor: ->
       super arguments...

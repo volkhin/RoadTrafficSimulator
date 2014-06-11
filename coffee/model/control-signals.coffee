@@ -1,8 +1,8 @@
 'use strict'
 
-define (require) ->
-  settings = require 'settings'
+settings = require '../settings.coffee'
 
+module.exports =
   class ControlSignals
     constructor: ->
       @time = 0

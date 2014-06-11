@@ -1,6 +1,6 @@
 'use strict'
 
-define [], () ->
+module.exports =
   class Point
     constructor: (@x = 0, @y = 0) ->
 

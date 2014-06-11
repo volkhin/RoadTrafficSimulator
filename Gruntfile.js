@@ -86,6 +86,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-closure-linter');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-coffeelint');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['coffeelint', 'coffee', 'jasmine']);
   grunt.registerTask('test', ['jshint', 'jasmine']);

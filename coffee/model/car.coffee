@@ -1,9 +1,9 @@
 'use strict'
 
-define (require) ->
-  _ = require 'underscore'
-  Trajectory = require 'model/trajectory'
+_ = require 'underscore'
+Trajectory = require './trajectory.coffee'
 
+module.exports =
   class Car
     constructor: (lane, position) ->
       @id = window.__nextId++

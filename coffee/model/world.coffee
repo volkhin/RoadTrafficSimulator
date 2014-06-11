@@ -1,13 +1,13 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  _ = require 'underscore'
-  Car = require 'model/car'
-  Intersection = require 'model/intersection'
-  Road = require 'model/road'
-  Pool = require 'model/pool'
+$ = require 'jquery'
+_ = require 'underscore'
+Car = require './car.coffee'
+Intersection = require './intersection.coffee'
+Road = require './road.coffee'
+Pool = require './pool.coffee'
 
+module.exports =
   class World
     constructor: ->
       @set {}

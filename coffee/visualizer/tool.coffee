@@ -1,22 +1,22 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  _ = require 'underscore'
-  Point = require 'geom/point'
-  Rect = require 'geom/rect'
-  require 'jquery-mousewheel'
+$ = require 'jquery'
+_ = require 'underscore'
+Point = require '../geom/point.coffee'
+Rect = require '../geom/rect.coffee'
+require 'jquery-mousewheel'
 
-  METHODS = [
-    'click',
-    'mousedown',
-    'mouseup',
-    'mousemove',
-    'mouseout',
-    'mousewheel',
-    'contextmenu'
-  ]
+METHODS = [
+  'click',
+  'mousedown',
+  'mouseup',
+  'mousemove',
+  'mouseout',
+  'mousewheel',
+  'contextmenu'
+]
 
+module.exports =
   class Tool
     constructor: (@visualizer, autobind) ->
       @ctx = @visualizer.ctx

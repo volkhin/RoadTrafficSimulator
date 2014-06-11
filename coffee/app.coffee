@@ -1,12 +1,12 @@
 'use strict'
 
-define (require) ->
-  require 'helpers'
-  Visualizer = require 'visualizer/visualizer'
-  DAT = require 'dat'
-  World = require 'model/world'
-  settings = require 'settings'
+require './helpers.coffee'
+Visualizer = require './visualizer/visualizer.coffee'
+DAT = require 'dat-gui'
+World = require './model/world.coffee'
+settings = require './settings.coffee'
 
+module.exports =
   class App
     init: ->
       @world = new World

@@ -1,10 +1,10 @@
 'use strict'
 
-define (require) ->
-  Point = require 'geom/point'
-  Rect = require 'geom/rect'
-  Tool = require 'visualizer/tool'
+Point = require '../geom/point.coffee'
+Rect = require '../geom/rect.coffee'
+Tool = require './tool.coffee'
 
+module.exports =
   class Zoomer extends Tool
     constructor: (@defaultZoom, @visualizer, args...) ->
       super @visualizer, args...

@@ -1,10 +1,10 @@
 'use strict'
 
-define (require) ->
-  Tool = require 'visualizer/tool'
-  Rect = require 'geom/rect'
-  settings = require 'settings'
+Tool = require './tool.coffee'
+Rect = require '../geom/rect.coffee'
+settings = require '../settings.coffee'
 
+module.exports =
   class ToolHighlighter extends Tool
     constructor: ->
       super arguments...

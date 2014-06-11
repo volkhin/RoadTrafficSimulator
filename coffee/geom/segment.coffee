@@ -1,6 +1,6 @@
 'use strict'
 
-define [], () ->
+module.exports =
   class Segment
     constructor: (@source, @target) ->
 

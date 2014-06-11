@@ -1,6 +1,6 @@
 'use strict'
 
-define ->
+module.exports =
   class Pool
     constructor: (@factory, pool) ->
       @objects = {}

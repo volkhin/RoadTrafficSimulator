@@ -1,8 +1,8 @@
 'use strict'
 
-define (require) ->
-  Segment = require 'geom/segment'
+Segment = require './segment.coffee'
 
+module.exports =
   class Curve
     constructor: (@A, @B, @O) ->
       @AB = new Segment @A, @B

@@ -1,6 +1,6 @@
 'use strict'
 
-define () ->
+module.exports =
   class Graphics
     constructor: (@ctx) ->
 

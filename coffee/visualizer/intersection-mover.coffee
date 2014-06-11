@@ -1,8 +1,8 @@
 'use strict'
 
-define (require) ->
-  Tool = require 'visualizer/tool'
+Tool = require './tool.coffee'
 
+module.exports =
   class ToolIntersectionMover extends Tool
     constructor: ->
       super arguments...

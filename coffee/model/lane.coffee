@@ -1,9 +1,9 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  Segment = require 'geom/segment'
+$ = require 'jquery'
+Segment = require '../geom/segment.coffee'
 
+module.exports =
   class Lane
     constructor: (@sourceSegment, @targetSegment, @road) ->
       @leftAdjacent = null

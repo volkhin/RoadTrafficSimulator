@@ -1,10 +1,10 @@
 'use strict'
 
-define (requrie) ->
-  $ = require 'jquery'
-  ControlSignals = require 'model/control-signals'
-  Rect = requrie 'geom/rect'
+$ = require 'jquery'
+ControlSignals = require './control-signals.coffee'
+Rect = require '../geom/rect.coffee'
 
+module.exports =
   class Intersection
     constructor: (@rect) ->
       @id = window.__nextId++

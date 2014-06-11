@@ -1,10 +1,10 @@
 'use strict'
 
-define (require) ->
-  Tool = require 'visualizer/tool'
-  Intersection = require 'model/intersection' # TODO: decouple
-  Rect = require 'geom/rect'
+Tool = require './tool.coffee'
+Intersection = require '../model/intersection.coffee' # TODO: decouple
+Rect = require '../geom/rect.coffee'
 
+module.exports =
   class ToolIntersectionBuilder extends Tool
     constructor: ->
       super arguments...

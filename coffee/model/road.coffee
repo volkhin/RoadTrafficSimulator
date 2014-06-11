@@ -1,10 +1,10 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  _ = require 'underscore'
-  Lane = require 'model/lane'
+$ = require 'jquery'
+_ = require 'underscore'
+Lane = require './lane.coffee'
 
+module.exports =
   class Road
     constructor: (@source, @target) ->
       @id = window.__nextId++

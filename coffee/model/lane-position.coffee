@@ -1,6 +1,6 @@
 'use strict'
 
-define ->
+module.exports =
   class LanePosition
     constructor: (@car, @_lane, @position) ->
       @id = window.__nextId++

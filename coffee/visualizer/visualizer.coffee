@@ -1,19 +1,19 @@
 'use strict'
 
-define (require) ->
-  $ = require 'jquery'
-  _ = require 'underscore'
-  Point = require 'geom/point'
-  Rect = require 'geom/rect'
-  Graphics = require 'visualizer/graphics'
-  ToolMover = require 'visualizer/mover'
-  ToolIntersectionMover = require 'visualizer/intersection-mover'
-  ToolIntersectionBuilder = require 'visualizer/intersection-builder'
-  ToolRoadBuilder = require 'visualizer/road-builder'
-  ToolHighlighter = require 'visualizer/highlighter'
-  Zoomer = require 'visualizer/zoomer'
-  settings = require 'settings'
+$ = require 'jquery'
+_ = require 'underscore'
+Point = require '../geom/point.coffee'
+Rect = require '../geom/rect.coffee'
+Graphics = require './graphics.coffee'
+ToolMover = require './mover.coffee'
+ToolIntersectionMover = require './intersection-mover.coffee'
+ToolIntersectionBuilder = require './intersection-builder.coffee'
+ToolRoadBuilder = require './road-builder.coffee'
+ToolHighlighter = require './highlighter.coffee'
+Zoomer = require './zoomer.coffee'
+settings = require '../settings.coffee'
 
+module.exports =
   class Visualizer
     constructor: (@world) ->
       @$canvas = $('#canvas')
