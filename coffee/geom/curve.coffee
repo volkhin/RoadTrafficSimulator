@@ -9,10 +9,11 @@ module.exports =
       @AO = new Segment @A, @O
       @OB = new Segment @O, @B
 
-    length: ->
-      @AB.length() unless @O?
-      # FIXME: it's not the real length
-      @AB.length()
+    @property 'length',
+      get: ->
+        @AB.length unless @O?
+        # FIXME: it's not the real length
+        @AB.length
 
     getPoint: (a) ->
       @AB.getPoint a unless @O?
@@ -21,7 +22,7 @@ module.exports =
       (new Segment p0, p1).getPoint a
 
     getDirection: (a) ->
-      @AB.direction() unless @O?
+      @AB.direction unless @O?
       p0 = @AO.getPoint(a)
       p1 = @OB.getPoint(a)
-      (new Segment p0, p1).direction()
+      (new Segment p0, p1).direction

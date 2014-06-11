@@ -19,7 +19,7 @@ module.exports =
       get: -> if @temp.lane? then @temp.position else @current.position
 
     @property 'relativePosition',
-      get: -> @absolutePosition/@lane.length()
+      get: -> @absolutePosition/@lane.length
 
     @property 'direction',
       get: -> @lane.getDirection @relativePosition
@@ -30,17 +30,19 @@ module.exports =
     getDistanceToNextCar: ->
       Math.min @current.getDistanceToNextCar(), @next.getDistanceToNextCar()
 
-    getNextIntersection: -> #TODO: property
-      @current.lane.road.target
+    @property 'nextIntersection',
+      get: ->
+        @current.lane.road.target
 
-    getPreviousIntersection: -> #TODO property
-      @current.lane.road.source
+    @property 'previousIntersection',
+      get: ->
+        @current.lane.road.source
 
     canEnterIntersection: (nextLane) ->
       #TODO right turn is only allowed from the right lane
       sourceLane = @current.lane
       throw Error 'no road to enter' unless nextLane
-      intersection = @getNextIntersection()
+      intersection = @nextIntersection
       turnNumber = sourceLane.getTurnDirection nextLane
       throw Error 'no U-turns are allowed' if turnNumber is 3
       if turnNumber is 0 and not sourceLane.isLeftmost
@@ -51,7 +53,7 @@ module.exports =
       intersection.controlSignals.state[sideId][turnNumber]
 
     moveForward: (distance) ->
-      laneEnding = @current.position + @car.length >= @current.lane.length()
+      laneEnding = @current.position + @car.length >= @current.lane.length
       if laneEnding and not @isChangingLanes
         switch
           when not @car.nextLane? then @car.alive = false
@@ -68,7 +70,7 @@ module.exports =
       @current.position += distance
       @next.position += distance
       @temp.position += distance
-      if @isChangingLanes and @temp.position >= @temp.lane.length()
+      if @isChangingLanes and @temp.position >= @temp.lane.length
         @finishChangingLanes()
       if @current.lane and not @isChangingLanes and not @car.nextLane
         @car.pickNextLane()
@@ -79,7 +81,7 @@ module.exports =
       throw Error 'next lane == current lane' if nextLane is @lane
       throw Error 'not neighbouring lanes' unless @lane.road is nextLane.road
       nextPosition = @current.position + 5 * @car.length
-      throw Error 'too late to change lane' unless nextPosition < @lane.length()
+      throw Error 'too late to change lane' unless nextPosition < @lane.length
       @startChangingLanes nextLane, nextPosition, false
 
     changeLaneToLeft: ->
@@ -96,12 +98,12 @@ module.exports =
       @next.position = nextPosition
       p1 = @current.lane.getPoint @current.relativePosition
       p2 = @next.lane.getPoint @next.relativePosition
-      distance = p2.subtract(p1).length()
-      direction = @current.lane.middleLine.vector().normalize()
+      distance = p2.subtract(p1).length
+      direction = @current.lane.middleLine.vector.normalized
       control = p1.add direction.mult distance/2
       @temp.lane = new Curve p1, p2, control
       @temp.position = 0
-      @next.position -= @temp.lane.length()
+      @next.position -= @temp.lane.length
       @current.release() unless keepOldLine
 
     finishChangingLanes: ->

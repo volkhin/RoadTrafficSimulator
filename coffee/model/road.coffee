@@ -39,11 +39,11 @@ module.exports =
       @sourceSide = @source.rect.getSide(@sourceSideId).subsegment 0.5, 1.0
       @targetSideId = @target.rect.getSectorId @source.rect.center()
       @targetSide = @target.rect.getSide(@targetSideId).subsegment 0, 0.5
-      @lanesNumber = Math.min(@sourceSide.length(), @targetSide.length()) | 0
+      @lanesNumber = Math.min(@sourceSide.length, @targetSide.length) | 0
       sourceSplits = @sourceSide.split @lanesNumber, true
       targetSplits = @targetSide.split @lanesNumber
       if not @lanes? or @lanes.length < @lanesNumber
-        @lanes ?= [] # TODO check
+        @lanes ?= []
         for i in [0..@lanesNumber-1]
           @lanes[i] ?= new Lane sourceSplits[i], targetSplits[i], @
       for i in [0..@lanesNumber-1]

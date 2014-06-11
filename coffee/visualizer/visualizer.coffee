@@ -68,7 +68,7 @@ module.exports =
 
       @ctx.save()
       for lane in road.lanes
-        line = lane.getLeftBorder()
+        line = lane.leftBorder
         dashSize = 0.5
         @graphics.drawSegment line
         @ctx.lineWidth = 0.05
@@ -79,18 +79,18 @@ module.exports =
 
       @ctx.save()
       @ctx.lineWidth = 0.05
-      leftLine = road.leftmostLane.getLeftBorder()
+      leftLine = road.leftmostLane.leftBorder
       @graphics.drawSegment leftLine
       @graphics.stroke settings.colors.roadMarking
 
-      rightLine = road.rightmostLane.getRightBorder()
+      rightLine = road.rightmostLane.rightBorder
       @graphics.drawSegment rightLine
       @graphics.stroke settings.colors.roadMarking
       @ctx.restore()
 
 
     drawCar: (car) ->
-      angle = car.direction()
+      angle = car.direction
       center = car.coords
       rect = new Rect 0, 0, 1.1*car.length, 1.7*car.width
       rect.center new Point 0, 0

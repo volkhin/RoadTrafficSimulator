@@ -22,8 +22,7 @@ module.exports =
       @ctx = @visualizer.ctx
       @canvas = @ctx.canvas
       for method in METHODS when @[method]?
-        # TODO: better style?
-        @[method] = @[method].bind(@)
+        @[method] = @[method].bind @
       @isBound = false
       @bind() if autobind
 

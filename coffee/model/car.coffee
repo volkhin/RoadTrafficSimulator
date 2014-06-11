@@ -29,9 +29,9 @@ module.exports =
     @property 'relativePosition',
       get: ->
         current = @trajectory.current
-        current.position / current.lane.length()
+        current.position / current.lane.length
       set: (pos) ->
-        @trajectory.current.position = pos * @trajectory.current.lane.length()
+        @trajectory.current.position = pos * @trajectory.current.lane.length
 
     @property 'speed',
       get: -> @_speed
@@ -40,8 +40,9 @@ module.exports =
         speed = @maxSpeed if speed > @maxSpeed
         @_speed = speed
 
-    direction: ->
-      @trajectory.direction # TODO should be a property
+    @property 'direction',
+      get: ->
+        @trajectory.direction
 
     release: ->
       @trajectory.release()
@@ -64,8 +65,8 @@ module.exports =
     pickNextLane: ->
       throw Error 'next lane is already chosen' if @nextLane
       @nextLane = null
-      intersection = @trajectory.getNextIntersection()
-      previousIntersection = @trajectory.getPreviousIntersection()
+      intersection = @trajectory.nextIntersection
+      previousIntersection = @trajectory.previousIntersection
       currentLane = @trajectory.current.lane
       possibleRoads = intersection.roads.filter (x) ->
         x.target isnt previousIntersection

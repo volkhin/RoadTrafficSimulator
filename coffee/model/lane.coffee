@@ -17,11 +17,12 @@ module.exports =
       delete obj.carsPositions
       obj
 
-    length: -> # TODO: property
-      @middleLine.length()
+    @property 'length',
+      get: ->
+        @middleLine.length
 
     @property 'middleLine',
-      get: -> new Segment @sourceSegment.center(), @targetSegment.center()
+      get: -> new Segment @sourceSegment.center, @targetSegment.center
 
     @property 'sourceSideId',
       get: -> @road.sourceSideId
@@ -35,6 +36,14 @@ module.exports =
     @property 'isLeftmost',
       get: -> @ is @.leftmostAdjacent
 
+    @property 'leftBorder',
+      get: ->
+        new Segment @sourceSegment.source, @targetSegment.target
+
+    @property 'rightBorder',
+      get: ->
+        new Segment @sourceSegment.target, @targetSegment.source
+
     getTurnDirection: (other) ->
       throw Error 'invalid lanes' if @road.target isnt other.road.source
       side1 = @targetSideId
@@ -42,14 +51,8 @@ module.exports =
       # 0 - left, 1 - forward, 2 - right
       turnNumber = (side2 - side1 - 1 + 8) % 4
 
-    getLeftBorder: -> # TODO: property
-      new Segment @sourceSegment.source, @targetSegment.target
-
-    getRightBorder: -> # TODO: property
-      new Segment @sourceSegment.target, @targetSegment.source
-
-    getDirection: -> # TODO: property
-      @middleLine.direction()
+    getDirection: ->
+      @middleLine.direction
 
     getPoint: (a) ->
       @middleLine.getPoint a

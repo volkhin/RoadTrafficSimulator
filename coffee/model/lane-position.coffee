@@ -15,7 +15,7 @@ module.exports =
         @acquire()
 
     @property 'relativePosition',
-      get: -> @position/@lane.length()
+      get: -> @position/@lane.length
 
     acquire: ->
       if @lane?.addCarPosition?

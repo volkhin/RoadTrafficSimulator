@@ -4,30 +4,34 @@ module.exports =
   class Segment
     constructor: (@source, @target) ->
 
-    center: ->
-      @getPoint 0.5
+    @property 'vector',
+      get: ->
+        @target.subtract @source
+
+    @property 'length',
+      get: ->
+        @vector.length
+
+    @property 'direction',
+      get: ->
+        @vector.direction
+
+    @property 'center',
+      get: ->
+        @getPoint 0.5
 
     split: (n, reverse) ->
       order = if reverse then [n - 1 .. 0] else [0 .. n - 1]
       @subsegment k / n, (k + 1) / n for k in order
 
-    vector: ->
-      @target.subtract @source
-
-    length: ->
-      @vector().length()
-
-    direction: ->
-      @vector().direction()
-
     getPoint: (a) ->
-      @source.add (@vector().mult a)
+      @source.add (@vector.mult a)
 
     # getSplit: (k, n) ->
     # TODO
 
     subsegment: (a, b) ->
-      offset = @vector()
+      offset = @vector
       start = @source.add (offset.mult a)
       end = @source.add (offset.mult b)
       new Segment start, end

@@ -49,12 +49,14 @@ module.exports = Curve = (function() {
     this.OB = new Segment(this.O, this.B);
   }
 
-  Curve.prototype.length = function() {
-    if (this.O == null) {
-      this.AB.length();
+  Curve.property('length', {
+    get: function() {
+      if (this.O == null) {
+        this.AB.length;
+      }
+      return this.AB.length;
     }
-    return this.AB.length();
-  };
+  });
 
   Curve.prototype.getPoint = function(a) {
     var p0, p1;
@@ -69,11 +71,11 @@ module.exports = Curve = (function() {
   Curve.prototype.getDirection = function(a) {
     var p0, p1;
     if (this.O == null) {
-      this.AB.direction();
+      this.AB.direction;
     }
     p0 = this.AO.getPoint(a);
     p1 = this.OB.getPoint(a);
-    return (new Segment(p0, p1)).direction();
+    return (new Segment(p0, p1)).direction;
   };
 
   return Curve;
@@ -91,6 +93,24 @@ module.exports = Point = (function() {
     this.y = y != null ? y : 0;
   }
 
+  Point.property('length', {
+    get: function() {
+      return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+  });
+
+  Point.property('direction', {
+    get: function() {
+      return Math.atan2(this.y, this.x);
+    }
+  });
+
+  Point.property('normalized', {
+    get: function() {
+      return new Point(this.x / this.length, this.y / this.length);
+    }
+  });
+
   Point.prototype.add = function(o) {
     return new Point(this.x + o.x, this.y + o.y);
   };
@@ -105,20 +125,6 @@ module.exports = Point = (function() {
 
   Point.prototype.divide = function(k) {
     return new Point(this.x / k, this.y / k);
-  };
-
-  Point.prototype.normalize = function() {
-    var length;
-    length = this.length();
-    return new Point(this.x / length, this.y / length);
-  };
-
-  Point.prototype.length = function() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  };
-
-  Point.prototype.direction = function() {
-    return Math.atan2(this.y, this.x);
   };
 
   return Point;
@@ -262,9 +268,29 @@ module.exports = Segment = (function() {
     this.target = target;
   }
 
-  Segment.prototype.center = function() {
-    return this.getPoint(0.5);
-  };
+  Segment.property('vector', {
+    get: function() {
+      return this.target.subtract(this.source);
+    }
+  });
+
+  Segment.property('length', {
+    get: function() {
+      return this.vector.length;
+    }
+  });
+
+  Segment.property('direction', {
+    get: function() {
+      return this.vector.direction;
+    }
+  });
+
+  Segment.property('center', {
+    get: function() {
+      return this.getPoint(0.5);
+    }
+  });
 
   Segment.prototype.split = function(n, reverse) {
     var k, order, _i, _j, _k, _len, _ref, _ref1, _results, _results1, _results2;
@@ -285,25 +311,13 @@ module.exports = Segment = (function() {
     return _results2;
   };
 
-  Segment.prototype.vector = function() {
-    return this.target.subtract(this.source);
-  };
-
-  Segment.prototype.length = function() {
-    return this.vector().length();
-  };
-
-  Segment.prototype.direction = function() {
-    return this.vector().direction();
-  };
-
   Segment.prototype.getPoint = function(a) {
-    return this.source.add(this.vector().mult(a));
+    return this.source.add(this.vector.mult(a));
   };
 
   Segment.prototype.subsegment = function(a, b) {
     var end, offset, start;
-    offset = this.vector();
+    offset = this.vector;
     start = this.source.add(offset.mult(a));
     end = this.source.add(offset.mult(b));
     return new Segment(start, end);
@@ -368,10 +382,10 @@ module.exports = Car = (function() {
     get: function() {
       var current;
       current = this.trajectory.current;
-      return current.position / current.lane.length();
+      return current.position / current.lane.length;
     },
     set: function(pos) {
-      return this.trajectory.current.position = pos * this.trajectory.current.lane.length();
+      return this.trajectory.current.position = pos * this.trajectory.current.lane.length;
     }
   });
 
@@ -390,9 +404,11 @@ module.exports = Car = (function() {
     }
   });
 
-  Car.prototype.direction = function() {
-    return this.trajectory.direction;
-  };
+  Car.property('direction', {
+    get: function() {
+      return this.trajectory.direction;
+    }
+  });
 
   Car.prototype.release = function() {
     return this.trajectory.release();
@@ -424,8 +440,8 @@ module.exports = Car = (function() {
       throw Error('next lane is already chosen');
     }
     this.nextLane = null;
-    intersection = this.trajectory.getNextIntersection();
-    previousIntersection = this.trajectory.getPreviousIntersection();
+    intersection = this.trajectory.nextIntersection;
+    previousIntersection = this.trajectory.previousIntersection;
     currentLane = this.trajectory.current.lane;
     possibleRoads = intersection.roads.filter(function(x) {
       return x.target !== previousIntersection;
@@ -617,7 +633,7 @@ module.exports = LanePosition = (function() {
 
   LanePosition.property('relativePosition', {
     get: function() {
-      return this.position / this.lane.length();
+      return this.position / this.lane.length;
     }
   });
 
@@ -684,13 +700,15 @@ module.exports = Lane = (function() {
     return obj;
   };
 
-  Lane.prototype.length = function() {
-    return this.middleLine.length();
-  };
+  Lane.property('length', {
+    get: function() {
+      return this.middleLine.length;
+    }
+  });
 
   Lane.property('middleLine', {
     get: function() {
-      return new Segment(this.sourceSegment.center(), this.targetSegment.center());
+      return new Segment(this.sourceSegment.center, this.targetSegment.center);
     }
   });
 
@@ -718,6 +736,18 @@ module.exports = Lane = (function() {
     }
   });
 
+  Lane.property('leftBorder', {
+    get: function() {
+      return new Segment(this.sourceSegment.source, this.targetSegment.target);
+    }
+  });
+
+  Lane.property('rightBorder', {
+    get: function() {
+      return new Segment(this.sourceSegment.target, this.targetSegment.source);
+    }
+  });
+
   Lane.prototype.getTurnDirection = function(other) {
     var side1, side2, turnNumber;
     if (this.road.target !== other.road.source) {
@@ -728,16 +758,8 @@ module.exports = Lane = (function() {
     return turnNumber = (side2 - side1 - 1 + 8) % 4;
   };
 
-  Lane.prototype.getLeftBorder = function() {
-    return new Segment(this.sourceSegment.source, this.targetSegment.target);
-  };
-
-  Lane.prototype.getRightBorder = function() {
-    return new Segment(this.sourceSegment.target, this.targetSegment.source);
-  };
-
   Lane.prototype.getDirection = function() {
-    return this.middleLine.direction();
+    return this.middleLine.direction;
   };
 
   Lane.prototype.getPoint = function(a) {
@@ -908,7 +930,7 @@ module.exports = Road = (function() {
     this.sourceSide = this.source.rect.getSide(this.sourceSideId).subsegment(0.5, 1.0);
     this.targetSideId = this.target.rect.getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
-    this.lanesNumber = Math.min(this.sourceSide.length(), this.targetSide.length()) | 0;
+    this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length) | 0;
     sourceSplits = this.sourceSide.split(this.lanesNumber, true);
     targetSplits = this.targetSide.split(this.lanesNumber);
     if ((this.lanes == null) || this.lanes.length < this.lanesNumber) {
@@ -976,7 +998,7 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('relativePosition', {
     get: function() {
-      return this.absolutePosition / this.lane.length();
+      return this.absolutePosition / this.lane.length;
     }
   });
 
@@ -996,13 +1018,17 @@ module.exports = Trajectory = (function() {
     return Math.min(this.current.getDistanceToNextCar(), this.next.getDistanceToNextCar());
   };
 
-  Trajectory.prototype.getNextIntersection = function() {
-    return this.current.lane.road.target;
-  };
+  Trajectory.property('nextIntersection', {
+    get: function() {
+      return this.current.lane.road.target;
+    }
+  });
 
-  Trajectory.prototype.getPreviousIntersection = function() {
-    return this.current.lane.road.source;
-  };
+  Trajectory.property('previousIntersection', {
+    get: function() {
+      return this.current.lane.road.source;
+    }
+  });
 
   Trajectory.prototype.canEnterIntersection = function(nextLane) {
     var intersection, sideId, sourceLane, turnNumber;
@@ -1010,7 +1036,7 @@ module.exports = Trajectory = (function() {
     if (!nextLane) {
       throw Error('no road to enter');
     }
-    intersection = this.getNextIntersection();
+    intersection = this.nextIntersection;
     turnNumber = sourceLane.getTurnDirection(nextLane);
     if (turnNumber === 3) {
       throw Error('no U-turns are allowed');
@@ -1027,7 +1053,7 @@ module.exports = Trajectory = (function() {
 
   Trajectory.prototype.moveForward = function(distance) {
     var laneEnding;
-    laneEnding = this.current.position + this.car.length >= this.current.lane.length();
+    laneEnding = this.current.position + this.car.length >= this.current.lane.length;
     if (laneEnding && !this.isChangingLanes) {
       switch (false) {
         case !(this.car.nextLane == null):
@@ -1047,7 +1073,7 @@ module.exports = Trajectory = (function() {
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;
-    if (this.isChangingLanes && this.temp.position >= this.temp.lane.length()) {
+    if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
       this.finishChangingLanes();
     }
     if (this.current.lane && !this.isChangingLanes && !this.car.nextLane) {
@@ -1070,7 +1096,7 @@ module.exports = Trajectory = (function() {
       throw Error('not neighbouring lanes');
     }
     nextPosition = this.current.position + 5 * this.car.length;
-    if (!(nextPosition < this.lane.length())) {
+    if (!(nextPosition < this.lane.length)) {
       throw Error('too late to change lane');
     }
     return this.startChangingLanes(nextLane, nextPosition, false);
@@ -1097,12 +1123,12 @@ module.exports = Trajectory = (function() {
     this.next.position = nextPosition;
     p1 = this.current.lane.getPoint(this.current.relativePosition);
     p2 = this.next.lane.getPoint(this.next.relativePosition);
-    distance = p2.subtract(p1).length();
-    direction = this.current.lane.middleLine.vector().normalize();
+    distance = p2.subtract(p1).length;
+    direction = this.current.lane.middleLine.vector.normalized;
     control = p1.add(direction.mult(distance / 2));
     this.temp.lane = new Curve(p1, p2, control);
     this.temp.position = 0;
-    this.next.position -= this.temp.lane.length();
+    this.next.position -= this.temp.lane.length;
     if (!keepOldLine) {
       return this.current.release();
     }
@@ -1902,7 +1928,7 @@ module.exports = Visualizer = (function() {
     _ref = road.lanes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       lane = _ref[_i];
-      line = lane.getLeftBorder();
+      line = lane.leftBorder;
       dashSize = 0.5;
       this.graphics.drawSegment(line);
       this.ctx.lineWidth = 0.05;
@@ -1913,10 +1939,10 @@ module.exports = Visualizer = (function() {
     this.ctx.restore();
     this.ctx.save();
     this.ctx.lineWidth = 0.05;
-    leftLine = road.leftmostLane.getLeftBorder();
+    leftLine = road.leftmostLane.leftBorder;
     this.graphics.drawSegment(leftLine);
     this.graphics.stroke(settings.colors.roadMarking);
-    rightLine = road.rightmostLane.getRightBorder();
+    rightLine = road.rightmostLane.rightBorder;
     this.graphics.drawSegment(rightLine);
     this.graphics.stroke(settings.colors.roadMarking);
     return this.ctx.restore();
@@ -1924,7 +1950,7 @@ module.exports = Visualizer = (function() {
 
   Visualizer.prototype.drawCar = function(car) {
     var angle, boundRect, center, h, l, rect, s, style;
-    angle = car.direction();
+    angle = car.direction;
     center = car.coords;
     rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
     rect.center(new Point(0, 0));
