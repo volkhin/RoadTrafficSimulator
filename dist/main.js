@@ -24,6 +24,7 @@ $(document).ready(function() {
   gui.add(world, 'save');
   gui.add(world, 'load');
   gui.add(world, 'clear');
+  gui.add(world, 'generateMap');
   gui.add(visualizer, 'running').listen();
   gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen();
   gui.add(visualizer, 'timeFactor', 0.1, 10).listen();
@@ -935,6 +936,7 @@ module.exports = Road = (function() {
     this.targetSideId = this.target.rect.getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
     this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length) | 0;
+    this.lanesNumber || (this.lanesNumber = 1);
     sourceSplits = this.sourceSide.split(this.lanesNumber, true);
     targetSplits = this.targetSide.split(this.lanesNumber);
     if ((this.lanes == null) || this.lanes.length < this.lanesNumber) {
@@ -1170,7 +1172,8 @@ module.exports = Trajectory = (function() {
 
 },{"../geom/curve.coffee":2,"./lane-position.coffee":10}],15:[function(require,module,exports){
 'use strict';
-var $, Car, Intersection, Pool, Road, World, _;
+var $, Car, Intersection, Pool, Rect, Road, World, _,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 $ = require('jquery');
 
@@ -1183,6 +1186,8 @@ Intersection = require('./intersection.coffee');
 Road = require('./road.coffee');
 
 Pool = require('./pool.coffee');
+
+Rect = require('../geom/rect.coffee');
 
 module.exports = World = (function() {
   function World() {
@@ -1248,6 +1253,67 @@ module.exports = World = (function() {
       _results.push(this.addRoad(road));
     }
     return _results;
+  };
+
+  World.prototype.generateMap = function(minX, maxX, minY, maxY) {
+    var intersection, intersectionsNumber, map, pair, picked, previous, x, y, _i, _j, _k, _l;
+    if (minX == null) {
+      minX = -4;
+    }
+    if (maxX == null) {
+      maxX = 4;
+    }
+    if (minY == null) {
+      minY = -2;
+    }
+    if (maxY == null) {
+      maxY = 2;
+    }
+    this.clear();
+    intersectionsNumber = 30;
+    picked = [];
+    map = {};
+    while (picked.length < intersectionsNumber) {
+      x = _.random(minX, maxX);
+      y = _.random(minY, maxY);
+      pair = [x, y];
+      if (__indexOf.call(picked, pair) < 0) {
+        picked.push(pair);
+        map[[x, y]] = intersection = new Intersection(new Rect(5 * x, 5 * y, 1, 1));
+        this.addIntersection(intersection);
+      }
+    }
+    for (x = _i = minX; minX <= maxX ? _i <= maxX : _i >= maxX; x = minX <= maxX ? ++_i : --_i) {
+      previous = null;
+      for (y = _j = minY; minY <= maxY ? _j <= maxY : _j >= maxY; y = minY <= maxY ? ++_j : --_j) {
+        intersection = map[[x, y]];
+        if (intersection != null) {
+          if (previous != null) {
+            this.addRoad(new Road(intersection, previous));
+          }
+          if (previous != null) {
+            this.addRoad(new Road(previous, intersection));
+          }
+          previous = intersection;
+        }
+      }
+    }
+    for (y = _k = minY; minY <= maxY ? _k <= maxY : _k >= maxY; y = minY <= maxY ? ++_k : --_k) {
+      previous = null;
+      for (x = _l = minX; minX <= maxX ? _l <= maxX : _l >= maxX; x = minX <= maxX ? ++_l : --_l) {
+        intersection = map[[x, y]];
+        if (intersection != null) {
+          if (previous != null) {
+            this.addRoad(new Road(intersection, previous));
+          }
+          if (previous != null) {
+            this.addRoad(new Road(previous, intersection));
+          }
+          previous = intersection;
+        }
+      }
+    }
+    return null;
   };
 
   World.prototype.clear = function() {
@@ -1349,7 +1415,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {

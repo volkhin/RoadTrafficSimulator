@@ -6,6 +6,7 @@ Car = require './car.coffee'
 Intersection = require './intersection.coffee'
 Road = require './road.coffee'
 Pool = require './pool.coffee'
+Rect = require '../geom/rect.coffee'
 
 module.exports =
   class World
@@ -46,6 +47,38 @@ module.exports =
         road.source = @getIntersection road.source
         road.target = @getIntersection road.target
         @addRoad road
+
+    generateMap: (minX = -4, maxX = 4, minY = -2, maxY = 2) ->
+      @clear()
+      intersectionsNumber = 30
+      picked = []
+      map = {}
+      while picked.length < intersectionsNumber
+        x = _.random minX, maxX
+        y = _.random minY, maxY
+        pair = [x, y]
+        unless pair in picked
+          picked.push pair
+          map[[x, y]] = intersection = new Intersection new Rect 5*x, 5*y, 1, 1
+          @addIntersection intersection
+      for x in [minX..maxX]
+        previous = null
+        for y in [minY..maxY]
+          intersection = map[[x, y]]
+          if intersection?
+            @addRoad new Road intersection, previous if previous?
+            @addRoad new Road previous, intersection if previous?
+            previous = intersection
+      for y in [minY..maxY]
+        previous = null
+        for x in [minX..maxX]
+          intersection = map[[x, y]]
+          if intersection?
+            @addRoad new Road intersection, previous if previous?
+            @addRoad new Road previous, intersection if previous?
+            previous = intersection
+      null
+
 
     clear: ->
       @set {}

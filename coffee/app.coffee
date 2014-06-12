@@ -16,6 +16,7 @@ $(document).ready ->
   gui.add world, 'save'
   gui.add world, 'load'
   gui.add world, 'clear'
+  gui.add world, 'generateMap'
   gui.add(visualizer, 'running').listen()
   gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen()
   gui.add(visualizer, 'timeFactor', 0.1, 10).listen()
