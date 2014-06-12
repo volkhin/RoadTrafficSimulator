@@ -48,19 +48,19 @@ module.exports =
       @trajectory.release()
 
     move: (delta) ->
-      if @trajectory.getDistanceToNextCar() > @safeDistance
+      if @trajectory.getDistanceToNextCar() - @safeDistance > @speed * delta
         k = 1 - Math.pow @speed/@maxSpeed, 4
         @speed += @acceleration * delta * k
       else
         @speed = 0
-
       if @preferedLane? and @preferedLane isnt @trajectory.current.lane and
       not @trajectory.isChangingLanes
         switch @turnNumber
           when 0 then @trajectory.changeLaneToLeft()
           when 2 then @trajectory.changeLaneToRight()
-
-      @trajectory.moveForward @speed*delta
+      step = @speed * delta
+      step = 0 if @trajectory.getDistanceToNextCar() - @safeDistance < step
+      @trajectory.moveForward @speed * delta
 
     pickNextLane: ->
       throw Error 'next lane is already chosen' if @nextLane

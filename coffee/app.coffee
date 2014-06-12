@@ -8,9 +8,9 @@ World = require './model/world.coffee'
 settings = require './settings.coffee'
 
 $(document).ready ->
-  world = new World
+  window.world = new World
   world.load()
-  visualizer = new Visualizer world
+  window.visualizer = new Visualizer world
   visualizer.start()
   gui = new DAT.GUI
   gui.add world, 'save'

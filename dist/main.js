@@ -15,10 +15,10 @@ World = require('./model/world.coffee');
 settings = require('./settings.coffee');
 
 $(document).ready(function() {
-  var gui, visualizer, world;
-  world = new World;
+  var gui;
+  window.world = new World;
   world.load();
-  visualizer = new Visualizer(world);
+  window.visualizer = new Visualizer(world);
   visualizer.start();
   gui = new DAT.GUI;
   gui.add(world, 'save');
@@ -415,8 +415,8 @@ module.exports = Car = (function() {
   };
 
   Car.prototype.move = function(delta) {
-    var k;
-    if (this.trajectory.getDistanceToNextCar() > this.safeDistance) {
+    var k, step;
+    if (this.trajectory.getDistanceToNextCar() - this.safeDistance > this.speed * delta) {
       k = 1 - Math.pow(this.speed / this.maxSpeed, 4);
       this.speed += this.acceleration * delta * k;
     } else {
@@ -430,6 +430,10 @@ module.exports = Car = (function() {
         case 2:
           this.trajectory.changeLaneToRight();
       }
+    }
+    step = this.speed * delta;
+    if (this.trajectory.getDistanceToNextCar() - this.safeDistance < step) {
+      step = 0;
     }
     return this.trajectory.moveForward(this.speed * delta);
   };

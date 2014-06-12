@@ -64,7 +64,7 @@ module.exports =
             @car.preferedLane = null
             @car.turnNumber = null
           else
-            # FIXME should be dont in car model
+            # FIXME should be done in car model
             @car.speed = 0
             distance = 0
       @current.position += distance
@@ -82,6 +82,7 @@ module.exports =
       throw Error 'not neighbouring lanes' unless @lane.road is nextLane.road
       nextPosition = @current.position + 5 * @car.length
       throw Error 'too late to change lane' unless nextPosition < @lane.length
+      #TODO: keep old lane after implementing IDM
       @startChangingLanes nextLane, nextPosition, false
 
     changeLaneToLeft: ->
