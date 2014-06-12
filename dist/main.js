@@ -353,8 +353,8 @@ module.exports = Car = (function() {
     this.id = window.__nextId++;
     this.color = 255 * Math.random();
     this._speed = 0;
-    this.width = 0.3;
-    this.length = 0.7;
+    this.width = 0.1;
+    this.length = 0.2;
     this.safeDistance = 1.5 * this.length;
     this.maxSpeed = (4 + Math.random()) / 5 * 4.5;
     this.acceleration = 1;
@@ -936,7 +936,7 @@ module.exports = Road = (function() {
     this.targetSideId = this.target.rect.getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
     this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length) | 0;
-    this.lanesNumber || (this.lanesNumber = 1);
+    this.lanesNumber = Math.max(2, this.lanesNumber);
     sourceSplits = this.sourceSide.split(this.lanesNumber, true);
     targetSplits = this.targetSide.split(this.lanesNumber);
     if ((this.lanes == null) || this.lanes.length < this.lanesNumber) {
@@ -1172,8 +1172,7 @@ module.exports = Trajectory = (function() {
 
 },{"../geom/curve.coffee":2,"./lane-position.coffee":10}],15:[function(require,module,exports){
 'use strict';
-var $, Car, Intersection, Pool, Rect, Road, World, _,
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+var $, Car, Intersection, Pool, Rect, Road, World, _;
 
 $ = require('jquery');
 
@@ -1256,12 +1255,12 @@ module.exports = World = (function() {
   };
 
   World.prototype.generateMap = function(minX, maxX, minY, maxY) {
-    var intersection, intersectionsNumber, map, pair, picked, previous, x, y, _i, _j, _k, _l;
+    var intersection, intersectionsNumber, map, previous, x, y, _i, _j, _k, _l;
     if (minX == null) {
-      minX = -4;
+      minX = -2;
     }
     if (maxX == null) {
-      maxX = 4;
+      maxX = 2;
     }
     if (minY == null) {
       minY = -2;
@@ -1270,17 +1269,15 @@ module.exports = World = (function() {
       maxY = 2;
     }
     this.clear();
-    intersectionsNumber = 30;
-    picked = [];
+    intersectionsNumber = 20;
     map = {};
-    while (picked.length < intersectionsNumber) {
+    while (intersectionsNumber > 0) {
       x = _.random(minX, maxX);
       y = _.random(minY, maxY);
-      pair = [x, y];
-      if (__indexOf.call(picked, pair) < 0) {
-        picked.push(pair);
+      if (map[[x, y]] == null) {
         map[[x, y]] = intersection = new Intersection(new Rect(5 * x, 5 * y, 1, 1));
         this.addIntersection(intersection);
+        intersectionsNumber--;
       }
     }
     for (x = _i = minX; minX <= maxX ? _i <= maxX : _i >= maxX; x = minX <= maxX ? ++_i : --_i) {
@@ -1949,7 +1946,7 @@ module.exports = Visualizer = (function() {
     this.height = this.canvas.height;
     this.carImage = new Image;
     this.carImage.src = 'images/car.png';
-    this.zoomer = new Zoomer(20, this, true);
+    this.zoomer = new Zoomer(50, this, true);
     this.graphics = new Graphics(this.ctx);
     this.toolRoadbuilder = new ToolRoadBuilder(this, true);
     this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
@@ -1975,7 +1972,7 @@ module.exports = Visualizer = (function() {
     segment = road.targetSide;
     sideId = road.targetSideId;
     lights = intersection.controlSignals.state[sideId];
-    this.ctx.lineWidth = 0.1;
+    this.ctx.lineWidth = 0.03;
     this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
     this.graphics.stroke(lightsColors[lights[0]]);
     this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
@@ -1999,16 +1996,16 @@ module.exports = Visualizer = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       lane = _ref[_i];
       line = lane.leftBorder;
-      dashSize = 0.5;
+      dashSize = 0.1;
       this.graphics.drawSegment(line);
-      this.ctx.lineWidth = 0.05;
+      this.ctx.lineWidth = 0.02;
       this.ctx.lineDashOffset = 1.5 * dashSize;
       this.ctx.setLineDash([dashSize]);
       this.graphics.stroke(settings.colors.roadMarking);
     }
     this.ctx.restore();
     this.ctx.save();
-    this.ctx.lineWidth = 0.05;
+    this.ctx.lineWidth = 0.02;
     leftLine = road.leftmostLane.leftBorder;
     this.graphics.drawSegment(leftLine);
     this.graphics.stroke(settings.colors.roadMarking);

@@ -25,7 +25,7 @@ module.exports =
       @carImage = new Image
       @carImage.src = 'images/car.png'
 
-      @zoomer = new Zoomer 20, @, true
+      @zoomer = new Zoomer 50, @, true
       @graphics = new Graphics @ctx
       @toolRoadbuilder = new ToolRoadBuilder @, true
       @toolIntersectionBuilder = new ToolIntersectionBuilder @, true
@@ -48,7 +48,7 @@ module.exports =
       sideId = road.targetSideId
       lights = intersection.controlSignals.state[sideId]
 
-      @ctx.lineWidth = 0.1
+      @ctx.lineWidth = 0.03
       @graphics.drawSegment segment.subsegment 0.7, 1.0
       @graphics.stroke lightsColors[lights[0]]
       @graphics.drawSegment segment.subsegment 0.35, 0.65
@@ -69,16 +69,16 @@ module.exports =
       @ctx.save()
       for lane in road.lanes
         line = lane.leftBorder
-        dashSize = 0.5
+        dashSize = 0.1
         @graphics.drawSegment line
-        @ctx.lineWidth = 0.05
+        @ctx.lineWidth = 0.02
         @ctx.lineDashOffset = 1.5 * dashSize
         @ctx.setLineDash [dashSize]
         @graphics.stroke settings.colors.roadMarking
       @ctx.restore()
 
       @ctx.save()
-      @ctx.lineWidth = 0.05
+      @ctx.lineWidth = 0.02
       leftLine = road.leftmostLane.leftBorder
       @graphics.drawSegment leftLine
       @graphics.stroke settings.colors.roadMarking

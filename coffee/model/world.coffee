@@ -48,19 +48,17 @@ module.exports =
         road.target = @getIntersection road.target
         @addRoad road
 
-    generateMap: (minX = -4, maxX = 4, minY = -2, maxY = 2) ->
+    generateMap: (minX = -2, maxX = 2, minY = -2, maxY = 2) ->
       @clear()
-      intersectionsNumber = 30
-      picked = []
+      intersectionsNumber = 20
       map = {}
-      while picked.length < intersectionsNumber
+      while intersectionsNumber > 0
         x = _.random minX, maxX
         y = _.random minY, maxY
-        pair = [x, y]
-        unless pair in picked
-          picked.push pair
+        unless map[[x, y]]?
           map[[x, y]] = intersection = new Intersection new Rect 5*x, 5*y, 1, 1
           @addIntersection intersection
+          intersectionsNumber--
       for x in [minX..maxX]
         previous = null
         for y in [minY..maxY]
