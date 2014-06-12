@@ -6,7 +6,7 @@ Trajectory = require './trajectory.coffee'
 module.exports =
   class Car
     constructor: (lane, position) ->
-      @id = window.__nextId++
+      @id = Object.genId()
       @color = 255 * Math.random()
       @_speed = 0
       @width = 0.1

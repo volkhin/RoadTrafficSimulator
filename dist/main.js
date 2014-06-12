@@ -333,6 +333,10 @@ module.exports = Segment = (function() {
 'use strict';
 module.exports = {};
 
+Object.genId = function() {
+  return Math.random().toString().substr(2) | 0;
+};
+
 Function.prototype.property = function(prop, desc) {
   return Object.defineProperty(this.prototype, prop, desc);
 };
@@ -350,7 +354,7 @@ Trajectory = require('./trajectory.coffee');
 
 module.exports = Car = (function() {
   function Car(lane, position) {
-    this.id = window.__nextId++;
+    this.id = Object.genId();
     this.color = 255 * Math.random();
     this._speed = 0;
     this.width = 0.1;
@@ -566,7 +570,7 @@ Rect = require('../geom/rect.coffee');
 module.exports = Intersection = (function() {
   function Intersection(rect) {
     this.rect = rect;
-    this.id = window.__nextId++;
+    this.id = Object.genId();
     this.roads = [];
     this.inRoads = [];
     this.controlSignals = new ControlSignals;
@@ -620,7 +624,7 @@ module.exports = LanePosition = (function() {
   function LanePosition(car, lane, position) {
     this.car = car;
     this.position = position;
-    this.id = window.__nextId++;
+    this.id = Object.genId();
     this.free = true;
     this.lane = lane;
   }
@@ -883,7 +887,7 @@ module.exports = Road = (function() {
   function Road(source, target) {
     this.source = source;
     this.target = target;
-    this.id = window.__nextId++;
+    this.id = Object.genId();
     this.lanes = [];
     this.lanesNumber = null;
     this.update();
@@ -1215,14 +1219,12 @@ module.exports = World = (function() {
     this.intersections = new Pool(Intersection, obj.intersections);
     this.roads = new Pool(Road, obj.roads);
     this.cars = new Pool(Car, obj.cars);
-    this.carsNumber = 0;
-    return window.__nextId = obj.__nextId || 1;
+    return this.carsNumber = 0;
   };
 
   World.prototype.save = function() {
     var data;
     data = $.extend({}, this);
-    data.nextId = window.__nextId;
     delete data.cars;
     return localStorage.world = JSON.stringify(data);
   };
@@ -1235,7 +1237,6 @@ module.exports = World = (function() {
       return;
     }
     this.clear();
-    window.__nextId = data.nextId || 1;
     this.carsNumber = data.carsNumber || 0;
     _ref = data.intersections;
     for (id in _ref) {
@@ -17403,4 +17404,4 @@ return jQuery;
   }
 }).call(this);
 
-},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25])
+},{}]},{},[1])

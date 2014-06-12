@@ -7,7 +7,7 @@ Lane = require './lane.coffee'
 module.exports =
   class Road
     constructor: (@source, @target) ->
-      @id = window.__nextId++
+      @id = Object.genId()
       @lanes = []
       @lanesNumber = null
       @update()

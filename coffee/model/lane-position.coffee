@@ -3,7 +3,7 @@
 module.exports =
   class LanePosition
     constructor: (@car, lane, @position) ->
-      @id = window.__nextId++
+      @id = Object.genId()
       @free = true
       @lane = lane
 

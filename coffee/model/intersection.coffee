@@ -7,7 +7,7 @@ Rect = require '../geom/rect.coffee'
 module.exports =
   class Intersection
     constructor: (@rect) ->
-      @id = window.__nextId++
+      @id = Object.genId()
       @roads = []
       @inRoads = []
       @controlSignals = new ControlSignals

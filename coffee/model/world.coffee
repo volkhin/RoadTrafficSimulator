@@ -25,11 +25,9 @@ module.exports =
       @roads = new Pool Road, obj.roads
       @cars = new Pool Car, obj.cars
       @carsNumber = 0
-      window.__nextId = obj.__nextId or 1
 
     save: ->
       data = $.extend {}, @
-      data.nextId = window.__nextId
       delete data.cars
       localStorage.world = JSON.stringify data
 
@@ -38,7 +36,6 @@ module.exports =
       data = data and JSON.parse data
       return unless data?
       @clear()
-      window.__nextId = data.nextId || 1
       @carsNumber = data.carsNumber or 0
       for id, intersection of data.intersections
         @addIntersection Intersection.copy intersection

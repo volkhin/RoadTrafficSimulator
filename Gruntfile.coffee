@@ -29,7 +29,7 @@ module.exports = (grunt) ->
     browserify:
       dist:
         files:
-          'dist/main.js': ['coffee/**/*.coffee']
+          'dist/main.js': ['coffee/app.coffee']
         options:
           transform: ['coffeeify']
           bundleOptions:
