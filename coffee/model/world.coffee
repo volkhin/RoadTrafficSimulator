@@ -50,7 +50,7 @@ module.exports =
 
     generateMap: (minX = -2, maxX = 2, minY = -2, maxY = 2) ->
       @clear()
-      intersectionsNumber = 20
+      intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0
       map = {}
       while intersectionsNumber > 0
         x = _.random minX, maxX

@@ -1269,7 +1269,7 @@ module.exports = World = (function() {
       maxY = 2;
     }
     this.clear();
-    intersectionsNumber = 20;
+    intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0;
     map = {};
     while (intersectionsNumber > 0) {
       x = _.random(minX, maxX);
