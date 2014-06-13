@@ -35,6 +35,7 @@ module.exports =
       @_running = false
       @previousTime = 0
       @timeFactor = 1
+      @isDrawingIds = false
 
     drawIntersection: (intersection, alpha) ->
       color = intersection.color or settings.colors.intersection
@@ -106,14 +107,21 @@ module.exports =
       style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
       @graphics.drawImage @carImage, rect
       @graphics.fillRect boundRect, style, 0.5
+      if @isDrawingIds
+        @ctx.fillStyle = "black"
+        @ctx.font = "1px Arial"
+        @ctx.scale 0.1, 0.1
+        @ctx.fillText car.id, 0, 0
+        @ctx.scale 10, 10
       @graphics.restore()
 
     drawGrid: ->
+      gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
-      return if box.area() >= 2000
+      return if box.area() / gridSize / gridSize >= 2000
 
-      for i in [box.left()..box.right()]
-        for j in [box.top()..box.bottom()]
+      for i in [box.left()..box.right()] by gridSize
+        for j in [box.top()..box.bottom()] by gridSize
           rect = new Rect i, j, 0.05, 0.05
           @graphics.fillRect rect, settings.colors.gridPoint
 

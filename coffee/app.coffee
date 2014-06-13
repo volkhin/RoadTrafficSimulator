@@ -18,6 +18,7 @@ $(document).ready ->
   gui.add world, 'clear'
   gui.add world, 'generateMap'
   gui.add(visualizer, 'running').listen()
+  gui.add(visualizer, 'isDrawingIds').listen()
   gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen()
   gui.add(visualizer, 'timeFactor', 0.1, 10).listen()
   gui.add(world, 'carsNumber').min(0).max(200).step(1).listen()

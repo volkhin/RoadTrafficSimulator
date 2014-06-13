@@ -26,6 +26,7 @@ $(document).ready(function() {
   gui.add(world, 'clear');
   gui.add(world, 'generateMap');
   gui.add(visualizer, 'running').listen();
+  gui.add(visualizer, 'isDrawingIds').listen();
   gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen();
   gui.add(visualizer, 'timeFactor', 0.1, 10).listen();
   gui.add(world, 'carsNumber').min(0).max(200).step(1).listen();
@@ -1427,7 +1428,7 @@ module.exports = World = (function() {
 'use strict';
 module.exports = {
   colors: {
-    background: '#fff',
+    background: '#fafafa',
     redLight: 'hsl(0, 100%, 50%)',
     greenLight: 'hsl(120, 100%, 50%)',
     intersection: '#666',
@@ -1441,7 +1442,8 @@ module.exports = {
     hoveredGrid: '#f4e8e1'
   },
   fps: 30,
-  lightsFlipInterval: 1
+  lightsFlipInterval: 1,
+  gridSize: 10
 };
 
 
@@ -1967,6 +1969,7 @@ module.exports = Visualizer = (function() {
     this._running = false;
     this.previousTime = 0;
     this.timeFactor = 1;
+    this.isDrawingIds = false;
   }
 
   Visualizer.prototype.drawIntersection = function(intersection, alpha) {
@@ -2043,21 +2046,29 @@ module.exports = Visualizer = (function() {
     style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     this.graphics.drawImage(this.carImage, rect);
     this.graphics.fillRect(boundRect, style, 0.5);
+    if (this.isDrawingIds) {
+      this.ctx.fillStyle = "black";
+      this.ctx.font = "1px Arial";
+      this.ctx.scale(0.1, 0.1);
+      this.ctx.fillText(car.id, 0, 0);
+      this.ctx.scale(10, 10);
+    }
     return this.graphics.restore();
   };
 
   Visualizer.prototype.drawGrid = function() {
-    var box, i, j, rect, _i, _ref, _ref1, _results;
+    var box, gridSize, i, j, rect, _i, _ref, _ref1, _results;
+    gridSize = settings.gridSize;
     box = this.zoomer.getBoundingBox();
-    if (box.area() >= 2000) {
+    if (box.area() / gridSize / gridSize >= 2000) {
       return;
     }
     _results = [];
-    for (i = _i = _ref = box.left(), _ref1 = box.right(); _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+    for (i = _i = _ref = box.left(), _ref1 = box.right(); gridSize > 0 ? _i <= _ref1 : _i >= _ref1; i = _i += gridSize) {
       _results.push((function() {
         var _j, _ref2, _ref3, _results1;
         _results1 = [];
-        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); _ref2 <= _ref3 ? _j <= _ref3 : _j >= _ref3; j = _ref2 <= _ref3 ? ++_j : --_j) {
+        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); gridSize > 0 ? _j <= _ref3 : _j >= _ref3; j = _j += gridSize) {
           rect = new Rect(i, j, 0.05, 0.05);
           _results1.push(this.graphics.fillRect(rect, settings.colors.gridPoint));
         }

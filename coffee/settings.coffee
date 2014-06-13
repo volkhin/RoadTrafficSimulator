@@ -2,7 +2,7 @@
 
 module.exports =
   colors:
-    background: '#fff'
+    background: '#fafafa'
     redLight: 'hsl(0, 100%, 50%)'
     greenLight: 'hsl(120, 100%, 50%)'
     intersection: '#666'
@@ -16,3 +16,4 @@ module.exports =
     hoveredGrid: '#f4e8e1'
   fps: 30
   lightsFlipInterval: 1
+  gridSize: 10
