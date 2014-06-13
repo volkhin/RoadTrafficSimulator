@@ -1,13 +1,16 @@
 {
   "name": "trafic-simulator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simulator of road networks with signal-controlled intersections",
-  "main": "index.js",
   "scripts": {
     "test": "grunt test"
   },
-  "author": "Artem Volkhin",
-  "license": "ISC",
+  "author": {
+    "name": "Artem Volkhin",
+    "email": "artem@volkhin.com",
+    "url": "http://volkhin.com/"
+  }
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "browserify": "^4.1.9",
