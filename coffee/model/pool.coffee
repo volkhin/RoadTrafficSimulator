@@ -20,8 +20,7 @@ module.exports =
     pop: (obj) ->
       id = obj.id ? obj
       result = @objects[id]
-      if typeof result.release is 'function'
-        result.release()
+      result.release?()
       delete @objects[id]
       result
 

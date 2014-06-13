@@ -61,16 +61,18 @@ module.exports =
         for y in [minY..maxY]
           intersection = map[[x, y]]
           if intersection?
-            @addRoad new Road intersection, previous if previous?
-            @addRoad new Road previous, intersection if previous?
+            if Math.random() < 0.7
+              @addRoad new Road intersection, previous if previous?
+              @addRoad new Road previous, intersection if previous?
             previous = intersection
       for y in [minY..maxY]
         previous = null
         for x in [minX..maxX]
           intersection = map[[x, y]]
           if intersection?
-            @addRoad new Road intersection, previous if previous?
-            @addRoad new Road previous, intersection if previous?
+            if Math.random() < 0.7
+              @addRoad new Road intersection, previous if previous?
+              @addRoad new Road previous, intersection if previous?
             previous = intersection
       null
 

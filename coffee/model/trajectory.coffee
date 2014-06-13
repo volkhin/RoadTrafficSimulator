@@ -63,17 +63,17 @@ module.exports =
       @next.position += distance
       @temp.position += distance
       if @timeToMakeTurn() and @canEnterIntersection @car.nextLane
-        @startChangingLanes @car.nextLane, 0, true
+        @_startChangingLanes @car.nextLane, 0, true
         # FIXME should be done in car model
         @car.nextLane = null
         @car.preferedLane = null
         @car.turnNumber = null
       if @isChangingLanes and @temp.position >= @temp.lane.length
-        @finishChangingLanes()
+        @_finishChangingLanes()
       if @current.lane and not @isChangingLanes and not @car.nextLane
         @car.pickNextLane()
 
-    changeLane: (nextLane) ->
+    _changeLane: (nextLane) ->
       throw Error 'already changing lane' if @isChangingLanes
       throw Error 'no next lane' unless nextLane?
       throw Error 'next lane == current lane' if nextLane is @lane
@@ -81,33 +81,46 @@ module.exports =
       nextPosition = @current.position + 5 * @car.length
       throw Error 'too late to change lane' unless nextPosition < @lane.length
       #TODO: keep old lane after implementing IDM
-      @startChangingLanes nextLane, nextPosition, false
+      @_startChangingLanes nextLane, nextPosition, false
 
     changeLaneToLeft: ->
-      @changeLane @current.lane.leftAdjacent
+      @_changeLane @current.lane.leftAdjacent
 
     changeLaneToRight: ->
-      @changeLane @current.lane.rightAdjacent
+      @_changeLane @current.lane.rightAdjacent
 
-    startChangingLanes: (nextLane, nextPosition, keepOldLine) ->
-      throw Error 'already changing lane' if @isChangingLanes
-      throw Error 'no next lane' unless nextLane?
-      @isChangingLanes = true
-      @next.lane = nextLane
-      @next.position = nextPosition
+    _getIntersectionLaneChangeCurve: ->
+
+    _getAdjacentLaneChangeCurve: ->
       p1 = @current.lane.getPoint @current.relativePosition
       p2 = @next.lane.getPoint @next.relativePosition
       distance = p2.subtract(p1).length
       direction = @current.lane.middleLine.vector.normalized
       control = p1.add direction.mult distance/2
-      @temp.lane = new Curve p1, p2, control
-      @temp.position = 0
+      curve = new Curve p1, p2, control
+
+    _getCurve: ->
+      # FIXME: race condition due to using relativePosition on intersections
+      @_getAdjacentLaneChangeCurve()
+
+    _startChangingLanes: (nextLane, nextPosition, keepOldLine) ->
+      throw Error 'already changing lane' if @isChangingLanes
+      throw Error 'no next lane' unless nextLane?
+      @isChangingLanes = true
+      @next.lane = nextLane
+      @next.position = nextPosition
+
+      curve = @_getCurve()
+
+      @temp.lane = curve
+      @temp.position = 0 # @current.lane.length - @current.position
       @next.position -= @temp.lane.length
       @current.release() unless keepOldLine
 
-    finishChangingLanes: ->
+    _finishChangingLanes: ->
       throw Error 'no lane changing is going on' unless @isChangingLanes
       @isChangingLanes = false
+      # TODO swap current and next
       @current.lane = @next.lane
       @current.position = @next.position or 0
       @next.lane = null
