@@ -59,8 +59,15 @@ module.exports =
           when 0 then @trajectory.changeLaneToLeft()
           when 2 then @trajectory.changeLaneToRight()
       step = @speed * delta
+      # TODO: hacks, should have changed speed
       step = 0 if @trajectory.getDistanceToNextCar() - @safeDistance < step
-      @trajectory.moveForward @speed * delta
+      if @trajectory.timeToMakeTurn(step)
+        return @alive = false if not @nextLane?
+        if not @trajectory.canEnterIntersection @nextLane
+          if step > @trajectory.getDistanceToIntersection()
+            step = @trajectory.getDistanceToIntersection()
+            @speed = 0
+      @trajectory.moveForward step
 
     pickNextLane: ->
       throw Error 'next lane is already chosen' if @nextLane

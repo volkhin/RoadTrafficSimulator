@@ -52,24 +52,22 @@ module.exports =
       sideId = sourceLane.road.targetSideId
       intersection.controlSignals.state[sideId][turnNumber]
 
+    getDistanceToIntersection: ->
+      @current.lane.length - @car.length - @current.position
+
+    timeToMakeTurn: (plannedStep = 0) ->
+      @getDistanceToIntersection() <= plannedStep and not @isChangingLanes
+
     moveForward: (distance) ->
-      laneEnding = @current.position + @car.length >= @current.lane.length
-      if laneEnding and not @isChangingLanes
-        switch
-          when not @car.nextLane? then @car.alive = false
-          when @canEnterIntersection @car.nextLane
-            @startChangingLanes @car.nextLane, 0, true
-            # FIXME should be done in car model
-            @car.nextLane = null
-            @car.preferedLane = null
-            @car.turnNumber = null
-          else
-            # FIXME should be done in car model
-            @car.speed = 0
-            distance = 0
       @current.position += distance
       @next.position += distance
       @temp.position += distance
+      if @timeToMakeTurn() and @canEnterIntersection @car.nextLane
+        @startChangingLanes @car.nextLane, 0, true
+        # FIXME should be done in car model
+        @car.nextLane = null
+        @car.preferedLane = null
+        @car.turnNumber = null
       if @isChangingLanes and @temp.position >= @temp.lane.length
         @finishChangingLanes()
       if @current.lane and not @isChangingLanes and not @car.nextLane

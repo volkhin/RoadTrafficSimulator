@@ -440,7 +440,18 @@ module.exports = Car = (function() {
     if (this.trajectory.getDistanceToNextCar() - this.safeDistance < step) {
       step = 0;
     }
-    return this.trajectory.moveForward(this.speed * delta);
+    if (this.trajectory.timeToMakeTurn(step)) {
+      if (this.nextLane == null) {
+        return this.alive = false;
+      }
+      if (!this.trajectory.canEnterIntersection(this.nextLane)) {
+        if (step > this.trajectory.getDistanceToIntersection()) {
+          step = this.trajectory.getDistanceToIntersection();
+          this.speed = 0;
+        }
+      }
+    }
+    return this.trajectory.moveForward(step);
   };
 
   Car.prototype.pickNextLane = function() {
@@ -1061,28 +1072,27 @@ module.exports = Trajectory = (function() {
     return intersection.controlSignals.state[sideId][turnNumber];
   };
 
-  Trajectory.prototype.moveForward = function(distance) {
-    var laneEnding;
-    laneEnding = this.current.position + this.car.length >= this.current.lane.length;
-    if (laneEnding && !this.isChangingLanes) {
-      switch (false) {
-        case !(this.car.nextLane == null):
-          this.car.alive = false;
-          break;
-        case !this.canEnterIntersection(this.car.nextLane):
-          this.startChangingLanes(this.car.nextLane, 0, true);
-          this.car.nextLane = null;
-          this.car.preferedLane = null;
-          this.car.turnNumber = null;
-          break;
-        default:
-          this.car.speed = 0;
-          distance = 0;
-      }
+  Trajectory.prototype.getDistanceToIntersection = function() {
+    return this.current.lane.length - this.car.length - this.current.position;
+  };
+
+  Trajectory.prototype.timeToMakeTurn = function(plannedStep) {
+    if (plannedStep == null) {
+      plannedStep = 0;
     }
+    return this.getDistanceToIntersection() <= plannedStep && !this.isChangingLanes;
+  };
+
+  Trajectory.prototype.moveForward = function(distance) {
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;
+    if (this.timeToMakeTurn() && this.canEnterIntersection(this.car.nextLane)) {
+      this.startChangingLanes(this.car.nextLane, 0, true);
+      this.car.nextLane = null;
+      this.car.preferedLane = null;
+      this.car.turnNumber = null;
+    }
     if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
       this.finishChangingLanes();
     }
