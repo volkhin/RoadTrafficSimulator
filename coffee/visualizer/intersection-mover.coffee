@@ -22,7 +22,7 @@ module.exports =
         cell = @getCell e
         @intersection.rect.left(cell.x)
         @intersection.rect.top(cell.y)
-        @intersection.update() # FIXME should be done automaticlly
+        @intersection.update()
 
     mouseout: ->
       @intersection = null

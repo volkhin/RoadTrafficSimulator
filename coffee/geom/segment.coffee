@@ -27,9 +27,6 @@ module.exports =
     getPoint: (a) ->
       @source.add (@vector.mult a)
 
-    # getSplit: (k, n) ->
-    # TODO
-
     subsegment: (a, b) ->
       offset = @vector
       start = @source.add (offset.mult a)
