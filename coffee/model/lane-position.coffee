@@ -35,5 +35,8 @@ module.exports =
     @property 'distanceToNextCar',
       get: ->
         next = @getNext()
-        return next.position - @position if next?
+        if next
+          rearPosition = next.position - next.car.length/2
+          frontPosition = @position + @car.length/2
+          return rearPosition - frontPosition
         return Infinity

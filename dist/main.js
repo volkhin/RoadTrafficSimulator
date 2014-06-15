@@ -386,8 +386,8 @@ module.exports = Car = (function() {
     this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
     this.width = 0.1;
-    this.length = 0.2;
-    this.safeDistance = 1.5 * this.length;
+    this.length = 0.15 + 0.1 * Math.random();
+    this.safeDistance = 0.5 * this.length;
     this.maxSpeed = (4 + Math.random()) / 5;
     this.acceleration = 0.25;
     this.trajectory = new Trajectory(this, lane, position);
@@ -694,10 +694,12 @@ module.exports = LanePosition = (function() {
 
   LanePosition.property('distanceToNextCar', {
     get: function() {
-      var next;
+      var frontPosition, next, rearPosition;
       next = this.getNext();
-      if (next != null) {
-        return next.position - this.position;
+      if (next) {
+        rearPosition = next.position - next.car.length / 2;
+        frontPosition = this.position + this.car.length / 2;
+        return rearPosition - frontPosition;
       }
       return Infinity;
     }
