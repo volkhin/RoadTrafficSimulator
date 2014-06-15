@@ -1,0 +1,56 @@
+.dg.main.taller-than-window .close-button {
+    border-top: 1px solid #ddd;
+}
+
+.dg {
+    color: #93a1a1;
+    text-shadow: none !important;
+}
+
+/* .dg.main::-webkit-scrollbar {
+    background: #fafafa;
+}
+
+.dg.main::-webkit-scrollbar-thumb {
+    background: #bbb;
+} */
+ 
+.dg.main .close-button {
+    background-color: #002b36;
+}
+ 
+.dg li:not(.folder) {
+    background: #002b36;
+    border-bottom: 1px solid #073642;
+}
+ 
+.dg li.title {
+    background: #002b36 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
+}
+
+.dg.main .close-button:hover,
+.dg .cr.function:hover,
+.dg .cr.boolean:hover {
+    background: #073642;
+}
+ 
+.dg .c input[type=text] {
+    background: #073642;
+}
+ 
+.dg .c input[type=text]:hover {
+    background: #073642;
+}
+ 
+.dg .c input[type=text]:focus {
+    background: #073642;
+    /* color: #555; */
+}
+ 
+.dg .c .slider {
+    background: #073642;
+}
+
+.dg .c .slider:hover {
+    background: #586e75;
+}

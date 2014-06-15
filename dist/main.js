@@ -15,7 +15,6 @@ World = require('./model/world.coffee');
 settings = require('./settings.coffee');
 
 updateCanvasSize = function() {
-  console.log('here');
   return $('canvas').attr({
     width: $(window).width(),
     height: $(window).height()
@@ -23,7 +22,7 @@ updateCanvasSize = function() {
 };
 
 $(document).ready(function() {
-  var canvas, gui;
+  var canvas, gui, guiVisualizer, guiWorld;
   canvas = $('<canvas />', {
     id: 'canvas'
   });
@@ -35,16 +34,20 @@ $(document).ready(function() {
   window.visualizer = new Visualizer(world);
   visualizer.start();
   gui = new DAT.GUI;
-  gui.add(world, 'save');
-  gui.add(world, 'load');
-  gui.add(world, 'clear');
-  gui.add(world, 'generateMap');
-  gui.add(visualizer, 'running').listen();
-  gui.add(visualizer, 'isDrawingIds').listen();
-  gui.add(visualizer.zoomer, 'scale', 0.1, 2).listen();
-  gui.add(visualizer, 'timeFactor', 0.1, 10).listen();
-  gui.add(world, 'carsNumber').min(0).max(200).step(1).listen();
-  gui.add(world, 'instantSpeed').step(0.00001).listen();
+  guiWorld = gui.addFolder('world');
+  guiWorld.open();
+  guiWorld.add(world, 'save');
+  guiWorld.add(world, 'load');
+  guiWorld.add(world, 'clear');
+  guiWorld.add(world, 'generateMap');
+  guiVisualizer = gui.addFolder('visualizer');
+  guiVisualizer.open();
+  guiVisualizer.add(visualizer, 'running').listen();
+  guiVisualizer.add(visualizer, 'debug').listen();
+  guiVisualizer.add(visualizer.zoomer, 'scale', 0.1, 2).listen();
+  guiVisualizer.add(visualizer, 'timeFactor', 0.1, 10).listen();
+  guiWorld.add(world, 'carsNumber').min(0).max(200).step(1).listen();
+  guiWorld.add(world, 'instantSpeed').step(0.00001).listen();
   return gui.add(settings, 'lightsFlipInterval', 0, 10, 0.01).listen();
 });
 
@@ -2046,14 +2049,14 @@ module.exports = Visualizer = (function() {
     this._running = false;
     this.previousTime = 0;
     this.timeFactor = 1;
-    this.isDrawingIds = false;
+    this.debug = false;
   }
 
   Visualizer.prototype.drawIntersection = function(intersection, alpha) {
     var color;
     color = intersection.color || settings.colors.intersection;
     this.graphics.drawRect(intersection.rect);
-    this.ctx.lineWidth = 0.02;
+    this.ctx.lineWidth = 0.04;
     this.graphics.stroke(settings.colors.roadMarking);
     return this.graphics.fillRect(intersection.rect, color, alpha);
   };
@@ -2133,7 +2136,7 @@ module.exports = Visualizer = (function() {
     l = 90 - 30 * car.speed / car.maxSpeed;
     style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     this.graphics.fillRect(boundRect, style);
-    if (this.isDrawingIds) {
+    if (this.debug) {
       this.ctx.fillStyle = "black";
       this.ctx.font = "1px Arial";
       this.ctx.scale(0.1, 0.1);
@@ -2150,7 +2153,7 @@ module.exports = Visualizer = (function() {
     if (box.area() >= 2000) {
       return;
     }
-    sz = 0.05;
+    sz = 0.04;
     _results = [];
     for (i = _i = _ref = box.left(), _ref1 = box.right(); _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
       _results.push((function() {
@@ -2169,39 +2172,41 @@ module.exports = Visualizer = (function() {
   Visualizer.prototype.draw = function(time) {
     var car, delta, id, intersection, road, _ref, _ref1, _ref2, _ref3;
     delta = (time - this.previousTime) || 0;
-    if (delta > 100) {
-      delta = 100;
+    if (delta > 30) {
+      if (delta > 100) {
+        delta = 100;
+      }
+      this.previousTime = time;
+      this.world.onTick(this.timeFactor * delta / 1000);
+      this.graphics.clear(settings.colors.background);
+      this.graphics.save();
+      this.zoomer.transform();
+      this.drawGrid();
+      _ref = this.world.intersections.all();
+      for (id in _ref) {
+        intersection = _ref[id];
+        this.drawIntersection(intersection, 0.9);
+      }
+      _ref1 = this.world.roads.all();
+      for (id in _ref1) {
+        road = _ref1[id];
+        this.drawRoad(road, 0.9);
+      }
+      _ref2 = this.world.roads.all();
+      for (id in _ref2) {
+        road = _ref2[id];
+        this.drawSignals(road);
+      }
+      _ref3 = this.world.cars.all();
+      for (id in _ref3) {
+        car = _ref3[id];
+        this.drawCar(car);
+      }
+      this.toolIntersectionBuilder.draw();
+      this.toolRoadbuilder.draw();
+      this.toolHighlighter.draw();
+      this.graphics.restore();
     }
-    this.previousTime = time;
-    this.world.onTick(this.timeFactor * delta / 1000);
-    this.graphics.clear(settings.colors.background);
-    this.graphics.save();
-    this.zoomer.transform();
-    this.drawGrid();
-    _ref = this.world.intersections.all();
-    for (id in _ref) {
-      intersection = _ref[id];
-      this.drawIntersection(intersection, 0.9);
-    }
-    _ref1 = this.world.roads.all();
-    for (id in _ref1) {
-      road = _ref1[id];
-      this.drawRoad(road, 0.9);
-    }
-    _ref2 = this.world.roads.all();
-    for (id in _ref2) {
-      road = _ref2[id];
-      this.drawSignals(road);
-    }
-    _ref3 = this.world.cars.all();
-    for (id in _ref3) {
-      car = _ref3[id];
-      this.drawCar(car);
-    }
-    this.toolIntersectionBuilder.draw();
-    this.toolRoadbuilder.draw();
-    this.toolHighlighter.draw();
-    this.graphics.restore();
     if (this.running) {
       return window.requestAnimationFrame(this.draw.bind(this));
     }

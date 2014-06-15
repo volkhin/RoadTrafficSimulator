@@ -36,12 +36,12 @@ module.exports =
       @_running = false
       @previousTime = 0
       @timeFactor = 1
-      @isDrawingIds = false
+      @debug = false
 
     drawIntersection: (intersection, alpha) ->
       color = intersection.color or settings.colors.intersection
       @graphics.drawRect intersection.rect
-      @ctx.lineWidth = 0.02
+      @ctx.lineWidth = 0.04
       @graphics.stroke settings.colors.roadMarking
       @graphics.fillRect intersection.rect, color, alpha
 
@@ -128,7 +128,7 @@ module.exports =
       style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
       # @graphics.drawImage @carImage, rect
       @graphics.fillRect boundRect, style
-      if @isDrawingIds
+      if @debug
         @ctx.fillStyle = "black"
         @ctx.font = "1px Arial"
         @ctx.scale 0.1, 0.1
@@ -140,7 +140,7 @@ module.exports =
       gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
       return if box.area() >= 2000
-      sz = 0.05
+      sz = 0.04
 
       for i in [box.left()..box.right()]
         for j in [box.top()..box.bottom()]
@@ -149,23 +149,23 @@ module.exports =
 
     draw: (time) ->
       delta = (time - @previousTime) || 0
-      delta = 100 if delta > 100
-      @previousTime = time
-      @world.onTick @timeFactor*delta/1000
-
-      @graphics.clear settings.colors.background
-      @graphics.save()
-      @zoomer.transform()
-      @drawGrid()
-      for id, intersection of @world.intersections.all()
-        @drawIntersection intersection, 0.9
-      @drawRoad road, 0.9 for id, road of @world.roads.all()
-      @drawSignals road for id, road of @world.roads.all()
-      @drawCar car for id, car of @world.cars.all()
-      @toolIntersectionBuilder.draw() # TODO: all tools
-      @toolRoadbuilder.draw()
-      @toolHighlighter.draw()
-      @graphics.restore()
+      if delta > 30
+        delta = 100 if delta > 100
+        @previousTime = time
+        @world.onTick @timeFactor*delta/1000
+        @graphics.clear settings.colors.background
+        @graphics.save()
+        @zoomer.transform()
+        @drawGrid()
+        for id, intersection of @world.intersections.all()
+          @drawIntersection intersection, 0.9
+        @drawRoad road, 0.9 for id, road of @world.roads.all()
+        @drawSignals road for id, road of @world.roads.all()
+        @drawCar car for id, car of @world.cars.all()
+        @toolIntersectionBuilder.draw() # TODO: all tools
+        @toolRoadbuilder.draw()
+        @toolHighlighter.draw()
+        @graphics.restore()
       window.requestAnimationFrame @draw.bind @ if @running
 
     @property 'running',
