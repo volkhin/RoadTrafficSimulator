@@ -39,6 +39,8 @@ $(document).ready(function() {
 'use strict';
 var Curve, Segment;
 
+require('../helpers.coffee');
+
 Segment = require('./segment.coffee');
 
 module.exports = Curve = (function() {
@@ -85,9 +87,11 @@ module.exports = Curve = (function() {
 })();
 
 
-},{"./segment.coffee":5}],3:[function(require,module,exports){
+},{"../helpers.coffee":6,"./segment.coffee":5}],3:[function(require,module,exports){
 'use strict';
 var Point;
+
+require('../helpers.coffee');
 
 module.exports = Point = (function() {
   function Point(x, y) {
@@ -134,9 +138,11 @@ module.exports = Point = (function() {
 })();
 
 
-},{}],4:[function(require,module,exports){
+},{"../helpers.coffee":6}],4:[function(require,module,exports){
 'use strict';
 var $, Point, Rect, Segment;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -260,9 +266,11 @@ module.exports = Rect = (function() {
 })();
 
 
-},{"./point.coffee":3,"./segment.coffee":5,"jquery":30}],5:[function(require,module,exports){
+},{"../helpers.coffee":6,"./point.coffee":3,"./segment.coffee":5,"jquery":30}],5:[function(require,module,exports){
 'use strict';
 var Segment;
+
+require('../helpers.coffee');
 
 module.exports = Segment = (function() {
   function Segment(source, target) {
@@ -330,7 +338,7 @@ module.exports = Segment = (function() {
 })();
 
 
-},{}],6:[function(require,module,exports){
+},{"../helpers.coffee":6}],6:[function(require,module,exports){
 'use strict';
 module.exports = {};
 
@@ -348,6 +356,8 @@ Function.prototype.property = function(prop, desc) {
 },{}],7:[function(require,module,exports){
 'use strict';
 var Car, Trajectory, _;
+
+require('../helpers.coffee');
 
 _ = require('underscore');
 
@@ -474,10 +484,12 @@ module.exports = Car = (function() {
 })();
 
 
-},{"./trajectory.coffee":14,"underscore":31}],8:[function(require,module,exports){
+},{"../helpers.coffee":6,"./trajectory.coffee":14,"underscore":31}],8:[function(require,module,exports){
 'use strict';
 var ControlSignals, settings,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+require('../helpers.coffee');
 
 settings = require('../settings.coffee');
 
@@ -548,9 +560,11 @@ module.exports = ControlSignals = (function() {
 })();
 
 
-},{"../settings.coffee":16}],9:[function(require,module,exports){
+},{"../helpers.coffee":6,"../settings.coffee":16}],9:[function(require,module,exports){
 'use strict';
 var $, ControlSignals, Intersection, Rect;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -607,9 +621,11 @@ module.exports = Intersection = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"./control-signals.coffee":8,"jquery":30}],10:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"jquery":30}],10:[function(require,module,exports){
 'use strict';
 var LanePosition;
+
+require('../helpers.coffee');
 
 module.exports = LanePosition = (function() {
   function LanePosition(car, lane, position) {
@@ -675,9 +691,11 @@ module.exports = LanePosition = (function() {
 })();
 
 
-},{}],11:[function(require,module,exports){
+},{"../helpers.coffee":6}],11:[function(require,module,exports){
 'use strict';
 var $, Lane, Segment;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -806,9 +824,11 @@ module.exports = Lane = (function() {
 })();
 
 
-},{"../geom/segment.coffee":5,"jquery":30}],12:[function(require,module,exports){
+},{"../geom/segment.coffee":5,"../helpers.coffee":6,"jquery":30}],12:[function(require,module,exports){
 'use strict';
 var Pool;
+
+require('../helpers.coffee');
 
 module.exports = Pool = (function() {
   function Pool(factory, pool) {
@@ -866,9 +886,11 @@ module.exports = Pool = (function() {
 })();
 
 
-},{}],13:[function(require,module,exports){
+},{"../helpers.coffee":6}],13:[function(require,module,exports){
 'use strict';
 var $, Lane, Road, _;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -963,9 +985,11 @@ module.exports = Road = (function() {
 })();
 
 
-},{"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
+},{"../helpers.coffee":6,"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
 'use strict';
 var Curve, LanePosition, Trajectory;
+
+require('../helpers.coffee');
 
 LanePosition = require('./lane-position.coffee');
 
@@ -1180,9 +1204,11 @@ module.exports = Trajectory = (function() {
 })();
 
 
-},{"../geom/curve.coffee":2,"./lane-position.coffee":10}],15:[function(require,module,exports){
+},{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10}],15:[function(require,module,exports){
 'use strict';
 var $, Car, Intersection, Pool, Rect, Road, World, _;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -1423,7 +1449,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {
@@ -1450,6 +1476,8 @@ module.exports = {
 'use strict';
 var Graphics,
   __slice = [].slice;
+
+require('../helpers.coffee');
 
 module.exports = Graphics = (function() {
   function Graphics(ctx) {
@@ -1540,11 +1568,13 @@ module.exports = Graphics = (function() {
 })();
 
 
-},{}],18:[function(require,module,exports){
+},{"../helpers.coffee":6}],18:[function(require,module,exports){
 'use strict';
 var Rect, Tool, ToolHighlighter, settings,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
@@ -1592,11 +1622,13 @@ module.exports = ToolHighlighter = (function(_super) {
 })(Tool);
 
 
-},{"../geom/rect.coffee":4,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
 'use strict';
 var Intersection, Rect, Tool, ToolIntersectionBuilder,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
@@ -1655,11 +1687,13 @@ module.exports = ToolIntersectionBuilder = (function(_super) {
 })(Tool);
 
 
-},{"../geom/rect.coffee":4,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
 'use strict';
 var Tool, ToolIntersectionMover,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
@@ -1703,11 +1737,13 @@ module.exports = ToolIntersectionMover = (function(_super) {
 })(Tool);
 
 
-},{"./tool.coffee":23}],21:[function(require,module,exports){
+},{"../helpers.coffee":6,"./tool.coffee":23}],21:[function(require,module,exports){
 'use strict';
 var Mover, Tool,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
@@ -1750,11 +1786,13 @@ module.exports = Mover = (function(_super) {
 })(Tool);
 
 
-},{"./tool.coffee":23}],22:[function(require,module,exports){
+},{"../helpers.coffee":6,"./tool.coffee":23}],22:[function(require,module,exports){
 'use strict';
 var Road, Tool, ToolRoadBuilder,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
@@ -1825,9 +1863,11 @@ module.exports = ToolRoadBuilder = (function(_super) {
 })(Tool);
 
 
-},{"../model/road.coffee":13,"./tool.coffee":23}],23:[function(require,module,exports){
+},{"../helpers.coffee":6,"../model/road.coffee":13,"./tool.coffee":23}],23:[function(require,module,exports){
 'use strict';
 var $, METHODS, Point, Rect, Tool, _;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -1920,9 +1960,11 @@ module.exports = Tool = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
 var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
+
+require('../helpers.coffee');
 
 $ = require('jquery');
 
@@ -2147,12 +2189,14 @@ module.exports = Visualizer = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
 var Point, Rect, Tool, Zoomer,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
+
+require('../helpers.coffee');
 
 Point = require('../geom/point.coffee');
 
@@ -2245,7 +2289,7 @@ module.exports = Zoomer = (function(_super) {
 })(Tool);
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"./tool.coffee":23}],26:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"./tool.coffee":23}],26:[function(require,module,exports){
 module.exports = require('./vendor/dat.gui')
 module.exports.color = require('./vendor/dat.color')
 },{"./vendor/dat.color":27,"./vendor/dat.gui":28}],27:[function(require,module,exports){

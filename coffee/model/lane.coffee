@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 $ = require 'jquery'
 Segment = require '../geom/segment.coffee'
 

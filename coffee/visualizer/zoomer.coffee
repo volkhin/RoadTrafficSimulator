@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 Point = require '../geom/point.coffee'
 Rect = require '../geom/rect.coffee'
 Tool = require './tool.coffee'

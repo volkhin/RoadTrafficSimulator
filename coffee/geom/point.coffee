@@ -1,5 +1,7 @@
 'use strict'
 
+require '../helpers.coffee'
+
 module.exports =
   class Point
     constructor: (@x = 0, @y = 0) ->

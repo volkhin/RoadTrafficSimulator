@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 settings = require '../settings.coffee'
 
 module.exports =

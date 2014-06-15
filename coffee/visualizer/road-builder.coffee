@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 Tool = require './tool.coffee'
 Road = require '../model/road.coffee'
 

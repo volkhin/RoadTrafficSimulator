@@ -1,5 +1,7 @@
 'use strict'
 
+require '../helpers.coffee'
+
 module.exports =
   class Segment
     constructor: (@source, @target) ->

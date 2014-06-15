@@ -1,5 +1,7 @@
 'use strict'
 
+require '../helpers.coffee'
+
 module.exports =
   class Pool
     constructor: (@factory, pool) ->

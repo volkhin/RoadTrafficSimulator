@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 $ = require 'jquery'
 Point = require './point.coffee'
 Segment = require './segment.coffee'

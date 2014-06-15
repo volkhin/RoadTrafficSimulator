@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 Segment = require './segment.coffee'
 
 module.exports =

@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 $ = require 'jquery'
 _ = require 'underscore'
 Car = require './car.coffee'

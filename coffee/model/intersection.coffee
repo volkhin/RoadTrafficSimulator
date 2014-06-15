@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 $ = require 'jquery'
 ControlSignals = require './control-signals.coffee'
 Rect = require '../geom/rect.coffee'

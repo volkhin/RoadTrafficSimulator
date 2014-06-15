@@ -1,5 +1,6 @@
 'use strict'
 
+require '../helpers.coffee'
 _ = require 'underscore'
 Trajectory = require './trajectory.coffee'
 
