@@ -30,7 +30,8 @@ module.exports =
     getNext: ->
       return @lane.getNext @ if @lane and not @free
 
-    getDistanceToNextCar: ->
-      next = @getNext()
-      return next.position - @position if next?
-      return Infinity
+    @property 'distanceToNextCar',
+      get: ->
+        next = @getNext()
+        return next.position - @position if next?
+        return Infinity

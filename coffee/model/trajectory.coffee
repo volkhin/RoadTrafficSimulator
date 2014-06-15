@@ -27,8 +27,9 @@ module.exports =
     @property 'coords',
       get: -> @lane.getPoint @relativePosition
 
-    getDistanceToNextCar: ->
-      Math.min @current.getDistanceToNextCar(), @next.getDistanceToNextCar()
+    @property 'distanceToNextCar',
+      get: ->
+        Math.min @current.distanceToNextCar, @next.distanceToNextCar
 
     @property 'nextIntersection',
       get: ->

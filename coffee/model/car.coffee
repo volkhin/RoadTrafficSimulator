@@ -22,17 +22,6 @@ module.exports =
     @property 'coords',
       get: -> @trajectory.coords
 
-    @property 'absolutePosition',
-      get: -> @trajectory.current.position
-      set: (pos) -> @trajectory.current.position = pos
-
-    @property 'relativePosition',
-      get: ->
-        current = @trajectory.current
-        current.position / current.lane.length
-      set: (pos) ->
-        @trajectory.current.position = pos * @trajectory.current.lane.length
-
     @property 'speed',
       get: -> @_speed
       set: (speed) ->
@@ -41,14 +30,13 @@ module.exports =
         @_speed = speed
 
     @property 'direction',
-      get: ->
-        @trajectory.direction
+      get: -> @trajectory.direction
 
     release: ->
       @trajectory.release()
 
     move: (delta) ->
-      if @trajectory.getDistanceToNextCar() - @safeDistance > @speed * delta
+      if @trajectory.distanceToNextCar - @safeDistance > @speed * delta
         k = 1 - Math.pow @speed/@maxSpeed, 4
         @speed += @acceleration * delta * k
       else
@@ -60,7 +48,7 @@ module.exports =
           when 2 then @trajectory.changeLaneToRight()
       step = @speed * delta
       # TODO: hacks, should have changed speed
-      step = 0 if @trajectory.getDistanceToNextCar() - @safeDistance < step
+      step = 0 if @trajectory.distanceToNextCar - @safeDistance < step
       if @trajectory.timeToMakeTurn(step)
         return @alive = false if not @nextLane?
         if not @trajectory.canEnterIntersection @nextLane
@@ -73,10 +61,9 @@ module.exports =
       throw Error 'next lane is already chosen' if @nextLane
       @nextLane = null
       intersection = @trajectory.nextIntersection
-      previousIntersection = @trajectory.previousIntersection
       currentLane = @trajectory.current.lane
       possibleRoads = intersection.roads.filter (x) ->
-        x.target isnt previousIntersection
+        x.target isnt currentLane.road.source
       return null if possibleRoads.length is 0
       nextRoad = _.sample possibleRoads
       laneNumber = _.random 0, nextRoad.lanesNumber-1

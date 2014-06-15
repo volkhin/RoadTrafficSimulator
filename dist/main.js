@@ -375,26 +375,6 @@ module.exports = Car = (function() {
     }
   });
 
-  Car.property('absolutePosition', {
-    get: function() {
-      return this.trajectory.current.position;
-    },
-    set: function(pos) {
-      return this.trajectory.current.position = pos;
-    }
-  });
-
-  Car.property('relativePosition', {
-    get: function() {
-      var current;
-      current = this.trajectory.current;
-      return current.position / current.lane.length;
-    },
-    set: function(pos) {
-      return this.trajectory.current.position = pos * this.trajectory.current.lane.length;
-    }
-  });
-
   Car.property('speed', {
     get: function() {
       return this._speed;
@@ -422,7 +402,7 @@ module.exports = Car = (function() {
 
   Car.prototype.move = function(delta) {
     var k, step;
-    if (this.trajectory.getDistanceToNextCar() - this.safeDistance > this.speed * delta) {
+    if (this.trajectory.distanceToNextCar - this.safeDistance > this.speed * delta) {
       k = 1 - Math.pow(this.speed / this.maxSpeed, 4);
       this.speed += this.acceleration * delta * k;
     } else {
@@ -438,7 +418,7 @@ module.exports = Car = (function() {
       }
     }
     step = this.speed * delta;
-    if (this.trajectory.getDistanceToNextCar() - this.safeDistance < step) {
+    if (this.trajectory.distanceToNextCar - this.safeDistance < step) {
       step = 0;
     }
     if (this.trajectory.timeToMakeTurn(step)) {
@@ -456,16 +436,15 @@ module.exports = Car = (function() {
   };
 
   Car.prototype.pickNextLane = function() {
-    var currentLane, intersection, laneNumber, nextRoad, possibleRoads, previousIntersection;
+    var currentLane, intersection, laneNumber, nextRoad, possibleRoads;
     if (this.nextLane) {
       throw Error('next lane is already chosen');
     }
     this.nextLane = null;
     intersection = this.trajectory.nextIntersection;
-    previousIntersection = this.trajectory.previousIntersection;
     currentLane = this.trajectory.current.lane;
     possibleRoads = intersection.roads.filter(function(x) {
-      return x.target !== previousIntersection;
+      return x.target !== currentLane.road.source;
     });
     if (possibleRoads.length === 0) {
       return null;
@@ -680,14 +659,16 @@ module.exports = LanePosition = (function() {
     }
   };
 
-  LanePosition.prototype.getDistanceToNextCar = function() {
-    var next;
-    next = this.getNext();
-    if (next != null) {
-      return next.position - this.position;
+  LanePosition.property('distanceToNextCar', {
+    get: function() {
+      var next;
+      next = this.getNext();
+      if (next != null) {
+        return next.position - this.position;
+      }
+      return Infinity;
     }
-    return Infinity;
-  };
+  });
 
   return LanePosition;
 
@@ -1036,9 +1017,11 @@ module.exports = Trajectory = (function() {
     }
   });
 
-  Trajectory.prototype.getDistanceToNextCar = function() {
-    return Math.min(this.current.getDistanceToNextCar(), this.next.getDistanceToNextCar());
-  };
+  Trajectory.property('distanceToNextCar', {
+    get: function() {
+      return Math.min(this.current.distanceToNextCar, this.next.distanceToNextCar);
+    }
+  });
 
   Trajectory.property('nextIntersection', {
     get: function() {
