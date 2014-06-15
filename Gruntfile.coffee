@@ -34,5 +34,15 @@ module.exports = (grunt) ->
           transform: ['coffeeify']
           bundleOptions:
             debug: false
+    # jasmine:
+      # coffeeTemplate:
+        # src: 'js/**/*.js'
+        # options:
+          # specs: 'js/spec/*.js'
+    jasmine_node:
+      all: ['coffee/spec']
+      options:
+        coffee: true
+        # forceExit: true
 
-  grunt.registerTask 'default', ['coffeelint', 'browserify']
+  grunt.registerTask 'default', ['coffeelint', 'jasmine_node', 'browserify']
