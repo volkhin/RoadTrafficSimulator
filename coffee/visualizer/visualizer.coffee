@@ -43,20 +43,38 @@ module.exports =
       @graphics.fillRect intersection.rect, color, alpha
 
     drawSignals: (road) ->
-      @ctx.save()
       lightsColors = [settings.colors.redLight, settings.colors.greenLight]
       intersection = road.target
       segment = road.targetSide
       sideId = road.targetSideId
       lights = intersection.controlSignals.state[sideId]
 
-      @ctx.lineWidth = 0.03
-      @graphics.drawSegment segment.subsegment 0.7, 1.0
-      @graphics.stroke lightsColors[lights[0]]
-      @graphics.drawSegment segment.subsegment 0.35, 0.65
-      @graphics.stroke lightsColors[lights[1]]
-      @graphics.drawSegment segment.subsegment 0.0, 0.3
-      @graphics.stroke lightsColors[lights[2]]
+      @ctx.save()
+      @ctx.translate segment.center.x, segment.center.y
+      @ctx.rotate (sideId + 1) * Math.PI / 2
+      @ctx.scale 1 * segment.length, 1 * segment.length
+      # map lane ending to [(0, -0.5), (0, 0.5)]
+      if lights[0]
+        @graphics.drawTriangle(
+          new Point(0.1, -0.2),
+          new Point(0.2, -0.4),
+          new Point(0.3, -0.2)
+        )
+        @graphics.fill settings.colors.greenLight
+      if lights[1]
+        @graphics.drawTriangle(
+          new Point(0.3, -0.1),
+          new Point(0.5, 0),
+          new Point(0.3, 0.1)
+        )
+        @graphics.fill settings.colors.greenLight
+      if lights[2]
+        @graphics.drawTriangle(
+          new Point(0.1, 0.2),
+          new Point(0.2, 0.4),
+          new Point(0.3, 0.2)
+        )
+        @graphics.fill settings.colors.greenLight
       @ctx.restore()
 
     drawRoad: (road, alpha) ->
@@ -138,12 +156,9 @@ module.exports =
       @drawGrid()
       for id, intersection of @world.intersections.all()
         @drawIntersection intersection, 0.9
-      for id, road of @world.roads.all()
-        @drawRoad road, 0.9
-      for id, road of @world.roads.all()
-        @drawSignals road
-      for id, car of @world.cars.all()
-        @drawCar car
+      @drawRoad road, 0.9 for id, road of @world.roads.all()
+      @drawSignals road for id, road of @world.roads.all()
+      @drawCar car for id, car of @world.cars.all()
       @toolIntersectionBuilder.draw() # TODO: all tools
       @toolRoadbuilder.draw()
       @toolHighlighter.draw()

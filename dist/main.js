@@ -1524,6 +1524,19 @@ module.exports = Graphics = (function() {
     return this.drawLine(segment.source, segment.target);
   };
 
+  Graphics.prototype.drawArrow = function(source, target) {
+    this.ctx.beginPath();
+    this.moveTo(source);
+    return this.lineTo(target);
+  };
+
+  Graphics.prototype.drawTriangle = function(p1, p2, p3) {
+    this.ctx.beginPath();
+    this.moveTo(p1);
+    this.lineTo(p2);
+    return this.lineTo(p3);
+  };
+
   Graphics.prototype.fill = function(style, alpha) {
     var _alpha;
     this.ctx.fillStyle = style;
@@ -1962,7 +1975,7 @@ module.exports = Tool = (function() {
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
-var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
+var $, Graphics, Point, Rect, Segment, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
 
 require('../helpers.coffee');
 
@@ -1973,6 +1986,8 @@ _ = require('underscore');
 Point = require('../geom/point.coffee');
 
 Rect = require('../geom/rect.coffee');
+
+Segment = require('../geom/segment.coffee');
 
 Graphics = require('./graphics.coffee');
 
@@ -2021,19 +2036,27 @@ module.exports = Visualizer = (function() {
 
   Visualizer.prototype.drawSignals = function(road) {
     var intersection, lights, lightsColors, segment, sideId;
-    this.ctx.save();
     lightsColors = [settings.colors.redLight, settings.colors.greenLight];
     intersection = road.target;
     segment = road.targetSide;
     sideId = road.targetSideId;
     lights = intersection.controlSignals.state[sideId];
-    this.ctx.lineWidth = 0.03;
-    this.graphics.drawSegment(segment.subsegment(0.7, 1.0));
-    this.graphics.stroke(lightsColors[lights[0]]);
-    this.graphics.drawSegment(segment.subsegment(0.35, 0.65));
-    this.graphics.stroke(lightsColors[lights[1]]);
-    this.graphics.drawSegment(segment.subsegment(0.0, 0.3));
-    this.graphics.stroke(lightsColors[lights[2]]);
+    this.ctx.save();
+    this.ctx.translate(segment.center.x, segment.center.y);
+    this.ctx.rotate((sideId + 1) * Math.PI / 2);
+    this.ctx.scale(1 * segment.length, 1 * segment.length);
+    if (lights[0]) {
+      this.graphics.drawTriangle(new Point(0.1, -0.2), new Point(0.2, -0.4), new Point(0.3, -0.2));
+      this.graphics.fill(settings.colors.greenLight);
+    }
+    if (lights[1]) {
+      this.graphics.drawTriangle(new Point(0.3, -0.1), new Point(0.5, 0), new Point(0.3, 0.1));
+      this.graphics.fill(settings.colors.greenLight);
+    }
+    if (lights[2]) {
+      this.graphics.drawTriangle(new Point(0.1, 0.2), new Point(0.2, 0.4), new Point(0.3, 0.2));
+      this.graphics.fill(settings.colors.greenLight);
+    }
     return this.ctx.restore();
   };
 
@@ -2189,7 +2212,7 @@ module.exports = Visualizer = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../geom/segment.coffee":5,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
 var Point, Rect, Tool, Zoomer,
   __hasProp = {}.hasOwnProperty,

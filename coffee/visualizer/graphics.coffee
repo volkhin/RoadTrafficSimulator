@@ -34,6 +34,12 @@ module.exports =
     drawSegment: (segment) ->
       @drawLine segment.source, segment.target
 
+    drawTriangle: (p1, p2, p3) ->
+      @ctx.beginPath()
+      @moveTo p1
+      @lineTo p2
+      @lineTo p3
+
     fill: (style, alpha) ->
       @ctx.fillStyle = style
       _alpha = @ctx.globalAlpha
