@@ -40,6 +40,9 @@ module.exports =
 
     drawIntersection: (intersection, alpha) ->
       color = intersection.color or settings.colors.intersection
+      @graphics.drawRect intersection.rect
+      @ctx.lineWidth = 0.02
+      @graphics.stroke settings.colors.roadMarking
       @graphics.fillRect intersection.rect, color, alpha
 
     drawSignals: (road) ->
@@ -82,23 +85,8 @@ module.exports =
       sourceSide = road.sourceSide
       targetSide = road.targetSide
 
-      @graphics.polyline sourceSide.source, sourceSide.target,
-      targetSide.source, targetSide.target
-      @graphics.fill settings.colors.road, alpha
-
       @ctx.save()
-      for lane in road.lanes
-        line = lane.leftBorder
-        dashSize = 0.1
-        @graphics.drawSegment line
-        @ctx.lineWidth = 0.02
-        @ctx.lineDashOffset = 1.5 * dashSize
-        @ctx.setLineDash [dashSize]
-        @graphics.stroke settings.colors.roadMarking
-      @ctx.restore()
-
-      @ctx.save()
-      @ctx.lineWidth = 0.02
+      @ctx.lineWidth = 0.04
       leftLine = road.leftmostLane.leftBorder
       @graphics.drawSegment leftLine
       @graphics.stroke settings.colors.roadMarking
@@ -108,6 +96,20 @@ module.exports =
       @graphics.stroke settings.colors.roadMarking
       @ctx.restore()
 
+      @graphics.polyline sourceSide.source, sourceSide.target,
+      targetSide.source, targetSide.target
+      @graphics.fill settings.colors.road, alpha
+
+      @ctx.save()
+      for lane in road.lanes[1..]
+        line = lane.rightBorder
+        dashSize = 0.1
+        @graphics.drawSegment line
+        @ctx.lineWidth = 0.02
+        @ctx.lineDashOffset = 1.5 * dashSize
+        @ctx.setLineDash [dashSize]
+        @graphics.stroke settings.colors.roadMarking
+      @ctx.restore()
 
     drawCar: (car) ->
       angle = car.direction
@@ -121,11 +123,11 @@ module.exports =
       @ctx.translate center.x, center.y
       @ctx.rotate angle
       h = car.color
-      s = 100
-      l = 90 - 40 * car.speed/car.maxSpeed
+      s = 80
+      l = 90 - 30 * car.speed/car.maxSpeed
       style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
-      @graphics.drawImage @carImage, rect
-      @graphics.fillRect boundRect, style, 0.5
+      # @graphics.drawImage @carImage, rect
+      @graphics.fillRect boundRect, style
       if @isDrawingIds
         @ctx.fillStyle = "black"
         @ctx.font = "1px Arial"
@@ -137,11 +139,12 @@ module.exports =
     drawGrid: ->
       gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
-      return if box.area() / gridSize / gridSize >= 2000
+      return if box.area() >= 2000
+      sz = 0.05
 
-      for i in [box.left()..box.right()] by gridSize
-        for j in [box.top()..box.bottom()] by gridSize
-          rect = new Rect i, j, 0.05, 0.05
+      for i in [box.left()..box.right()]
+        for j in [box.top()..box.bottom()]
+          rect = new Rect i - sz/2, j-sz/2, sz, sz
           @graphics.fillRect rect, settings.colors.gridPoint
 
     draw: (time) ->

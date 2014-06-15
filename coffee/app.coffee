@@ -7,7 +7,18 @@ DAT = require 'dat-gui'
 World = require './model/world.coffee'
 settings = require './settings.coffee'
 
+updateCanvasSize = ->
+  console.log 'here'
+  $('canvas').attr
+    width: $(window).width()
+    height: $(window).height()
+
 $(document).ready ->
+  canvas = $('<canvas />', {id: 'canvas'})
+  $(document.body).append(canvas)
+  updateCanvasSize()
+  $(window).resize updateCanvasSize
+
   window.world = new World
   world.load()
   window.visualizer = new Visualizer world

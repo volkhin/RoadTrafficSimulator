@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
-var $, DAT, Visualizer, World, settings;
+var $, DAT, Visualizer, World, settings, updateCanvasSize;
 
 require('./helpers.coffee');
 
@@ -14,8 +14,22 @@ World = require('./model/world.coffee');
 
 settings = require('./settings.coffee');
 
+updateCanvasSize = function() {
+  console.log('here');
+  return $('canvas').attr({
+    width: $(window).width(),
+    height: $(window).height()
+  });
+};
+
 $(document).ready(function() {
-  var gui;
+  var canvas, gui;
+  canvas = $('<canvas />', {
+    id: 'canvas'
+  });
+  $(document.body).append(canvas);
+  updateCanvasSize();
+  $(window).resize(updateCanvasSize);
   window.world = new World;
   world.load();
   window.visualizer = new Visualizer(world);
@@ -366,7 +380,7 @@ Trajectory = require('./trajectory.coffee');
 module.exports = Car = (function() {
   function Car(lane, position) {
     this.id = Object.genId();
-    this.color = 255 * Math.random();
+    this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
     this.width = 0.1;
     this.length = 0.2;
@@ -1453,15 +1467,15 @@ module.exports = World = (function() {
 'use strict';
 module.exports = {
   colors: {
-    background: '#fafafa',
+    background: '#97a1a1',
     redLight: 'hsl(0, 100%, 50%)',
-    greenLight: 'hsl(120, 100%, 50%)',
-    intersection: '#666',
-    road: '#666',
-    roadMarking: '#eee',
+    greenLight: '#85ee00',
+    intersection: '#586970',
+    road: '#586970',
+    roadMarking: '#bbb',
     hoveredIntersection: '#3d4c53',
     tempRoad: '#aaa',
-    gridPoint: '#70b7ba',
+    gridPoint: '#586970',
     grid1: 'rgba(255, 255, 255, 0.5)',
     grid2: 'rgba(220, 220, 220, 0.5)',
     hoveredGrid: '#f4e8e1'
@@ -1497,6 +1511,21 @@ module.exports = Graphics = (function() {
     return this.ctx.globalAlpha = _alpha;
   };
 
+  Graphics.prototype.drawRect = function(rect) {
+    var point, vertices, _i, _len, _ref, _results;
+    this.ctx.beginPath;
+    vertices = rect.getVertices();
+    this.ctx.beginPath();
+    this.moveTo(vertices[0]);
+    _ref = vertices.slice(1);
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      point = _ref[_i];
+      _results.push(this.lineTo(point));
+    }
+    return _results;
+  };
+
   Graphics.prototype.drawImage = function(image, rect) {
     return this.ctx.drawImage(image, rect.left(), rect.top(), rect.width(), rect.height());
   };
@@ -1522,12 +1551,6 @@ module.exports = Graphics = (function() {
 
   Graphics.prototype.drawSegment = function(segment) {
     return this.drawLine(segment.source, segment.target);
-  };
-
-  Graphics.prototype.drawArrow = function(source, target) {
-    this.ctx.beginPath();
-    this.moveTo(source);
-    return this.lineTo(target);
   };
 
   Graphics.prototype.drawTriangle = function(p1, p2, p3) {
@@ -1975,7 +1998,7 @@ module.exports = Tool = (function() {
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
-var $, Graphics, Point, Rect, Segment, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
+var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _;
 
 require('../helpers.coffee');
 
@@ -1986,8 +2009,6 @@ _ = require('underscore');
 Point = require('../geom/point.coffee');
 
 Rect = require('../geom/rect.coffee');
-
-Segment = require('../geom/segment.coffee');
 
 Graphics = require('./graphics.coffee');
 
@@ -2031,6 +2052,9 @@ module.exports = Visualizer = (function() {
   Visualizer.prototype.drawIntersection = function(intersection, alpha) {
     var color;
     color = intersection.color || settings.colors.intersection;
+    this.graphics.drawRect(intersection.rect);
+    this.ctx.lineWidth = 0.02;
+    this.graphics.stroke(settings.colors.roadMarking);
     return this.graphics.fillRect(intersection.rect, color, alpha);
   };
 
@@ -2067,13 +2091,22 @@ module.exports = Visualizer = (function() {
     }
     sourceSide = road.sourceSide;
     targetSide = road.targetSide;
+    this.ctx.save();
+    this.ctx.lineWidth = 0.04;
+    leftLine = road.leftmostLane.leftBorder;
+    this.graphics.drawSegment(leftLine);
+    this.graphics.stroke(settings.colors.roadMarking);
+    rightLine = road.rightmostLane.rightBorder;
+    this.graphics.drawSegment(rightLine);
+    this.graphics.stroke(settings.colors.roadMarking);
+    this.ctx.restore();
     this.graphics.polyline(sourceSide.source, sourceSide.target, targetSide.source, targetSide.target);
     this.graphics.fill(settings.colors.road, alpha);
     this.ctx.save();
-    _ref = road.lanes;
+    _ref = road.lanes.slice(1);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       lane = _ref[_i];
-      line = lane.leftBorder;
+      line = lane.rightBorder;
       dashSize = 0.1;
       this.graphics.drawSegment(line);
       this.ctx.lineWidth = 0.02;
@@ -2081,15 +2114,6 @@ module.exports = Visualizer = (function() {
       this.ctx.setLineDash([dashSize]);
       this.graphics.stroke(settings.colors.roadMarking);
     }
-    this.ctx.restore();
-    this.ctx.save();
-    this.ctx.lineWidth = 0.02;
-    leftLine = road.leftmostLane.leftBorder;
-    this.graphics.drawSegment(leftLine);
-    this.graphics.stroke(settings.colors.roadMarking);
-    rightLine = road.rightmostLane.rightBorder;
-    this.graphics.drawSegment(rightLine);
-    this.graphics.stroke(settings.colors.roadMarking);
     return this.ctx.restore();
   };
 
@@ -2105,11 +2129,10 @@ module.exports = Visualizer = (function() {
     this.ctx.translate(center.x, center.y);
     this.ctx.rotate(angle);
     h = car.color;
-    s = 100;
-    l = 90 - 40 * car.speed / car.maxSpeed;
+    s = 80;
+    l = 90 - 30 * car.speed / car.maxSpeed;
     style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
-    this.graphics.drawImage(this.carImage, rect);
-    this.graphics.fillRect(boundRect, style, 0.5);
+    this.graphics.fillRect(boundRect, style);
     if (this.isDrawingIds) {
       this.ctx.fillStyle = "black";
       this.ctx.font = "1px Arial";
@@ -2121,19 +2144,20 @@ module.exports = Visualizer = (function() {
   };
 
   Visualizer.prototype.drawGrid = function() {
-    var box, gridSize, i, j, rect, _i, _ref, _ref1, _results;
+    var box, gridSize, i, j, rect, sz, _i, _ref, _ref1, _results;
     gridSize = settings.gridSize;
     box = this.zoomer.getBoundingBox();
-    if (box.area() / gridSize / gridSize >= 2000) {
+    if (box.area() >= 2000) {
       return;
     }
+    sz = 0.05;
     _results = [];
-    for (i = _i = _ref = box.left(), _ref1 = box.right(); gridSize > 0 ? _i <= _ref1 : _i >= _ref1; i = _i += gridSize) {
+    for (i = _i = _ref = box.left(), _ref1 = box.right(); _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
       _results.push((function() {
         var _j, _ref2, _ref3, _results1;
         _results1 = [];
-        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); gridSize > 0 ? _j <= _ref3 : _j >= _ref3; j = _j += gridSize) {
-          rect = new Rect(i, j, 0.05, 0.05);
+        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); _ref2 <= _ref3 ? _j <= _ref3 : _j >= _ref3; j = _ref2 <= _ref3 ? ++_j : --_j) {
+          rect = new Rect(i - sz / 2, j - sz / 2, sz, sz);
           _results1.push(this.graphics.fillRect(rect, settings.colors.gridPoint));
         }
         return _results1;
@@ -2212,7 +2236,7 @@ module.exports = Visualizer = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../geom/segment.coffee":5,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
 var Point, Rect, Tool, Zoomer,
   __hasProp = {}.hasOwnProperty,

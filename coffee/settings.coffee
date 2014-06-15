@@ -2,15 +2,15 @@
 
 module.exports =
   colors:
-    background: '#fafafa'
+    background: '#97a1a1'
     redLight: 'hsl(0, 100%, 50%)'
-    greenLight: 'hsl(120, 100%, 50%)'
-    intersection: '#666'
-    road: '#666'
-    roadMarking: '#eee'
+    greenLight: '#85ee00'
+    intersection: '#586970'
+    road: '#586970'
+    roadMarking: '#bbb'
     hoveredIntersection: '#3d4c53'
     tempRoad: '#aaa'
-    gridPoint: '#70b7ba'
+    gridPoint: '#586970'
     grid1: 'rgba(255, 255, 255, 0.5)'
     grid2: 'rgba(220, 220, 220, 0.5)'
     hoveredGrid: '#f4e8e1'

@@ -1,5 +1,12 @@
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
 #canvas {
-    border: 1px solid #333;
+    padding: 0;
+    margin: 0;
+    position: absolute;
 }
 
 /* * { background-color: rgba(255, 0, 0, 0.1); } */

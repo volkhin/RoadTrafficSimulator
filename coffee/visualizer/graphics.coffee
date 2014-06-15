@@ -13,6 +13,13 @@ module.exports =
       @ctx.fillRect rect.left(), rect.top(), rect.width(), rect.height()
       @ctx.globalAlpha = _alpha
 
+    drawRect: (rect) ->
+      @ctx.beginPath
+      vertices = rect.getVertices()
+      @ctx.beginPath()
+      @moveTo vertices[0]
+      @lineTo point for point in vertices[1..]
+
     drawImage: (image, rect) ->
       @ctx.drawImage image, rect.left(), rect.top(), rect.width(), rect.height()
 

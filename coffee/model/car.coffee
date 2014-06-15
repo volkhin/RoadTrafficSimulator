@@ -8,7 +8,7 @@ module.exports =
   class Car
     constructor: (lane, position) ->
       @id = Object.genId()
-      @color = 255 * Math.random()
+      @color = (300 + 240 * Math.random() | 0) % 360
       @_speed = 0
       @width = 0.1
       @length = 0.2
