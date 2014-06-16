@@ -3,6 +3,7 @@
 require '../helpers.coffee'
 LanePosition = require './lane-position.coffee'
 Curve = require '../geom/curve.coffee'
+_ = require 'underscore'
 
 module.exports =
   class Trajectory
@@ -28,9 +29,14 @@ module.exports =
     @property 'coords',
       get: -> @lane.getPoint @relativePosition
 
-    @property 'distanceToNextCar',
+    @property 'nextCarDistance',
       get: ->
-        Math.min @current.distanceToNextCar, @next.distanceToNextCar
+        a = @current.nextCarDistance
+        b = @next.nextCarDistance
+        if a.distance < b.distance then a else b
+
+    @property 'distanceToNextCar',
+      get: -> @nextCarDistance.distance
 
     @property 'nextIntersection',
       get: ->

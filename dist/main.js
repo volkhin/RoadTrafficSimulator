@@ -1,10 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
-var $, DAT, Visualizer, World, settings, updateCanvasSize;
+var $, DAT, Visualizer, World, settings, _;
 
 require('./helpers.coffee');
 
 $ = require('jquery');
+
+_ = require('underscore');
 
 Visualizer = require('./visualizer/visualizer.coffee');
 
@@ -14,21 +16,12 @@ World = require('./model/world.coffee');
 
 settings = require('./settings.coffee');
 
-updateCanvasSize = function() {
-  return $('canvas').attr({
-    width: $(window).width(),
-    height: $(window).height()
-  });
-};
-
 $(document).ready(function() {
   var canvas, gui, guiVisualizer, guiWorld;
   canvas = $('<canvas />', {
     id: 'canvas'
   });
   $(document.body).append(canvas);
-  updateCanvasSize();
-  $(window).resize(updateCanvasSize);
   window.world = new World;
   world.load();
   window.visualizer = new Visualizer(world);
@@ -52,7 +45,7 @@ $(document).ready(function() {
 });
 
 
-},{"./helpers.coffee":6,"./model/world.coffee":15,"./settings.coffee":16,"./visualizer/visualizer.coffee":24,"dat-gui":26,"jquery":30}],2:[function(require,module,exports){
+},{"./helpers.coffee":6,"./model/world.coffee":15,"./settings.coffee":16,"./visualizer/visualizer.coffee":24,"dat-gui":26,"jquery":30,"underscore":31}],2:[function(require,module,exports){
 'use strict';
 var Curve, Segment;
 
@@ -385,11 +378,13 @@ module.exports = Car = (function() {
     this.id = Object.genId();
     this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
-    this.width = 1;
-    this.length = 1.5 + Math.random();
-    this.safeDistance = 0.5 * this.length;
-    this.maxSpeed = (4 + Math.random()) * 2;
-    this.acceleration = 2.5;
+    this.width = 1.7;
+    this.length = 3 + 2 * Math.random();
+    this.maxSpeed = 30;
+    this.s0 = 2;
+    this.timeHeadway = 1.5;
+    this.maxAcceleration = 1;
+    this.maxDeceleration = 3;
     this.trajectory = new Trajectory(this, lane, position);
     this.alive = true;
     this.preferedLane = null;
@@ -423,18 +418,32 @@ module.exports = Car = (function() {
     }
   });
 
+  Car.property('safeDistance', {
+    get: function() {
+      var a, b, deltaSpeed, _ref;
+      a = this.maxAcceleration;
+      b = this.maxDeceleration;
+      deltaSpeed = (this.speed - ((_ref = this.trajectory.nextCarDistance.car) != null ? _ref.speed : void 0)) || 0;
+      return this.s0 + this.speed * this.timeHeadway + this.speed * deltaSpeed / (2 * Math.sqrt(a * b));
+    }
+  });
+
   Car.prototype.release = function() {
     return this.trajectory.release();
   };
 
+  Car.prototype.getAcceleration = function() {
+    var distanceToNextCar, k;
+    distanceToNextCar = Math.max(this.trajectory.distanceToNextCar, 0);
+    k = 1 - Math.pow(this.speed / this.maxSpeed, 4);
+    k -= Math.pow(this.safeDistance / distanceToNextCar, 2);
+    return this.maxAcceleration * k;
+  };
+
   Car.prototype.move = function(delta) {
-    var k, step;
-    if (this.trajectory.distanceToNextCar - this.safeDistance > this.speed * delta) {
-      k = 1 - Math.pow(this.speed / this.maxSpeed, 4);
-      this.speed += this.acceleration * delta * k;
-    } else {
-      this.speed = 0;
-    }
+    var acceleration, step;
+    acceleration = this.getAcceleration();
+    this.speed += acceleration * delta;
     if ((this.preferedLane != null) && this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
       switch (this.turnNumber) {
         case 0:
@@ -445,8 +454,8 @@ module.exports = Car = (function() {
       }
     }
     step = this.speed * delta;
-    if (this.trajectory.distanceToNextCar - this.safeDistance < step) {
-      step = 0;
+    if (this.trajectory.distanceToNextCar < step) {
+      console.log('bad IDM');
     }
     if (this.trajectory.timeToMakeTurn(step)) {
       if (this.nextLane == null) {
@@ -692,16 +701,22 @@ module.exports = LanePosition = (function() {
     }
   };
 
-  LanePosition.property('distanceToNextCar', {
+  LanePosition.property('nextCarDistance', {
     get: function() {
-      var frontPosition, next, rearPosition;
+      var frontPosition, next, rearPosition, result;
       next = this.getNext();
       if (next) {
         rearPosition = next.position - next.car.length / 2;
         frontPosition = this.position + this.car.length / 2;
-        return rearPosition - frontPosition;
+        return result = {
+          car: next.car,
+          distance: rearPosition - frontPosition
+        };
       }
-      return Infinity;
+      return result = {
+        car: null,
+        distance: Infinity
+      };
     }
   });
 
@@ -825,7 +840,7 @@ module.exports = Lane = (function() {
     for (id in _ref) {
       o = _ref[id];
       distance = o.position - carPosition.position;
-      if ((0 < distance && distance < bestDistance)) {
+      if (!o.free && (0 < distance && distance < bestDistance)) {
         bestDistance = distance;
         next = o;
       }
@@ -1004,13 +1019,15 @@ module.exports = Road = (function() {
 
 },{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
 'use strict';
-var Curve, LanePosition, Trajectory;
+var Curve, LanePosition, Trajectory, _;
 
 require('../helpers.coffee');
 
 LanePosition = require('./lane-position.coffee');
 
 Curve = require('../geom/curve.coffee');
+
+_ = require('underscore');
 
 module.exports = Trajectory = (function() {
   function Trajectory(car, lane, position) {
@@ -1058,9 +1075,22 @@ module.exports = Trajectory = (function() {
     }
   });
 
+  Trajectory.property('nextCarDistance', {
+    get: function() {
+      var a, b;
+      a = this.current.nextCarDistance;
+      b = this.next.nextCarDistance;
+      if (a.distance < b.distance) {
+        return a;
+      } else {
+        return b;
+      }
+    }
+  });
+
   Trajectory.property('distanceToNextCar', {
     get: function() {
-      return Math.min(this.current.distanceToNextCar, this.next.distanceToNextCar);
+      return this.nextCarDistance.distance;
     }
   });
 
@@ -1221,7 +1251,7 @@ module.exports = Trajectory = (function() {
 })();
 
 
-},{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10}],15:[function(require,module,exports){
+},{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10,"underscore":31}],15:[function(require,module,exports){
 'use strict';
 var $, Car, Intersection, Pool, Rect, Road, World, settings, _;
 
@@ -1402,18 +1432,15 @@ module.exports = World = (function() {
   };
 
   World.prototype.refreshCars = function() {
-    var _results;
     if (this.roads.length === 0) {
       this.carsNumber = 0;
     }
-    while (this.cars.length < this.carsNumber) {
+    if (this.cars.length < this.carsNumber) {
       this.addRandomCar();
     }
-    _results = [];
-    while (this.cars.length > this.carsNumber) {
-      _results.push(this.removeRandomCar());
+    if (this.cars.length > this.carsNumber) {
+      return this.removeRandomCar();
     }
-    return _results;
   };
 
   World.prototype.addRoad = function(road) {
@@ -1490,7 +1517,7 @@ module.exports = {
   },
   fps: 30,
   lightsFlipInterval: 1,
-  gridSize: 10
+  gridSize: 14
 };
 
 
@@ -2038,7 +2065,8 @@ module.exports = Visualizer = (function() {
     this.ctx = this.canvas.getContext('2d');
     this.carImage = new Image;
     this.carImage.src = 'images/car.png';
-    this.zoomer = new Zoomer(5, this, true);
+    this.updateCanvasSize();
+    this.zoomer = new Zoomer(4, this, true);
     this.graphics = new Graphics(this.ctx);
     this.toolRoadbuilder = new ToolRoadBuilder(this, true);
     this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
@@ -2168,6 +2196,15 @@ module.exports = Visualizer = (function() {
     return _results;
   };
 
+  Visualizer.prototype.updateCanvasSize = function() {
+    if (this.$canvas.attr('width') !== $(window).width || this.$canvas.attr('height') !== $(window).height) {
+      return this.$canvas.attr({
+        width: $(window).width(),
+        height: $(window).height()
+      });
+    }
+  };
+
   Visualizer.prototype.draw = function(time) {
     var car, delta, id, intersection, road, _ref, _ref1, _ref2, _ref3;
     delta = (time - this.previousTime) || 0;
@@ -2177,6 +2214,7 @@ module.exports = Visualizer = (function() {
       }
       this.previousTime = time;
       this.world.onTick(this.timeFactor * delta / 1000);
+      this.updateCanvasSize();
       this.graphics.clear(settings.colors.background);
       this.graphics.save();
       this.zoomer.transform();

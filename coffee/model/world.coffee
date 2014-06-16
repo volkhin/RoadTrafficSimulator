@@ -96,8 +96,8 @@ module.exports =
 
     refreshCars: ->
       @carsNumber = 0 if @roads.length is 0
-      @addRandomCar() while @cars.length < @carsNumber
-      @removeRandomCar() while @cars.length > @carsNumber
+      @addRandomCar() if @cars.length < @carsNumber
+      @removeRandomCar() if @cars.length > @carsNumber
 
     addRoad: (road) ->
       @roads.put road

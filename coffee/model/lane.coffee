@@ -71,7 +71,7 @@ module.exports =
       bestDistance = Infinity
       for id, o of @carsPositions
         distance = o.position - carPosition.position
-        if 0 < distance < bestDistance
+        if not o.free and 0 < distance < bestDistance
           bestDistance = distance
           next = o
       next

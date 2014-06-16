@@ -16,4 +16,4 @@ module.exports =
     hoveredGrid: '#f4e8e1'
   fps: 30
   lightsFlipInterval: 1
-  gridSize: 10
+  gridSize: 14

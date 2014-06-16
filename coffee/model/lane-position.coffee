@@ -32,11 +32,15 @@ module.exports =
     getNext: ->
       return @lane.getNext @ if @lane and not @free
 
-    @property 'distanceToNextCar',
+    @property 'nextCarDistance',
       get: ->
         next = @getNext()
         if next
           rearPosition = next.position - next.car.length/2
           frontPosition = @position + @car.length/2
-          return rearPosition - frontPosition
-        return Infinity
+          return result =
+            car: next.car
+            distance: rearPosition - frontPosition
+        return result =
+          car: null
+          distance: Infinity

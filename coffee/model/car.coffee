@@ -10,11 +10,13 @@ module.exports =
       @id = Object.genId()
       @color = (300 + 240 * Math.random() | 0) % 360
       @_speed = 0
-      @width = 1
-      @length = 1.5 + Math.random()
-      @safeDistance = 0.5 * @length
-      @maxSpeed = (4 + Math.random()) * 2
-      @acceleration = 2.5
+      @width = 1.7
+      @length = 3 + 2 * Math.random()
+      @maxSpeed = 30
+      @s0 = 2
+      @timeHeadway = 1.5
+      @maxAcceleration = 1
+      @maxDeceleration = 3
       @trajectory = new Trajectory @, lane, position
       @alive = true
       @preferedLane = null
@@ -33,15 +35,26 @@ module.exports =
     @property 'direction',
       get: -> @trajectory.direction
 
+    @property 'safeDistance',
+      get: ->
+        a = @maxAcceleration
+        b = @maxDeceleration
+        deltaSpeed = (@speed - @trajectory.nextCarDistance.car?.speed) || 0
+        @s0 + @speed * @timeHeadway + @speed * deltaSpeed / (2 * Math.sqrt a*b)
+
     release: ->
       @trajectory.release()
 
+    getAcceleration: ->
+      distanceToNextCar = Math.max @trajectory.distanceToNextCar, 0
+      k = 1 - Math.pow @speed/@maxSpeed, 4
+      k -= Math.pow @safeDistance/distanceToNextCar, 2
+      return @maxAcceleration * k
+
     move: (delta) ->
-      if @trajectory.distanceToNextCar - @safeDistance > @speed * delta
-        k = 1 - Math.pow @speed/@maxSpeed, 4
-        @speed += @acceleration * delta * k
-      else
-        @speed = 0
+      acceleration = @getAcceleration()
+      @speed += acceleration * delta
+
       if @preferedLane? and @preferedLane isnt @trajectory.current.lane and
       not @trajectory.isChangingLanes
         switch @turnNumber
@@ -49,10 +62,13 @@ module.exports =
           when 2 then @trajectory.changeLaneToRight()
       step = @speed * delta
       # TODO: hacks, should have changed speed
-      step = 0 if @trajectory.distanceToNextCar - @safeDistance < step
+      console.log 'bad IDM' if @trajectory.distanceToNextCar < step
+      # step = 0 if @trajectory.distanceToNextCar < step
+
       if @trajectory.timeToMakeTurn(step)
         return @alive = false if not @nextLane?
         if not @trajectory.canEnterIntersection @nextLane
+          #FIXME hack
           if step > @trajectory.getDistanceToIntersection()
             step = @trajectory.getDistanceToIntersection()
             @speed = 0
