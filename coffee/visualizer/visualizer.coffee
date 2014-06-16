@@ -24,7 +24,8 @@ module.exports =
       @carImage = new Image
       @carImage.src = 'images/car.png'
 
-      @zoomer = new Zoomer 5, @, true
+      @updateCanvasSize()
+      @zoomer = new Zoomer 4, @, true
       @graphics = new Graphics @ctx
       @toolRoadbuilder = new ToolRoadBuilder @, true
       @toolIntersectionBuilder = new ToolIntersectionBuilder @, true
@@ -145,12 +146,20 @@ module.exports =
           rect = new Rect i - sz/2, j-sz/2, sz, sz
           @graphics.fillRect rect, settings.colors.gridPoint
 
+    updateCanvasSize: ->
+      if @$canvas.attr('width') isnt $(window).width or
+      @$canvas.attr('height') isnt $(window).height
+        @$canvas.attr
+          width: $(window).width()
+          height: $(window).height()
+
     draw: (time) ->
       delta = (time - @previousTime) || 0
       if delta > 30
         delta = 100 if delta > 100
         @previousTime = time
         @world.onTick @timeFactor*delta/1000
+        @updateCanvasSize()
         @graphics.clear settings.colors.background
         @graphics.save()
         @zoomer.transform()

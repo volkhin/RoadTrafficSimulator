@@ -2,21 +2,15 @@
 
 require './helpers.coffee'
 $ = require 'jquery'
+_ = require 'underscore'
 Visualizer = require './visualizer/visualizer.coffee'
 DAT = require 'dat-gui'
 World = require './model/world.coffee'
 settings = require './settings.coffee'
 
-updateCanvasSize = ->
-  $('canvas').attr
-    width: $(window).width()
-    height: $(window).height()
-
 $(document).ready ->
   canvas = $('<canvas />', {id: 'canvas'})
   $(document.body).append(canvas)
-  updateCanvasSize()
-  $(window).resize updateCanvasSize
 
   window.world = new World
   world.load()

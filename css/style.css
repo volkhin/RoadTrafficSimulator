@@ -1,6 +1,8 @@
 body, html {
     padding: 0;
     margin: 0;
+    overflow: hidden;
+    background: #97a1a1;
 }
 
 #canvas {
