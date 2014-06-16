@@ -730,6 +730,7 @@ module.exports = Lane = (function() {
     this.leftmostAdjacent = null;
     this.rightmostAdjacent = null;
     this.carsPositions = {};
+    this.update();
   }
 
   Lane.prototype.toJSON = function() {
@@ -738,18 +739,6 @@ module.exports = Lane = (function() {
     delete obj.carsPositions;
     return obj;
   };
-
-  Lane.property('length', {
-    get: function() {
-      return this.middleLine.length;
-    }
-  });
-
-  Lane.property('middleLine', {
-    get: function() {
-      return new Segment(this.sourceSegment.center, this.targetSegment.center);
-    }
-  });
 
   Lane.property('sourceSideId', {
     get: function() {
@@ -787,6 +776,12 @@ module.exports = Lane = (function() {
     }
   });
 
+  Lane.prototype.update = function() {
+    this.middleLine = new Segment(this.sourceSegment.center, this.targetSegment.center);
+    this.length = this.middleLine.length;
+    return this.direction = this.middleLine.direction;
+  };
+
   Lane.prototype.getTurnDirection = function(other) {
     var side1, side2, turnNumber;
     if (this.road.target !== other.road.source) {
@@ -798,7 +793,7 @@ module.exports = Lane = (function() {
   };
 
   Lane.prototype.getDirection = function() {
-    return this.middleLine.direction;
+    return this.direction;
   };
 
   Lane.prototype.getPoint = function(a) {
@@ -1517,18 +1512,17 @@ module.exports = Graphics = (function() {
   };
 
   Graphics.prototype.drawRect = function(rect) {
-    var point, vertices, _i, _len, _ref, _results;
+    var point, vertices, _i, _len, _ref;
     this.ctx.beginPath;
     vertices = rect.getVertices();
     this.ctx.beginPath();
     this.moveTo(vertices[0]);
     _ref = vertices.slice(1);
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       point = _ref[_i];
-      _results.push(this.lineTo(point));
+      this.lineTo(point);
     }
-    return _results;
+    return this.ctx.closePath();
   };
 
   Graphics.prototype.drawImage = function(image, rect) {
@@ -2037,8 +2031,6 @@ module.exports = Visualizer = (function() {
     this.$canvas = $('#canvas');
     this.canvas = this.$canvas[0];
     this.ctx = this.canvas.getContext('2d');
-    this.width = this.canvas.width;
-    this.height = this.canvas.height;
     this.carImage = new Image;
     this.carImage.src = 'images/car.png';
     this.zoomer = new Zoomer(50, this, true);
@@ -2268,11 +2260,10 @@ module.exports = Zoomer = (function(_super) {
     this.visualizer = visualizer;
     Zoomer.__super__.constructor.apply(this, [this.visualizer].concat(__slice.call(args)));
     this.ctx = this.visualizer.ctx;
-    this.width = this.ctx.canvas.width;
-    this.height = this.ctx.canvas.height;
+    this.canvas = this.ctx.canvas;
     this._scale = 1;
-    this.screenCenter = new Point(this.width / 2, this.height / 2);
-    this.center = new Point(this.width / 2, this.height / 2);
+    this.screenCenter = new Point(this.canvas.width / 2, this.canvas.height / 2);
+    this.center = new Point(this.canvas.width / 2, this.canvas.height / 2);
   }
 
   Zoomer.property('scale', {
@@ -2298,7 +2289,7 @@ module.exports = Zoomer = (function(_super) {
       cell1 = this.toCellCoords(new Point(0, 0));
     }
     if (cell2 == null) {
-      cell2 = this.toCellCoords(new Point(this.width, this.height));
+      cell2 = this.toCellCoords(new Point(this.canvas.width, this.canvas.height));
     }
     x1 = cell1.x;
     y1 = cell1.y;

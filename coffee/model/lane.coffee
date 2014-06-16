@@ -12,18 +12,12 @@ module.exports =
       @leftmostAdjacent = null
       @rightmostAdjacent = null
       @carsPositions = {}
+      @update()
 
     toJSON: ->
       obj = $.extend {}, @
       delete obj.carsPositions
       obj
-
-    @property 'length',
-      get: ->
-        @middleLine.length
-
-    @property 'middleLine',
-      get: -> new Segment @sourceSegment.center, @targetSegment.center
 
     @property 'sourceSideId',
       get: -> @road.sourceSideId
@@ -45,6 +39,11 @@ module.exports =
       get: ->
         new Segment @sourceSegment.target, @targetSegment.source
 
+    update: ->
+      @middleLine = new Segment @sourceSegment.center, @targetSegment.center
+      @length = @middleLine.length
+      @direction = @middleLine.direction
+
     getTurnDirection: (other) ->
       throw Error 'invalid lanes' if @road.target isnt other.road.source
       side1 = @targetSideId
@@ -53,7 +52,7 @@ module.exports =
       turnNumber = (side2 - side1 - 1 + 8) % 4
 
     getDirection: ->
-      @middleLine.direction
+      @direction
 
     getPoint: (a) ->
       @middleLine.getPoint a

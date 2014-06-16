@@ -19,6 +19,7 @@ module.exports =
       @ctx.beginPath()
       @moveTo vertices[0]
       @lineTo point for point in vertices[1..]
+      @ctx.closePath()
 
     drawImage: (image, rect) ->
       @ctx.drawImage image, rect.left(), rect.top(), rect.width(), rect.height()

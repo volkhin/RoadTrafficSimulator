@@ -10,11 +10,10 @@ module.exports =
     constructor: (@defaultZoom, @visualizer, args...) ->
       super @visualizer, args...
       @ctx = @visualizer.ctx
-      @width = @ctx.canvas.width
-      @height = @ctx.canvas.height
+      @canvas = @ctx.canvas
       @_scale = 1
-      @screenCenter = new Point @width/2, @height/2
-      @center = new Point @width/2, @height/2
+      @screenCenter = new Point @canvas.width/2, @canvas.height/2
+      @center = new Point @canvas.width/2, @canvas.height/2
 
     @property 'scale',
       get: -> @_scale
@@ -28,7 +27,7 @@ module.exports =
 
     getBoundingBox: (cell1, cell2) ->
       cell1 ?= @toCellCoords new Point 0, 0
-      cell2 ?= @toCellCoords new Point @width, @height
+      cell2 ?= @toCellCoords new Point @canvas.width, @canvas.height
       x1 = cell1.x
       y1 = cell1.y
       x2 = cell2.x

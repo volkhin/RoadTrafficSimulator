@@ -20,8 +20,6 @@ module.exports =
       @$canvas = $('#canvas')
       @canvas = @$canvas[0]
       @ctx = @canvas.getContext('2d')
-      @width = @canvas.width
-      @height = @canvas.height
 
       @carImage = new Image
       @carImage.src = 'images/car.png'
