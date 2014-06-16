@@ -15,8 +15,7 @@ module.exports =
     mousedown: (e) ->
       @mouseDownPos = @getCell e
       if e.shiftKey
-        rect = new Rect @mouseDownPos.x, @mouseDownPos.y, 1, 1
-        @tempIntersection = new Intersection rect
+        @tempIntersection = new Intersection @mouseDownPos
         e.stopImmediatePropagation()
 
     mouseup: ->

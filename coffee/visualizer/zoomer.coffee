@@ -4,6 +4,7 @@ require '../helpers.coffee'
 Point = require '../geom/point.coffee'
 Rect = require '../geom/rect.coffee'
 Tool = require './tool.coffee'
+settings = require '../settings.coffee'
 
 module.exports =
   class Zoomer extends Tool
@@ -20,10 +21,11 @@ module.exports =
       set: (scale) -> @zoom scale, @screenCenter
 
     toCellCoords: (point) ->
+      gridSize = settings.gridSize
       centerOffset = point.subtract(@center).divide(@scale)
-      x = Math.floor centerOffset.x/@defaultZoom
-      y = Math.floor centerOffset.y/@defaultZoom
-      new Point x, y
+      x = gridSize * Math.floor centerOffset.x/@defaultZoom/gridSize
+      y = gridSize * Math.floor centerOffset.y/@defaultZoom/gridSize
+      new Rect x, y, gridSize, gridSize
 
     getBoundingBox: (cell1, cell2) ->
       cell1 ?= @toCellCoords new Point 0, 0
@@ -32,9 +34,11 @@ module.exports =
       y1 = cell1.y
       x2 = cell2.x
       y2 = cell2.y
-      [x1, x2] = [Math.min(x1, x2), Math.max(x1, x2)]
-      [y1, y2] = [Math.min(y1, y2), Math.max(y1, y2)]
-      new Rect x1, y1, x2-x1+1, y2-y1+1
+      xMin = Math.min cell1.left(), cell2.left()
+      xMax = Math.max cell1.right(), cell2.right()
+      yMin = Math.min cell1.top(), cell2.top()
+      yMax = Math.max cell1.bottom(), cell2.bottom()
+      new Rect xMin, yMin, xMax-xMin, yMax-yMin
 
     transform: ->
       @ctx.translate @center.x, @center.y

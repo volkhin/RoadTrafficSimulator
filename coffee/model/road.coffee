@@ -4,6 +4,7 @@ require '../helpers.coffee'
 $ = require 'jquery'
 _ = require 'underscore'
 Lane = require './lane.coffee'
+settings = require '../settings.coffee'
 
 module.exports =
   class Road
@@ -41,7 +42,7 @@ module.exports =
       @targetSideId = @target.rect.getSectorId @source.rect.center()
       @targetSide = @target.rect.getSide(@targetSideId).subsegment 0, 0.5
       @lanesNumber = Math.min(@sourceSide.length, @targetSide.length) | 0
-      @lanesNumber = Math.max 2, @lanesNumber
+      @lanesNumber = Math.max 2, @lanesNumber/settings.gridSize | 0
       sourceSplits = @sourceSide.split @lanesNumber, true
       targetSplits = @targetSide.split @lanesNumber
       if not @lanes? or @lanes.length < @lanesNumber
@@ -55,3 +56,4 @@ module.exports =
         @lanes[i].rightAdjacent = @lanes[i-1]
         @lanes[i].leftmostAdjacent = @lanes[@lanesNumber-1]
         @lanes[i].rightmostAdjacent = @lanes[0]
+        @lanes[i].update()

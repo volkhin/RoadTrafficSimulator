@@ -24,7 +24,7 @@ module.exports =
       @carImage = new Image
       @carImage.src = 'images/car.png'
 
-      @zoomer = new Zoomer 50, @, true
+      @zoomer = new Zoomer 5, @, true
       @graphics = new Graphics @ctx
       @toolRoadbuilder = new ToolRoadBuilder @, true
       @toolIntersectionBuilder = new ToolIntersectionBuilder @, true
@@ -39,7 +39,7 @@ module.exports =
     drawIntersection: (intersection, alpha) ->
       color = intersection.color or settings.colors.intersection
       @graphics.drawRect intersection.rect
-      @ctx.lineWidth = 0.04
+      @ctx.lineWidth = 0.4
       @graphics.stroke settings.colors.roadMarking
       @graphics.fillRect intersection.rect, color, alpha
 
@@ -84,7 +84,7 @@ module.exports =
       targetSide = road.targetSide
 
       @ctx.save()
-      @ctx.lineWidth = 0.04
+      @ctx.lineWidth = 0.4
       leftLine = road.leftmostLane.leftBorder
       @graphics.drawSegment leftLine
       @graphics.stroke settings.colors.roadMarking
@@ -101,9 +101,9 @@ module.exports =
       @ctx.save()
       for lane in road.lanes[1..]
         line = lane.rightBorder
-        dashSize = 0.1
+        dashSize = 1
         @graphics.drawSegment line
-        @ctx.lineWidth = 0.02
+        @ctx.lineWidth = 0.2
         @ctx.lineDashOffset = 1.5 * dashSize
         @ctx.setLineDash [dashSize]
         @graphics.stroke settings.colors.roadMarking
@@ -137,11 +137,11 @@ module.exports =
     drawGrid: ->
       gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
-      return if box.area() >= 2000
-      sz = 0.04
+      return if box.area() >= 2000 * gridSize * gridSize
+      sz = 0.4
 
-      for i in [box.left()..box.right()]
-        for j in [box.top()..box.bottom()]
+      for i in [box.left()..box.right()] by gridSize
+        for j in [box.top()..box.bottom()] by gridSize
           rect = new Rect i - sz/2, j-sz/2, sz, sz
           @graphics.fillRect rect, settings.colors.gridPoint
 

@@ -385,11 +385,11 @@ module.exports = Car = (function() {
     this.id = Object.genId();
     this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
-    this.width = 0.1;
-    this.length = 0.15 + 0.1 * Math.random();
+    this.width = 1;
+    this.length = 1.5 + Math.random();
     this.safeDistance = 0.5 * this.length;
-    this.maxSpeed = (4 + Math.random()) / 5;
-    this.acceleration = 0.25;
+    this.maxSpeed = (4 + Math.random()) * 2;
+    this.acceleration = 2.5;
     this.trajectory = new Trajectory(this, lane, position);
     this.alive = true;
     this.preferedLane = null;
@@ -902,7 +902,7 @@ module.exports = Pool = (function() {
 
 },{"../helpers.coffee":6}],13:[function(require,module,exports){
 'use strict';
-var $, Lane, Road, _;
+var $, Lane, Road, settings, _;
 
 require('../helpers.coffee');
 
@@ -911,6 +911,8 @@ $ = require('jquery');
 _ = require('underscore');
 
 Lane = require('./lane.coffee');
+
+settings = require('../settings.coffee');
 
 module.exports = Road = (function() {
   function Road(source, target) {
@@ -969,7 +971,7 @@ module.exports = Road = (function() {
     this.targetSideId = this.target.rect.getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
     this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length) | 0;
-    this.lanesNumber = Math.max(2, this.lanesNumber);
+    this.lanesNumber = Math.max(2, this.lanesNumber / settings.gridSize | 0);
     sourceSplits = this.sourceSide.split(this.lanesNumber, true);
     targetSplits = this.targetSide.split(this.lanesNumber);
     if ((this.lanes == null) || this.lanes.length < this.lanesNumber) {
@@ -989,7 +991,8 @@ module.exports = Road = (function() {
       this.lanes[i].leftAdjacent = this.lanes[i + 1];
       this.lanes[i].rightAdjacent = this.lanes[i - 1];
       this.lanes[i].leftmostAdjacent = this.lanes[this.lanesNumber - 1];
-      _results.push(this.lanes[i].rightmostAdjacent = this.lanes[0]);
+      this.lanes[i].rightmostAdjacent = this.lanes[0];
+      _results.push(this.lanes[i].update());
     }
     return _results;
   };
@@ -999,7 +1002,7 @@ module.exports = Road = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
+},{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
 'use strict';
 var Curve, LanePosition, Trajectory;
 
@@ -1220,7 +1223,7 @@ module.exports = Trajectory = (function() {
 
 },{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10}],15:[function(require,module,exports){
 'use strict';
-var $, Car, Intersection, Pool, Rect, Road, World, _;
+var $, Car, Intersection, Pool, Rect, Road, World, settings, _;
 
 require('../helpers.coffee');
 
@@ -1237,6 +1240,8 @@ Road = require('./road.coffee');
 Pool = require('./pool.coffee');
 
 Rect = require('../geom/rect.coffee');
+
+settings = require('../settings.coffee');
 
 module.exports = World = (function() {
   function World() {
@@ -1302,7 +1307,7 @@ module.exports = World = (function() {
   };
 
   World.prototype.generateMap = function(minX, maxX, minY, maxY) {
-    var intersection, intersectionsNumber, map, previous, x, y, _i, _j, _k, _l;
+    var gridSize, intersection, intersectionsNumber, map, previous, rect, step, x, y, _i, _j, _k, _l;
     if (minX == null) {
       minX = -2;
     }
@@ -1318,12 +1323,15 @@ module.exports = World = (function() {
     this.clear();
     intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0;
     map = {};
+    gridSize = settings.gridSize;
+    step = 5 * gridSize;
     while (intersectionsNumber > 0) {
       x = _.random(minX, maxX);
       y = _.random(minY, maxY);
       if (map[[x, y]] == null) {
-        map[[x, y]] = intersection = new Intersection(new Rect(5 * x, 5 * y, 1, 1));
-        this.addIntersection(intersection);
+        rect = new Rect(step * x, step * y, gridSize, gridSize);
+        intersection = new Intersection(rect);
+        this.addIntersection(map[[x, y]] = intersection);
         intersectionsNumber--;
       }
     }
@@ -1463,7 +1471,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {
@@ -1622,14 +1630,14 @@ module.exports = ToolHighlighter = (function(_super) {
 
   function ToolHighlighter() {
     ToolHighlighter.__super__.constructor.apply(this, arguments);
-    this.mousePos = null;
+    this.hoveredCell = null;
   }
 
   ToolHighlighter.prototype.mousemove = function(e) {
     var cell, hoveredIntersection, id, intersection, _ref;
     cell = this.getCell(e);
     hoveredIntersection = this.getHoveredIntersection(cell);
-    this.mousePos = cell;
+    this.hoveredCell = cell;
     _ref = this.visualizer.world.intersections.all();
     for (id in _ref) {
       intersection = _ref[id];
@@ -1641,14 +1649,14 @@ module.exports = ToolHighlighter = (function(_super) {
   };
 
   ToolHighlighter.prototype.mouseout = function() {
-    return this.mousePos = null;
+    return this.hoveredCell = null;
   };
 
   ToolHighlighter.prototype.draw = function() {
-    var cell;
-    if (this.mousePos) {
-      cell = new Rect(this.mousePos.x, this.mousePos.y, 1, 1);
-      return this.visualizer.graphics.fillRect(cell, settings.colors.hoveredGrid, 0.5);
+    var color;
+    if (this.hoveredCell) {
+      color = settings.colors.hoveredGrid;
+      return this.visualizer.graphics.fillRect(this.hoveredCell, color, 0.5);
     }
   };
 
@@ -1681,11 +1689,9 @@ module.exports = ToolIntersectionBuilder = (function(_super) {
   }
 
   ToolIntersectionBuilder.prototype.mousedown = function(e) {
-    var rect;
     this.mouseDownPos = this.getCell(e);
     if (e.shiftKey) {
-      rect = new Rect(this.mouseDownPos.x, this.mouseDownPos.y, 1, 1);
-      this.tempIntersection = new Intersection(rect);
+      this.tempIntersection = new Intersection(this.mouseDownPos);
       return e.stopImmediatePropagation();
     }
   };
@@ -1979,12 +1985,11 @@ module.exports = Tool = (function() {
   };
 
   Tool.prototype.getHoveredIntersection = function(cell) {
-    var cellRect, id, intersection, intersections;
-    cellRect = new Rect(cell.x, cell.y, 1, 1);
+    var id, intersection, intersections;
     intersections = this.visualizer.world.intersections.all();
     for (id in intersections) {
       intersection = intersections[id];
-      if (intersection.rect.containsRect(cellRect)) {
+      if (intersection.rect.containsRect(cell)) {
         return intersection;
       }
     }
@@ -2033,7 +2038,7 @@ module.exports = Visualizer = (function() {
     this.ctx = this.canvas.getContext('2d');
     this.carImage = new Image;
     this.carImage.src = 'images/car.png';
-    this.zoomer = new Zoomer(50, this, true);
+    this.zoomer = new Zoomer(5, this, true);
     this.graphics = new Graphics(this.ctx);
     this.toolRoadbuilder = new ToolRoadBuilder(this, true);
     this.toolIntersectionBuilder = new ToolIntersectionBuilder(this, true);
@@ -2050,7 +2055,7 @@ module.exports = Visualizer = (function() {
     var color;
     color = intersection.color || settings.colors.intersection;
     this.graphics.drawRect(intersection.rect);
-    this.ctx.lineWidth = 0.04;
+    this.ctx.lineWidth = 0.4;
     this.graphics.stroke(settings.colors.roadMarking);
     return this.graphics.fillRect(intersection.rect, color, alpha);
   };
@@ -2089,7 +2094,7 @@ module.exports = Visualizer = (function() {
     sourceSide = road.sourceSide;
     targetSide = road.targetSide;
     this.ctx.save();
-    this.ctx.lineWidth = 0.04;
+    this.ctx.lineWidth = 0.4;
     leftLine = road.leftmostLane.leftBorder;
     this.graphics.drawSegment(leftLine);
     this.graphics.stroke(settings.colors.roadMarking);
@@ -2104,9 +2109,9 @@ module.exports = Visualizer = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       lane = _ref[_i];
       line = lane.rightBorder;
-      dashSize = 0.1;
+      dashSize = 1;
       this.graphics.drawSegment(line);
-      this.ctx.lineWidth = 0.02;
+      this.ctx.lineWidth = 0.2;
       this.ctx.lineDashOffset = 1.5 * dashSize;
       this.ctx.setLineDash([dashSize]);
       this.graphics.stroke(settings.colors.roadMarking);
@@ -2144,16 +2149,16 @@ module.exports = Visualizer = (function() {
     var box, gridSize, i, j, rect, sz, _i, _ref, _ref1, _results;
     gridSize = settings.gridSize;
     box = this.zoomer.getBoundingBox();
-    if (box.area() >= 2000) {
+    if (box.area() >= 2000 * gridSize * gridSize) {
       return;
     }
-    sz = 0.04;
+    sz = 0.4;
     _results = [];
-    for (i = _i = _ref = box.left(), _ref1 = box.right(); _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+    for (i = _i = _ref = box.left(), _ref1 = box.right(); gridSize > 0 ? _i <= _ref1 : _i >= _ref1; i = _i += gridSize) {
       _results.push((function() {
         var _j, _ref2, _ref3, _results1;
         _results1 = [];
-        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); _ref2 <= _ref3 ? _j <= _ref3 : _j >= _ref3; j = _ref2 <= _ref3 ? ++_j : --_j) {
+        for (j = _j = _ref2 = box.top(), _ref3 = box.bottom(); gridSize > 0 ? _j <= _ref3 : _j >= _ref3; j = _j += gridSize) {
           rect = new Rect(i - sz / 2, j - sz / 2, sz, sz);
           _results1.push(this.graphics.fillRect(rect, settings.colors.gridPoint));
         }
@@ -2237,7 +2242,7 @@ module.exports = Visualizer = (function() {
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
-var Point, Rect, Tool, Zoomer,
+var Point, Rect, Tool, Zoomer, settings,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
@@ -2249,6 +2254,8 @@ Point = require('../geom/point.coffee');
 Rect = require('../geom/rect.coffee');
 
 Tool = require('./tool.coffee');
+
+settings = require('../settings.coffee');
 
 module.exports = Zoomer = (function(_super) {
   __extends(Zoomer, _super);
@@ -2276,15 +2283,16 @@ module.exports = Zoomer = (function(_super) {
   });
 
   Zoomer.prototype.toCellCoords = function(point) {
-    var centerOffset, x, y;
+    var centerOffset, gridSize, x, y;
+    gridSize = settings.gridSize;
     centerOffset = point.subtract(this.center).divide(this.scale);
-    x = Math.floor(centerOffset.x / this.defaultZoom);
-    y = Math.floor(centerOffset.y / this.defaultZoom);
-    return new Point(x, y);
+    x = gridSize * Math.floor(centerOffset.x / this.defaultZoom / gridSize);
+    y = gridSize * Math.floor(centerOffset.y / this.defaultZoom / gridSize);
+    return new Rect(x, y, gridSize, gridSize);
   };
 
   Zoomer.prototype.getBoundingBox = function(cell1, cell2) {
-    var x1, x2, y1, y2, _ref, _ref1;
+    var x1, x2, xMax, xMin, y1, y2, yMax, yMin;
     if (cell1 == null) {
       cell1 = this.toCellCoords(new Point(0, 0));
     }
@@ -2295,9 +2303,11 @@ module.exports = Zoomer = (function(_super) {
     y1 = cell1.y;
     x2 = cell2.x;
     y2 = cell2.y;
-    _ref = [Math.min(x1, x2), Math.max(x1, x2)], x1 = _ref[0], x2 = _ref[1];
-    _ref1 = [Math.min(y1, y2), Math.max(y1, y2)], y1 = _ref1[0], y2 = _ref1[1];
-    return new Rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+    xMin = Math.min(cell1.left(), cell2.left());
+    xMax = Math.max(cell1.right(), cell2.right());
+    yMin = Math.min(cell1.top(), cell2.top());
+    yMax = Math.max(cell1.bottom(), cell2.bottom());
+    return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
   };
 
   Zoomer.prototype.transform = function() {
@@ -2334,7 +2344,7 @@ module.exports = Zoomer = (function(_super) {
 })(Tool);
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"./tool.coffee":23}],26:[function(require,module,exports){
+},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],26:[function(require,module,exports){
 module.exports = require('./vendor/dat.gui')
 module.exports.color = require('./vendor/dat.color')
 },{"./vendor/dat.color":27,"./vendor/dat.gui":28}],27:[function(require,module,exports){

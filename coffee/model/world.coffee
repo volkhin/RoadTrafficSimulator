@@ -8,6 +8,7 @@ Intersection = require './intersection.coffee'
 Road = require './road.coffee'
 Pool = require './pool.coffee'
 Rect = require '../geom/rect.coffee'
+settings = require '../settings.coffee'
 
 module.exports =
   class World
@@ -50,12 +51,15 @@ module.exports =
       @clear()
       intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0
       map = {}
+      gridSize = settings.gridSize
+      step = 5 * gridSize
       while intersectionsNumber > 0
         x = _.random minX, maxX
         y = _.random minY, maxY
         unless map[[x, y]]?
-          map[[x, y]] = intersection = new Intersection new Rect 5*x, 5*y, 1, 1
-          @addIntersection intersection
+          rect = new Rect step*x, step*y, gridSize, gridSize
+          intersection = new Intersection rect
+          @addIntersection map[[x, y]] = intersection
           intersectionsNumber--
       for x in [minX..maxX]
         previous = null

@@ -49,7 +49,6 @@ module.exports =
       @visualizer.zoomer.toCellCoords @getPoint e
 
     getHoveredIntersection: (cell) ->
-      cellRect = new Rect cell.x, cell.y, 1, 1
       intersections = @visualizer.world.intersections.all()
       for id, intersection of intersections
-        return intersection if intersection.rect.containsRect cellRect
+        return intersection if intersection.rect.containsRect cell
