@@ -507,7 +507,8 @@ require('../helpers.coffee');
 settings = require('../settings.coffee');
 
 module.exports = ControlSignals = (function() {
-  function ControlSignals() {
+  function ControlSignals(intersection) {
+    this.intersection = intersection;
     this.time = 0;
     this.flipMultiplier = 1 + (Math.random() * 0.4 - 0.2);
     this.stateNum = 0;
@@ -547,6 +548,9 @@ module.exports = ControlSignals = (function() {
     get: function() {
       var stringState, x, _i, _len, _results;
       stringState = this.states[this.stateNum % this.states.length];
+      if (this.intersection.roads.length <= 2) {
+        stringState = ['LFR', 'LFR', 'LFR', 'LFR'];
+      }
       _results = [];
       for (_i = 0, _len = stringState.length; _i < _len; _i++) {
         x = stringState[_i];
@@ -593,7 +597,7 @@ module.exports = Intersection = (function() {
     this.id = _.uniqueId('intersection');
     this.roads = [];
     this.inRoads = [];
-    this.controlSignals = new ControlSignals;
+    this.controlSignals = new ControlSignals(this);
   }
 
   Intersection.copy = function(intersection) {
@@ -603,7 +607,7 @@ module.exports = Intersection = (function() {
     result = $.extend(result, intersection);
     result.roads = [];
     result.inRoads = [];
-    result.controlSignals = new ControlSignals;
+    result.controlSignals = new ControlSignals(result);
     return result;
   };
 

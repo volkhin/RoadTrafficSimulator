@@ -12,7 +12,7 @@ module.exports =
       @id = _.uniqueId 'intersection'
       @roads = []
       @inRoads = []
-      @controlSignals = new ControlSignals
+      @controlSignals = new ControlSignals @
 
     @copy: (intersection) ->
       intersection.rect = Rect.copy intersection.rect
@@ -20,7 +20,7 @@ module.exports =
       result = $.extend result, intersection
       result.roads = []
       result.inRoads = []
-      result.controlSignals = new ControlSignals
+      result.controlSignals = new ControlSignals result
       result
 
     toJSON: ->

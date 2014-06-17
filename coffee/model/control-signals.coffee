@@ -5,7 +5,7 @@ settings = require '../settings.coffee'
 
 module.exports =
   class ControlSignals
-    constructor: ->
+    constructor: (@intersection) ->
       @time = 0
       @flipMultiplier = 1 + (Math.random() * 0.4 - 0.2) # 0.8 - 1.2
       @stateNum = 0
@@ -32,6 +32,8 @@ module.exports =
     @property 'state',
       get: ->
         stringState = @states[@stateNum % @states.length]
+        if @intersection.roads.length <= 2
+          stringState = ['LFR', 'LFR', 'LFR', 'LFR']
         (@_decode x for x in stringState)
 
     flip: ->
