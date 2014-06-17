@@ -41,7 +41,7 @@ $(document).ready(function() {
   guiVisualizer.add(visualizer, 'timeFactor', 0.1, 10).listen();
   guiWorld.add(world, 'carsNumber').min(0).max(200).step(1).listen();
   guiWorld.add(world, 'instantSpeed').step(0.00001).listen();
-  return gui.add(settings, 'lightsFlipInterval', 0, 10, 0.01).listen();
+  return gui.add(settings, 'lightsFlipInterval', 0, 50, 0.01).listen();
 });
 
 
@@ -417,19 +417,21 @@ module.exports = Car = (function() {
   };
 
   Car.prototype.getAcceleration = function() {
-    var a, b, breakGap, busyRoadCoeff, coeff, deltaSpeed, distanceGap, distanceToNextCar, freeRoadCoeff, nextCarDistance, safeDistance, timeGap, _ref;
+    var a, b, breakGap, busyRoadCoeff, coeff, deltaSpeed, distanceGap, distanceToNextCar, freeRoadCoeff, intersectionCoeff, nextCarDistance, safeDistance, safeIntersectionDistance, timeGap, _ref;
     nextCarDistance = this.trajectory.nextCarDistance;
     distanceToNextCar = Math.max(nextCarDistance.distance, 0);
     a = this.maxAcceleration;
     b = this.maxDeceleration;
     deltaSpeed = (this.speed - ((_ref = nextCarDistance.car) != null ? _ref.speed : void 0)) || 0;
+    freeRoadCoeff = Math.pow(this.speed / this.maxSpeed, 4);
     distanceGap = this.s0;
     timeGap = this.speed * this.timeHeadway;
     breakGap = this.speed * deltaSpeed / (2 * Math.sqrt(a * b));
     safeDistance = distanceGap + timeGap + breakGap;
-    freeRoadCoeff = Math.pow(this.speed / this.maxSpeed, 4);
     busyRoadCoeff = Math.pow(safeDistance / distanceToNextCar, 2);
-    coeff = 1 - freeRoadCoeff - busyRoadCoeff;
+    safeIntersectionDistance = 1 + timeGap + Math.pow(this.speed, 2) / (2 * b);
+    intersectionCoeff = Math.pow(safeIntersectionDistance / this.trajectory.distanceToStopLine, 2);
+    coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff;
     return this.maxAcceleration * coeff;
   };
 
@@ -437,7 +439,7 @@ module.exports = Car = (function() {
     var acceleration, step;
     acceleration = this.getAcceleration();
     this.speed += acceleration * delta;
-    if (this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
+    if ((this.preferedLane != null) && this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
       this.trajectory.changeLane(this.preferedLane);
     }
     step = this.speed * delta;
@@ -1062,17 +1064,23 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('nextCarDistance', {
     get: function() {
-      var a, b, result;
+      var a, b;
       a = this.current.nextCarDistance;
       b = this.next.nextCarDistance;
-      result = a.distance < b.distance ? a : b;
-      if (this.getDistanceToIntersection() < result.distance && !this.isChangingLanes && !this.canEnterIntersection()) {
-        result = {
-          car: null,
-          distance: this.getDistanceToIntersection()
-        };
+      if (a.distance < b.distance) {
+        return a;
+      } else {
+        return b;
       }
-      return result;
+    }
+  });
+
+  Trajectory.property('distanceToStopLine', {
+    get: function() {
+      if (!this.isChangingLanes && !this.canEnterIntersection()) {
+        return Math.max(this.getDistanceToIntersection(), 0.00042);
+      }
+      return Infinity;
     }
   });
 
@@ -1122,7 +1130,7 @@ module.exports = Trajectory = (function() {
   };
 
   Trajectory.prototype.getDistanceToIntersection = function() {
-    return this.current.lane.length - this.car.length - this.current.position;
+    return this.current.lane.length - this.car.length / 2 - this.current.position;
   };
 
   Trajectory.prototype.timeToMakeTurn = function(plannedStep) {
@@ -1133,7 +1141,7 @@ module.exports = Trajectory = (function() {
   };
 
   Trajectory.prototype.moveForward = function(distance) {
-    var tempRelativePosition;
+    var tempRelativePosition, _ref;
     distance = Math.max(distance, 0);
     this.current.position += distance;
     this.next.position += distance;
@@ -1144,7 +1152,7 @@ module.exports = Trajectory = (function() {
       this.car.preferedLane = null;
       this.car.turnNumber = null;
     }
-    tempRelativePosition = this.temp.position / this.temp.lane.length;
+    tempRelativePosition = this.temp.position / ((_ref = this.temp.lane) != null ? _ref.length : void 0);
     if (this.isChangingLanes && tempRelativePosition >= 0.5 && this.next.free) {
       this.current.release();
       this.next.acquire();
@@ -1507,7 +1515,7 @@ module.exports = {
     hoveredGrid: '#f4e8e1'
   },
   fps: 30,
-  lightsFlipInterval: 1,
+  lightsFlipInterval: 20,
   gridSize: 14
 };
 

@@ -34,13 +34,13 @@ module.exports =
       get: ->
         a = @current.nextCarDistance
         b = @next.nextCarDistance
-        result = if a.distance < b.distance then a else b
-        if @getDistanceToIntersection() < result.distance and
-        not @isChangingLanes and not @canEnterIntersection()
-          result =
-            car: null
-            distance: @getDistanceToIntersection()
-        return result
+        if a.distance < b.distance then a else b
+
+    @property 'distanceToStopLine',
+      get: ->
+        if not @isChangingLanes and not @canEnterIntersection()
+          return Math.max @getDistanceToIntersection(), 0.00042
+        return Infinity
 
     @property 'nextIntersection',
       get: ->
@@ -73,7 +73,7 @@ module.exports =
       intersection.controlSignals.state[sideId][turnNumber]
 
     getDistanceToIntersection: ->
-      @current.lane.length - @car.length - @current.position
+      @current.lane.length - @car.length/2 - @current.position
 
     timeToMakeTurn: (plannedStep = 0) ->
       @getDistanceToIntersection() <= plannedStep and not @isChangingLanes
@@ -89,7 +89,7 @@ module.exports =
         @car.nextLane = null
         @car.preferedLane = null
         @car.turnNumber = null
-      tempRelativePosition = @temp.position / @temp.lane.length
+      tempRelativePosition = @temp.position / @temp.lane?.length
       if @isChangingLanes and tempRelativePosition >= 0.5 and @next.free
         @current.release()
         @next.acquire()
