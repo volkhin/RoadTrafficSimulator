@@ -454,12 +454,6 @@ module.exports = Car = (function() {
       if (this.nextLane == null) {
         return this.alive = false;
       }
-      if (!this.trajectory.canEnterIntersection()) {
-        if (step > this.trajectory.getDistanceToIntersection()) {
-          step = this.trajectory.getDistanceToIntersection();
-          this.speed = 0;
-        }
-      }
     }
     return this.trajectory.moveForward(step);
   };
@@ -1074,14 +1068,17 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('nextCarDistance', {
     get: function() {
-      var a, b;
+      var a, b, result;
       a = this.current.nextCarDistance;
       b = this.next.nextCarDistance;
-      if (a.distance < b.distance) {
-        return a;
-      } else {
-        return b;
+      result = a.distance < b.distance ? a : b;
+      if (this.getDistanceToIntersection() < result.distance && !this.isChangingLanes && !this.canEnterIntersection()) {
+        result = {
+          car: null,
+          distance: this.getDistanceToIntersection()
+        };
       }
+      return result;
     }
   });
 
@@ -1102,18 +1099,18 @@ module.exports = Trajectory = (function() {
     nextLane = this.car.nextLane;
     sourceLane = this.current.lane;
     if (!nextLane) {
-      throw Error('no road to enter');
+      return true;
     }
     intersection = this.nextIntersection;
     turnNumber = sourceLane.getTurnDirection(nextLane);
     if (turnNumber === 3) {
-      throw Error('no U-turns are allowed');
+      return false;
     }
     if (turnNumber === 0 && !sourceLane.isLeftmost) {
-      throw Error('no left turns from this lane');
+      return false;
     }
     if (turnNumber === 2 && !sourceLane.isRightmost) {
-      throw Error('no right turns from this lane');
+      return false;
     }
     sideId = sourceLane.road.targetSideId;
     return intersection.controlSignals.state[sideId][turnNumber];
@@ -1131,6 +1128,7 @@ module.exports = Trajectory = (function() {
   };
 
   Trajectory.prototype.moveForward = function(distance) {
+    distance = Math.max(distance, 0);
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;

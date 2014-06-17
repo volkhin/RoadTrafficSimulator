@@ -33,7 +33,13 @@ module.exports =
       get: ->
         a = @current.nextCarDistance
         b = @next.nextCarDistance
-        if a.distance < b.distance then a else b
+        result = if a.distance < b.distance then a else b
+        if @getDistanceToIntersection() < result.distance and
+        not @isChangingLanes and not @canEnterIntersection()
+          result =
+            car: null
+            distance: @getDistanceToIntersection()
+        return result
 
     @property 'nextIntersection',
       get: ->
@@ -47,14 +53,20 @@ module.exports =
       #TODO right turn is only allowed from the right lane
       nextLane = @car.nextLane
       sourceLane = @current.lane
-      throw Error 'no road to enter' unless nextLane
+      unless nextLane
+        return true
+        # throw Error 'no road to enter'
       intersection = @nextIntersection
       turnNumber = sourceLane.getTurnDirection nextLane
-      throw Error 'no U-turns are allowed' if turnNumber is 3
+      if turnNumber is 3
+        return false
+        # throw Error 'no U-turns are allowed'
       if turnNumber is 0 and not sourceLane.isLeftmost
-        throw Error 'no left turns from this lane'
+        return false
+        # throw Error 'no left turns from this lane'
       if turnNumber is 2 and not sourceLane.isRightmost
-        throw Error 'no right turns from this lane'
+        return false
+        # throw Error 'no right turns from this lane'
       sideId = sourceLane.road.targetSideId
       intersection.controlSignals.state[sideId][turnNumber]
 
@@ -65,6 +77,7 @@ module.exports =
       @getDistanceToIntersection() <= plannedStep and not @isChangingLanes
 
     moveForward: (distance) ->
+      distance = Math.max distance, 0
       @current.position += distance
       @next.position += distance
       @temp.position += distance

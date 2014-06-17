@@ -68,11 +68,6 @@ module.exports =
 
       if @trajectory.timeToMakeTurn(step)
         return @alive = false if not @nextLane?
-        if not @trajectory.canEnterIntersection()
-          #FIXME hack
-          if step > @trajectory.getDistanceToIntersection()
-            step = @trajectory.getDistanceToIntersection()
-            @speed = 0
       @trajectory.moveForward step
 
     pickNextLane: ->
