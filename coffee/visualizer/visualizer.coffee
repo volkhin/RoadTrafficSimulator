@@ -34,7 +34,7 @@ module.exports =
       @toolMover = new ToolMover @, true
       @_running = false
       @previousTime = 0
-      @timeFactor = 1
+      @timeFactor = settings.defaultTimeFactor
       @debug = false
 
     drawIntersection: (intersection, alpha) ->

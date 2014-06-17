@@ -14,6 +14,9 @@ $(document).ready ->
 
   window.world = new World
   world.load()
+  if world.intersections.length is 0
+    world.generateMap()
+    world.carsNumber = 100
   window.visualizer = new Visualizer world
   visualizer.start()
   gui = new DAT.GUI

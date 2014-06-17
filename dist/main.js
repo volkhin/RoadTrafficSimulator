@@ -24,6 +24,10 @@ $(document).ready(function() {
   $(document.body).append(canvas);
   window.world = new World;
   world.load();
+  if (world.intersections.length === 0) {
+    world.generateMap();
+    world.carsNumber = 100;
+  }
   window.visualizer = new Visualizer(world);
   visualizer.start();
   gui = new DAT.GUI;
@@ -1516,7 +1520,8 @@ module.exports = {
   },
   fps: 30,
   lightsFlipInterval: 20,
-  gridSize: 14
+  gridSize: 14,
+  defaultTimeFactor: 5
 };
 
 
@@ -2074,7 +2079,7 @@ module.exports = Visualizer = (function() {
     this.toolMover = new ToolMover(this, true);
     this._running = false;
     this.previousTime = 0;
-    this.timeFactor = 1;
+    this.timeFactor = settings.defaultTimeFactor;
     this.debug = false;
   }
 

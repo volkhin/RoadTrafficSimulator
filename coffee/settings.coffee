@@ -17,3 +17,4 @@ module.exports =
   fps: 30
   lightsFlipInterval: 20
   gridSize: 14
+  defaultTimeFactor: 5
