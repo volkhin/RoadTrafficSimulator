@@ -10,6 +10,7 @@ module.exports =
     constructor: (@car, lane, position) ->
       position ?= 0
       @current = new LanePosition @car, lane, position
+      @current.acquire()
       @next = new LanePosition @car
       @temp = new LanePosition @car
       @isChangingLanes = false
@@ -82,11 +83,15 @@ module.exports =
       @next.position += distance
       @temp.position += distance
       if @timeToMakeTurn() and @canEnterIntersection()
-        @_startChangingLanes @car.nextLane, 0, true
+        @_startChangingLanes @car.nextLane, 0
         # FIXME should be done in car model
         @car.nextLane = null
         @car.preferedLane = null
         @car.turnNumber = null
+      if @isChangingLanes and @temp.position >= 0.5 * @temp.lane.length and
+      @next.free
+        @current.release()
+        @next.acquire()
       if @isChangingLanes and @temp.position >= @temp.lane.length
         @_finishChangingLanes()
       if @current.lane and not @isChangingLanes and not @car.nextLane
@@ -100,7 +105,7 @@ module.exports =
       nextPosition = @current.position + 5 * @car.length
       throw Error 'too late to change lane' unless nextPosition < @lane.length
       #TODO: keep old lane after implementing IDM
-      @_startChangingLanes nextLane, nextPosition, false
+      @_startChangingLanes nextLane, nextPosition
 
     changeLaneToLeft: ->
       @_changeLane @current.lane.leftAdjacent
@@ -122,7 +127,7 @@ module.exports =
       # FIXME: race condition due to using relativePosition on intersections
       @_getAdjacentLaneChangeCurve()
 
-    _startChangingLanes: (nextLane, nextPosition, keepOldLine) ->
+    _startChangingLanes: (nextLane, nextPosition) ->
       throw Error 'already changing lane' if @isChangingLanes
       throw Error 'no next lane' unless nextLane?
       @isChangingLanes = true
@@ -134,7 +139,6 @@ module.exports =
       @temp.lane = curve
       @temp.position = 0 # @current.lane.length - @current.position
       @next.position -= @temp.lane.length
-      @current.release() unless keepOldLine
 
     _finishChangingLanes: ->
       throw Error 'no lane changing is going on' unless @isChangingLanes
@@ -142,6 +146,7 @@ module.exports =
       # TODO swap current and next
       @current.lane = @next.lane
       @current.position = @next.position or 0
+      @current.acquire()
       @next.lane = null
       @next.position = NaN
       @temp.lane = null

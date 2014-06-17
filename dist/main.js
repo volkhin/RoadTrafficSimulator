@@ -659,8 +659,7 @@ module.exports = LanePosition = (function() {
     },
     set: function(lane) {
       this.release();
-      this._lane = lane;
-      return this.acquire();
+      return this._lane = lane;
     }
   });
 
@@ -1027,6 +1026,7 @@ module.exports = Trajectory = (function() {
       position = 0;
     }
     this.current = new LanePosition(this.car, lane, position);
+    this.current.acquire();
     this.next = new LanePosition(this.car);
     this.temp = new LanePosition(this.car);
     this.isChangingLanes = false;
@@ -1133,10 +1133,14 @@ module.exports = Trajectory = (function() {
     this.next.position += distance;
     this.temp.position += distance;
     if (this.timeToMakeTurn() && this.canEnterIntersection()) {
-      this._startChangingLanes(this.car.nextLane, 0, true);
+      this._startChangingLanes(this.car.nextLane, 0);
       this.car.nextLane = null;
       this.car.preferedLane = null;
       this.car.turnNumber = null;
+    }
+    if (this.isChangingLanes && this.temp.position >= 0.5 * this.temp.lane.length && this.next.free) {
+      this.current.release();
+      this.next.acquire();
     }
     if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
       this._finishChangingLanes();
@@ -1164,7 +1168,7 @@ module.exports = Trajectory = (function() {
     if (!(nextPosition < this.lane.length)) {
       throw Error('too late to change lane');
     }
-    return this._startChangingLanes(nextLane, nextPosition, false);
+    return this._startChangingLanes(nextLane, nextPosition);
   };
 
   Trajectory.prototype.changeLaneToLeft = function() {
@@ -1191,7 +1195,7 @@ module.exports = Trajectory = (function() {
     return this._getAdjacentLaneChangeCurve();
   };
 
-  Trajectory.prototype._startChangingLanes = function(nextLane, nextPosition, keepOldLine) {
+  Trajectory.prototype._startChangingLanes = function(nextLane, nextPosition) {
     var curve;
     if (this.isChangingLanes) {
       throw Error('already changing lane');
@@ -1205,10 +1209,7 @@ module.exports = Trajectory = (function() {
     curve = this._getCurve();
     this.temp.lane = curve;
     this.temp.position = 0;
-    this.next.position -= this.temp.lane.length;
-    if (!keepOldLine) {
-      return this.current.release();
-    }
+    return this.next.position -= this.temp.lane.length;
   };
 
   Trajectory.prototype._finishChangingLanes = function() {
@@ -1218,6 +1219,7 @@ module.exports = Trajectory = (function() {
     this.isChangingLanes = false;
     this.current.lane = this.next.lane;
     this.current.position = this.next.position || 0;
+    this.current.acquire();
     this.next.lane = null;
     this.next.position = NaN;
     this.temp.lane = null;

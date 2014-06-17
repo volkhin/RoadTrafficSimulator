@@ -15,7 +15,7 @@ module.exports =
       set: (lane) ->
         @release()
         @_lane = lane
-        @acquire()
+        # @acquire()
 
     @property 'relativePosition',
       get: -> @position/@lane.length
