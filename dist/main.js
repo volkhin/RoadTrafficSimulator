@@ -437,14 +437,8 @@ module.exports = Car = (function() {
     var acceleration, step;
     acceleration = this.getAcceleration();
     this.speed += acceleration * delta;
-    if ((this.preferedLane != null) && this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
-      switch (this.turnNumber) {
-        case 0:
-          this.trajectory.changeLaneToLeft();
-          break;
-        case 2:
-          this.trajectory.changeLaneToRight();
-      }
+    if (this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
+      this.trajectory.changeLane(this.preferedLane);
     }
     step = this.speed * delta;
     if (this.trajectory.nextCarDistance.distance < step) {
@@ -486,7 +480,7 @@ module.exports = Car = (function() {
         case 2:
           return currentLane.rightmostAdjacent;
         default:
-          return null;
+          return currentLane;
       }
     }).call(this);
     return this.nextLane;
@@ -1094,6 +1088,26 @@ module.exports = Trajectory = (function() {
     }
   });
 
+  Trajectory.prototype.isValidTurn = function() {
+    var nextLane, sourceLane, turnNumber;
+    nextLane = this.car.nextLane;
+    sourceLane = this.current.lane;
+    if (!nextLane) {
+      throw Error('no road to enter');
+    }
+    turnNumber = sourceLane.getTurnDirection(nextLane);
+    if (turnNumber === 3) {
+      throw Error('no U-turns are allowed');
+    }
+    if (turnNumber === 0 && !sourceLane.isLeftmost) {
+      throw Error('no left turns from this lane');
+    }
+    if (turnNumber === 2 && !sourceLane.isRightmost) {
+      throw Error('no right turns from this lane');
+    }
+    return true;
+  };
+
   Trajectory.prototype.canEnterIntersection = function() {
     var intersection, nextLane, sideId, sourceLane, turnNumber;
     nextLane = this.car.nextLane;
@@ -1103,15 +1117,6 @@ module.exports = Trajectory = (function() {
     }
     intersection = this.nextIntersection;
     turnNumber = sourceLane.getTurnDirection(nextLane);
-    if (turnNumber === 3) {
-      return false;
-    }
-    if (turnNumber === 0 && !sourceLane.isLeftmost) {
-      return false;
-    }
-    if (turnNumber === 2 && !sourceLane.isRightmost) {
-      return false;
-    }
     sideId = sourceLane.road.targetSideId;
     return intersection.controlSignals.state[sideId][turnNumber];
   };
@@ -1128,21 +1133,23 @@ module.exports = Trajectory = (function() {
   };
 
   Trajectory.prototype.moveForward = function(distance) {
+    var tempRelativePosition;
     distance = Math.max(distance, 0);
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;
-    if (this.timeToMakeTurn() && this.canEnterIntersection()) {
+    if (this.timeToMakeTurn() && this.canEnterIntersection() && this.isValidTurn()) {
       this._startChangingLanes(this.car.nextLane, 0);
       this.car.nextLane = null;
       this.car.preferedLane = null;
       this.car.turnNumber = null;
     }
-    if (this.isChangingLanes && this.temp.position >= 0.5 * this.temp.lane.length && this.next.free) {
+    tempRelativePosition = this.temp.position / this.temp.lane.length;
+    if (this.isChangingLanes && tempRelativePosition >= 0.5 && this.next.free) {
       this.current.release();
       this.next.acquire();
     }
-    if (this.isChangingLanes && this.temp.position >= this.temp.lane.length) {
+    if (this.isChangingLanes && tempRelativePosition >= 1) {
       this._finishChangingLanes();
     }
     if (this.current.lane && !this.isChangingLanes && !this.car.nextLane) {
@@ -1150,7 +1157,7 @@ module.exports = Trajectory = (function() {
     }
   };
 
-  Trajectory.prototype._changeLane = function(nextLane) {
+  Trajectory.prototype.changeLane = function(nextLane) {
     var nextPosition;
     if (this.isChangingLanes) {
       throw Error('already changing lane');
@@ -1169,14 +1176,6 @@ module.exports = Trajectory = (function() {
       throw Error('too late to change lane');
     }
     return this._startChangingLanes(nextLane, nextPosition);
-  };
-
-  Trajectory.prototype.changeLaneToLeft = function() {
-    return this._changeLane(this.current.lane.leftAdjacent);
-  };
-
-  Trajectory.prototype.changeLaneToRight = function() {
-    return this._changeLane(this.current.lane.rightAdjacent);
   };
 
   Trajectory.prototype._getIntersectionLaneChangeCurve = function() {};

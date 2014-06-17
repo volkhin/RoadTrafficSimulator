@@ -57,11 +57,9 @@ module.exports =
       acceleration = @getAcceleration()
       @speed += acceleration * delta
 
-      if @preferedLane? and @preferedLane isnt @trajectory.current.lane and
+      if @preferedLane isnt @trajectory.current.lane and
       not @trajectory.isChangingLanes
-        switch @turnNumber
-          when 0 then @trajectory.changeLaneToLeft()
-          when 2 then @trajectory.changeLaneToRight()
+        @trajectory.changeLane @preferedLane
       step = @speed * delta
       # TODO: hacks, should have changed speed
       console.log 'bad IDM' if @trajectory.nextCarDistance.distance < step
@@ -86,5 +84,5 @@ module.exports =
       @preferedLane = switch @turnNumber
         when 0 then currentLane.leftmostAdjacent
         when 2 then currentLane.rightmostAdjacent
-        else null
+        else currentLane
       @nextLane
