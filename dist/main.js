@@ -352,15 +352,9 @@ module.exports = Segment = (function() {
 'use strict';
 module.exports = {};
 
-Object.genId = function() {
-  return Math.random().toString().substr(2) | 0;
-};
-
 Function.prototype.property = function(prop, desc) {
   return Object.defineProperty(this.prototype, prop, desc);
 };
-
-({});
 
 
 },{}],7:[function(require,module,exports){
@@ -375,7 +369,7 @@ Trajectory = require('./trajectory.coffee');
 
 module.exports = Car = (function() {
   function Car(lane, position) {
-    this.id = Object.genId();
+    this.id = _.uniqueId('car');
     this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
     this.width = 1.7;
@@ -418,26 +412,25 @@ module.exports = Car = (function() {
     }
   });
 
-  Car.property('safeDistance', {
-    get: function() {
-      var a, b, deltaSpeed, _ref;
-      a = this.maxAcceleration;
-      b = this.maxDeceleration;
-      deltaSpeed = (this.speed - ((_ref = this.trajectory.nextCarDistance.car) != null ? _ref.speed : void 0)) || 0;
-      return this.s0 + this.speed * this.timeHeadway + this.speed * deltaSpeed / (2 * Math.sqrt(a * b));
-    }
-  });
-
   Car.prototype.release = function() {
     return this.trajectory.release();
   };
 
   Car.prototype.getAcceleration = function() {
-    var distanceToNextCar, k;
-    distanceToNextCar = Math.max(this.trajectory.distanceToNextCar, 0);
-    k = 1 - Math.pow(this.speed / this.maxSpeed, 4);
-    k -= Math.pow(this.safeDistance / distanceToNextCar, 2);
-    return this.maxAcceleration * k;
+    var a, b, breakGap, busyRoadCoeff, coeff, deltaSpeed, distanceGap, distanceToNextCar, freeRoadCoeff, nextCarDistance, safeDistance, timeGap, _ref;
+    nextCarDistance = this.trajectory.nextCarDistance;
+    distanceToNextCar = Math.max(nextCarDistance.distance, 0);
+    a = this.maxAcceleration;
+    b = this.maxDeceleration;
+    deltaSpeed = (this.speed - ((_ref = nextCarDistance.car) != null ? _ref.speed : void 0)) || 0;
+    distanceGap = this.s0;
+    timeGap = this.speed * this.timeHeadway;
+    breakGap = this.speed * deltaSpeed / (2 * Math.sqrt(a * b));
+    safeDistance = distanceGap + timeGap + breakGap;
+    freeRoadCoeff = Math.pow(this.speed / this.maxSpeed, 4);
+    busyRoadCoeff = Math.pow(safeDistance / distanceToNextCar, 2);
+    coeff = 1 - freeRoadCoeff - busyRoadCoeff;
+    return this.maxAcceleration * coeff;
   };
 
   Car.prototype.move = function(delta) {
@@ -454,14 +447,14 @@ module.exports = Car = (function() {
       }
     }
     step = this.speed * delta;
-    if (this.trajectory.distanceToNextCar < step) {
+    if (this.trajectory.nextCarDistance.distance < step) {
       console.log('bad IDM');
     }
     if (this.trajectory.timeToMakeTurn(step)) {
       if (this.nextLane == null) {
         return this.alive = false;
       }
-      if (!this.trajectory.canEnterIntersection(this.nextLane)) {
+      if (!this.trajectory.canEnterIntersection()) {
         if (step > this.trajectory.getDistanceToIntersection()) {
           step = this.trajectory.getDistanceToIntersection();
           this.speed = 0;
@@ -588,11 +581,13 @@ module.exports = ControlSignals = (function() {
 
 },{"../helpers.coffee":6,"../settings.coffee":16}],9:[function(require,module,exports){
 'use strict';
-var $, ControlSignals, Intersection, Rect;
+var $, ControlSignals, Intersection, Rect, _;
 
 require('../helpers.coffee');
 
 $ = require('jquery');
+
+_ = require('underscore');
 
 ControlSignals = require('./control-signals.coffee');
 
@@ -601,7 +596,7 @@ Rect = require('../geom/rect.coffee');
 module.exports = Intersection = (function() {
   function Intersection(rect) {
     this.rect = rect;
-    this.id = Object.genId();
+    this.id = _.uniqueId('intersection');
     this.roads = [];
     this.inRoads = [];
     this.controlSignals = new ControlSignals;
@@ -647,17 +642,19 @@ module.exports = Intersection = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"jquery":30}],10:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"jquery":30,"underscore":31}],10:[function(require,module,exports){
 'use strict';
-var LanePosition;
+var LanePosition, _;
 
 require('../helpers.coffee');
+
+_ = require('underscore');
 
 module.exports = LanePosition = (function() {
   function LanePosition(car, lane, position) {
     this.car = car;
     this.position = position;
-    this.id = Object.genId();
+    this.id = _.uniqueId('laneposition');
     this.free = true;
     this.lane = lane;
   }
@@ -725,7 +722,7 @@ module.exports = LanePosition = (function() {
 })();
 
 
-},{"../helpers.coffee":6}],11:[function(require,module,exports){
+},{"../helpers.coffee":6,"underscore":31}],11:[function(require,module,exports){
 'use strict';
 var $, Lane, Segment;
 
@@ -933,7 +930,7 @@ module.exports = Road = (function() {
   function Road(source, target) {
     this.source = source;
     this.target = target;
-    this.id = Object.genId();
+    this.id = _.uniqueId('road');
     this.lanes = [];
     this.lanesNumber = null;
     this.update();
@@ -1088,12 +1085,6 @@ module.exports = Trajectory = (function() {
     }
   });
 
-  Trajectory.property('distanceToNextCar', {
-    get: function() {
-      return this.nextCarDistance.distance;
-    }
-  });
-
   Trajectory.property('nextIntersection', {
     get: function() {
       return this.current.lane.road.target;
@@ -1106,8 +1097,9 @@ module.exports = Trajectory = (function() {
     }
   });
 
-  Trajectory.prototype.canEnterIntersection = function(nextLane) {
-    var intersection, sideId, sourceLane, turnNumber;
+  Trajectory.prototype.canEnterIntersection = function() {
+    var intersection, nextLane, sideId, sourceLane, turnNumber;
+    nextLane = this.car.nextLane;
     sourceLane = this.current.lane;
     if (!nextLane) {
       throw Error('no road to enter');
@@ -1142,7 +1134,7 @@ module.exports = Trajectory = (function() {
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;
-    if (this.timeToMakeTurn() && this.canEnterIntersection(this.car.nextLane)) {
+    if (this.timeToMakeTurn() && this.canEnterIntersection()) {
       this._startChangingLanes(this.car.nextLane, 0, true);
       this.car.nextLane = null;
       this.car.preferedLane = null;
@@ -2166,9 +2158,7 @@ module.exports = Visualizer = (function() {
     if (this.debug) {
       this.ctx.fillStyle = "black";
       this.ctx.font = "1px Arial";
-      this.ctx.scale(0.1, 0.1);
       this.ctx.fillText(car.id, 0, 0);
-      this.ctx.scale(10, 10);
     }
     return this.graphics.restore();
   };

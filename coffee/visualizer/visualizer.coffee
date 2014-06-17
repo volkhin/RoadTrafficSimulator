@@ -130,9 +130,7 @@ module.exports =
       if @debug
         @ctx.fillStyle = "black"
         @ctx.font = "1px Arial"
-        @ctx.scale 0.1, 0.1
         @ctx.fillText car.id, 0, 0
-        @ctx.scale 10, 10
       @graphics.restore()
 
     drawGrid: ->

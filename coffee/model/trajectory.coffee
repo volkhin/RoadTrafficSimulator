@@ -35,9 +35,6 @@ module.exports =
         b = @next.nextCarDistance
         if a.distance < b.distance then a else b
 
-    @property 'distanceToNextCar',
-      get: -> @nextCarDistance.distance
-
     @property 'nextIntersection',
       get: ->
         @current.lane.road.target
@@ -46,8 +43,9 @@ module.exports =
       get: ->
         @current.lane.road.source
 
-    canEnterIntersection: (nextLane) ->
+    canEnterIntersection: ->
       #TODO right turn is only allowed from the right lane
+      nextLane = @car.nextLane
       sourceLane = @current.lane
       throw Error 'no road to enter' unless nextLane
       intersection = @nextIntersection
@@ -70,7 +68,7 @@ module.exports =
       @current.position += distance
       @next.position += distance
       @temp.position += distance
-      if @timeToMakeTurn() and @canEnterIntersection @car.nextLane
+      if @timeToMakeTurn() and @canEnterIntersection()
         @_startChangingLanes @car.nextLane, 0, true
         # FIXME should be done in car model
         @car.nextLane = null

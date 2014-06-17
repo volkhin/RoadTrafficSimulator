@@ -1,11 +1,12 @@
 'use strict'
 
 require '../helpers.coffee'
+_ = require 'underscore'
 
 module.exports =
   class LanePosition
     constructor: (@car, lane, @position) ->
-      @id = Object.genId()
+      @id = _.uniqueId 'laneposition'
       @free = true
       @lane = lane
 

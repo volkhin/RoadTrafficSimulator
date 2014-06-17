@@ -9,7 +9,7 @@ settings = require '../settings.coffee'
 module.exports =
   class Road
     constructor: (@source, @target) ->
-      @id = Object.genId()
+      @id = _.uniqueId 'road'
       @lanes = []
       @lanesNumber = null
       @update()

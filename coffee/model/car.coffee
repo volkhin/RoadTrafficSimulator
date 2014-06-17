@@ -7,7 +7,7 @@ Trajectory = require './trajectory.coffee'
 module.exports =
   class Car
     constructor: (lane, position) ->
-      @id = Object.genId()
+      @id = _.uniqueId 'car'
       @color = (300 + 240 * Math.random() | 0) % 360
       @_speed = 0
       @width = 1.7
@@ -35,21 +35,23 @@ module.exports =
     @property 'direction',
       get: -> @trajectory.direction
 
-    @property 'safeDistance',
-      get: ->
-        a = @maxAcceleration
-        b = @maxDeceleration
-        deltaSpeed = (@speed - @trajectory.nextCarDistance.car?.speed) || 0
-        @s0 + @speed * @timeHeadway + @speed * deltaSpeed / (2 * Math.sqrt a*b)
-
     release: ->
       @trajectory.release()
 
     getAcceleration: ->
-      distanceToNextCar = Math.max @trajectory.distanceToNextCar, 0
-      k = 1 - Math.pow @speed/@maxSpeed, 4
-      k -= Math.pow @safeDistance/distanceToNextCar, 2
-      return @maxAcceleration * k
+      nextCarDistance = @trajectory.nextCarDistance
+      distanceToNextCar = Math.max nextCarDistance.distance, 0
+      a = @maxAcceleration
+      b = @maxDeceleration
+      deltaSpeed = (@speed - nextCarDistance.car?.speed) || 0
+      distanceGap = @s0
+      timeGap = @speed * @timeHeadway
+      breakGap = @speed * deltaSpeed / (2 * Math.sqrt a*b)
+      safeDistance = distanceGap + timeGap + breakGap
+      freeRoadCoeff = Math.pow @speed/@maxSpeed, 4
+      busyRoadCoeff = Math.pow safeDistance/distanceToNextCar, 2
+      coeff = 1 - freeRoadCoeff - busyRoadCoeff
+      return @maxAcceleration * coeff
 
     move: (delta) ->
       acceleration = @getAcceleration()
@@ -62,12 +64,11 @@ module.exports =
           when 2 then @trajectory.changeLaneToRight()
       step = @speed * delta
       # TODO: hacks, should have changed speed
-      console.log 'bad IDM' if @trajectory.distanceToNextCar < step
-      # step = 0 if @trajectory.distanceToNextCar < step
+      console.log 'bad IDM' if @trajectory.nextCarDistance.distance < step
 
       if @trajectory.timeToMakeTurn(step)
         return @alive = false if not @nextLane?
-        if not @trajectory.canEnterIntersection @nextLane
+        if not @trajectory.canEnterIntersection()
           #FIXME hack
           if step > @trajectory.getDistanceToIntersection()
             step = @trajectory.getDistanceToIntersection()

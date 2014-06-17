@@ -2,13 +2,14 @@
 
 require '../helpers.coffee'
 $ = require 'jquery'
+_ = require 'underscore'
 ControlSignals = require './control-signals.coffee'
 Rect = require '../geom/rect.coffee'
 
 module.exports =
   class Intersection
     constructor: (@rect) ->
-      @id = Object.genId()
+      @id = _.uniqueId 'intersection'
       @roads = []
       @inRoads = []
       @controlSignals = new ControlSignals
