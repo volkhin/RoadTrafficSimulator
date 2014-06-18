@@ -1,7 +1,6 @@
 'use strict'
 
 require '../helpers.coffee'
-$ = require 'jquery'
 _ = require 'underscore'
 Car = require './car.coffee'
 Intersection = require './intersection.coffee'
@@ -29,7 +28,7 @@ module.exports =
       @carsNumber = 0
 
     save: ->
-      data = $.extend {}, @
+      data = _.extend {}, @
       delete data.cars
       localStorage.world = JSON.stringify data
 

@@ -1,7 +1,7 @@
 'use strict'
 
 require '../helpers.coffee'
-$ = require 'jquery'
+_ = require 'underscore'
 Point = require './point.coffee'
 Segment = require './segment.coffee'
 
@@ -13,7 +13,7 @@ module.exports =
       new Rect rect.x, rect.y, rect._width, rect._height
 
     toJSON: ->
-      $.extend {}, @
+      _.extend {}, @
 
     area: ->
       @width() * @height()

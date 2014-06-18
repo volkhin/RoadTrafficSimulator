@@ -1,7 +1,6 @@
 'use strict'
 
 require '../helpers.coffee'
-$ = require 'jquery'
 _ = require 'underscore'
 ControlSignals = require './control-signals.coffee'
 Rect = require '../geom/rect.coffee'
@@ -17,7 +16,7 @@ module.exports =
     @copy: (intersection) ->
       intersection.rect = Rect.copy intersection.rect
       result = Object.create Intersection::
-      result = $.extend result, intersection
+      _.extend result, intersection
       result.roads = []
       result.inRoads = []
       result.controlSignals = new ControlSignals result

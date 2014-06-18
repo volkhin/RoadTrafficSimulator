@@ -1,7 +1,7 @@
 'use strict'
 
 require '../helpers.coffee'
-$ = require 'jquery'
+_ = require 'underscore'
 Segment = require '../geom/segment.coffee'
 
 module.exports =
@@ -15,7 +15,7 @@ module.exports =
       @update()
 
     toJSON: ->
-      obj = $.extend {}, @
+      obj = _.extend {}, @
       delete obj.carsPositions
       obj
 

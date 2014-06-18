@@ -1,7 +1,6 @@
 'use strict'
 
 require '../helpers.coffee'
-$ = require 'jquery'
 _ = require 'underscore'
 Lane = require './lane.coffee'
 settings = require '../settings.coffee'
@@ -16,7 +15,7 @@ module.exports =
 
     @copy: (road) ->
       result = Object.create Road::
-      $.extend result, road
+      _.extend result, road
       result.lanes ?= []
       result
 

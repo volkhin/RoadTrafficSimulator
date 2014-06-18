@@ -154,11 +154,11 @@ module.exports = Point = (function() {
 
 },{"../helpers.coffee":6}],4:[function(require,module,exports){
 'use strict';
-var $, Point, Rect, Segment;
+var Point, Rect, Segment, _;
 
 require('../helpers.coffee');
 
-$ = require('jquery');
+_ = require('underscore');
 
 Point = require('./point.coffee');
 
@@ -177,7 +177,7 @@ module.exports = Rect = (function() {
   };
 
   Rect.prototype.toJSON = function() {
-    return $.extend({}, this);
+    return _.extend({}, this);
   };
 
   Rect.prototype.area = function() {
@@ -280,7 +280,7 @@ module.exports = Rect = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"./point.coffee":3,"./segment.coffee":5,"jquery":30}],5:[function(require,module,exports){
+},{"../helpers.coffee":6,"./point.coffee":3,"./segment.coffee":5,"underscore":31}],5:[function(require,module,exports){
 'use strict';
 var Segment;
 
@@ -579,11 +579,9 @@ module.exports = ControlSignals = (function() {
 
 },{"../helpers.coffee":6,"../settings.coffee":16}],9:[function(require,module,exports){
 'use strict';
-var $, ControlSignals, Intersection, Rect, _;
+var ControlSignals, Intersection, Rect, _;
 
 require('../helpers.coffee');
-
-$ = require('jquery');
 
 _ = require('underscore');
 
@@ -604,7 +602,7 @@ module.exports = Intersection = (function() {
     var result;
     intersection.rect = Rect.copy(intersection.rect);
     result = Object.create(Intersection.prototype);
-    result = $.extend(result, intersection);
+    _.extend(result, intersection);
     result.roads = [];
     result.inRoads = [];
     result.controlSignals = new ControlSignals(result);
@@ -640,7 +638,7 @@ module.exports = Intersection = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"jquery":30,"underscore":31}],10:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"underscore":31}],10:[function(require,module,exports){
 'use strict';
 var LanePosition, _;
 
@@ -721,11 +719,11 @@ module.exports = LanePosition = (function() {
 
 },{"../helpers.coffee":6,"underscore":31}],11:[function(require,module,exports){
 'use strict';
-var $, Lane, Segment;
+var Lane, Segment, _;
 
 require('../helpers.coffee');
 
-$ = require('jquery');
+_ = require('underscore');
 
 Segment = require('../geom/segment.coffee');
 
@@ -744,7 +742,7 @@ module.exports = Lane = (function() {
 
   Lane.prototype.toJSON = function() {
     var obj;
-    obj = $.extend({}, this);
+    obj = _.extend({}, this);
     delete obj.carsPositions;
     return obj;
   };
@@ -847,7 +845,7 @@ module.exports = Lane = (function() {
 })();
 
 
-},{"../geom/segment.coffee":5,"../helpers.coffee":6,"jquery":30}],12:[function(require,module,exports){
+},{"../geom/segment.coffee":5,"../helpers.coffee":6,"underscore":31}],12:[function(require,module,exports){
 'use strict';
 var Pool;
 
@@ -911,11 +909,9 @@ module.exports = Pool = (function() {
 
 },{"../helpers.coffee":6}],13:[function(require,module,exports){
 'use strict';
-var $, Lane, Road, settings, _;
+var Lane, Road, settings, _;
 
 require('../helpers.coffee');
-
-$ = require('jquery');
 
 _ = require('underscore');
 
@@ -936,7 +932,7 @@ module.exports = Road = (function() {
   Road.copy = function(road) {
     var result;
     result = Object.create(Road.prototype);
-    $.extend(result, road);
+    _.extend(result, road);
     if (result.lanes == null) {
       result.lanes = [];
     }
@@ -1011,7 +1007,7 @@ module.exports = Road = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"jquery":30,"underscore":31}],14:[function(require,module,exports){
+},{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"underscore":31}],14:[function(require,module,exports){
 'use strict';
 var Curve, LanePosition, Trajectory, _;
 
@@ -1260,11 +1256,9 @@ module.exports = Trajectory = (function() {
 
 },{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10,"underscore":31}],15:[function(require,module,exports){
 'use strict';
-var $, Car, Intersection, Pool, Rect, Road, World, settings, _;
+var Car, Intersection, Pool, Rect, Road, World, settings, _;
 
 require('../helpers.coffee');
-
-$ = require('jquery');
 
 _ = require('underscore');
 
@@ -1312,7 +1306,7 @@ module.exports = World = (function() {
 
   World.prototype.save = function() {
     var data;
-    data = $.extend({}, this);
+    data = _.extend({}, this);
     delete data.cars;
     return localStorage.world = JSON.stringify(data);
   };
@@ -1505,7 +1499,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"jquery":30,"underscore":31}],16:[function(require,module,exports){
+},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {
