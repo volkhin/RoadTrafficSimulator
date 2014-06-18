@@ -446,7 +446,7 @@ module.exports = Car = (function() {
     if ((this.preferedLane != null) && this.preferedLane !== this.trajectory.current.lane && !this.trajectory.isChangingLanes) {
       this.trajectory.changeLane(this.preferedLane);
     }
-    step = this.speed * delta;
+    step = this.speed * delta + 0.5 * acceleration * Math.pow(delta, 2);
     if (this.trajectory.nextCarDistance.distance < step) {
       console.log('bad IDM');
     }
@@ -1377,7 +1377,7 @@ module.exports = World = (function() {
       for (y = _j = minY; minY <= maxY ? _j <= maxY : _j >= maxY; y = minY <= maxY ? ++_j : --_j) {
         intersection = map[[x, y]];
         if (intersection != null) {
-          if (Math.random() < 0.7) {
+          if (Math.random() < 0.9) {
             if (previous != null) {
               this.addRoad(new Road(intersection, previous));
             }
@@ -1394,7 +1394,7 @@ module.exports = World = (function() {
       for (x = _l = minX; minX <= maxX ? _l <= maxX : _l >= maxX; x = minX <= maxX ? ++_l : --_l) {
         intersection = map[[x, y]];
         if (intersection != null) {
-          if (Math.random() < 0.7) {
+          if (Math.random() < 0.9) {
             if (previous != null) {
               this.addRoad(new Road(intersection, previous));
             }
@@ -2330,8 +2330,8 @@ module.exports = Zoomer = (function(_super) {
     var centerOffset, gridSize, x, y;
     gridSize = settings.gridSize;
     centerOffset = point.subtract(this.center).divide(this.scale);
-    x = gridSize * Math.floor(centerOffset.x / this.defaultZoom / gridSize);
-    y = gridSize * Math.floor(centerOffset.y / this.defaultZoom / gridSize);
+    x = Math.floor(centerOffset.x / (this.defaultZoom * gridSize)) * gridSize;
+    y = Math.floor(centerOffset.y / (this.defaultZoom * gridSize)) * gridSize;
     return new Rect(x, y, gridSize, gridSize);
   };
 

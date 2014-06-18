@@ -44,15 +44,15 @@ module.exports =
       a = @maxAcceleration
       b = @maxDeceleration
       deltaSpeed = (@speed - nextCarDistance.car?.speed) || 0
-      freeRoadCoeff = Math.pow @speed/@maxSpeed, 4
+      freeRoadCoeff = (@speed/@maxSpeed) ** 4
       distanceGap = @s0
       timeGap = @speed * @timeHeadway
       breakGap = @speed * deltaSpeed / (2 * Math.sqrt a*b)
       safeDistance = distanceGap + timeGap + breakGap
-      busyRoadCoeff = Math.pow safeDistance/distanceToNextCar, 2
-      safeIntersectionDistance = 1 + timeGap + Math.pow(@speed, 2) / (2 * b)
+      busyRoadCoeff = (safeDistance/distanceToNextCar) ** 2
+      safeIntersectionDistance = 1 + timeGap + @speed ** 2 / (2 * b)
       intersectionCoeff =
-      Math.pow safeIntersectionDistance/@trajectory.distanceToStopLine, 2
+      (safeIntersectionDistance/@trajectory.distanceToStopLine) ** 2
       coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
       return @maxAcceleration * coeff
 
@@ -63,7 +63,7 @@ module.exports =
       if @preferedLane? and @preferedLane isnt @trajectory.current.lane and
       not @trajectory.isChangingLanes
         @trajectory.changeLane @preferedLane
-      step = @speed * delta
+      step = @speed * delta + 0.5 * acceleration * delta ** 2
       # TODO: hacks, should have changed speed
       console.log 'bad IDM' if @trajectory.nextCarDistance.distance < step
 

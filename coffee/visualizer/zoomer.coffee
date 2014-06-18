@@ -23,8 +23,8 @@ module.exports =
     toCellCoords: (point) ->
       gridSize = settings.gridSize
       centerOffset = point.subtract(@center).divide(@scale)
-      x = gridSize * Math.floor centerOffset.x/@defaultZoom/gridSize
-      y = gridSize * Math.floor centerOffset.y/@defaultZoom/gridSize
+      x = centerOffset.x // (@defaultZoom * gridSize) * gridSize
+      y = centerOffset.y // (@defaultZoom * gridSize) * gridSize
       new Rect x, y, gridSize, gridSize
 
     getBoundingBox: (cell1, cell2) ->
@@ -56,6 +56,6 @@ module.exports =
 
     mousewheel: (e) ->
       offset = e.deltaY*e.deltaFactor
-      zoomFactor = Math.pow 2, 0.001 * offset
+      zoomFactor = 2 ** (0.001 * offset)
       @zoom @scale*zoomFactor, @getPoint e
       e.preventDefault()
