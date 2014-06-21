@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/volkhin/roadtrafficsimulator.png?label=ready&title=Ready)](https://waffle.io/volkhin/roadtrafficsimulator)
 RoadTrafficSimulator
 ====================
 
