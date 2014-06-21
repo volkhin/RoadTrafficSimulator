@@ -34,6 +34,8 @@ module.exports = (grunt) ->
           transform: ['coffeeify']
           bundleOptions:
             debug: false
+    uglify:
+      'dist/main.min.js': ['dist/main.js']
     # jasmine:
       # coffeeTemplate:
         # src: 'js/**/*.js'
@@ -45,4 +47,9 @@ module.exports = (grunt) ->
         coffee: true
         # forceExit: true
 
-  grunt.registerTask 'default', ['coffeelint', 'jasmine_node', 'browserify']
+  grunt.registerTask 'default', [
+    'coffeelint',
+    'browserify',
+    'jasmine_node',
+    'uglify'
+  ]
