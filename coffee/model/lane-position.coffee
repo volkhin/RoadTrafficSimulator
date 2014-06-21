@@ -11,30 +11,30 @@ module.exports =
       @lane = lane
 
     @property 'lane',
-      get: => @_lane
-      set: (lane) =>
+      get: -> @_lane
+      set: (lane) ->
         @release()
         @_lane = lane
         # @acquire()
 
     @property 'relativePosition',
-      get: => @position / @lane.length
+      get: -> @position / @lane.length
 
-    acquire: =>
+    acquire: ->
       if @lane?.addCarPosition?
         @free = false
         @lane.addCarPosition this
 
-    release: =>
+    release: ->
       if not @free and @lane?.removeCar
         @free = true
         @lane.removeCar this
 
-    getNext: =>
+    getNext: ->
       return @lane.getNext this if @lane and not @free
 
     @property 'nextCarDistance',
-      get: =>
+      get: ->
         next = @getNext()
         if next
           rearPosition = next.position - next.car.length / 2

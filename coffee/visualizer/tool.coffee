@@ -25,28 +25,28 @@ module.exports =
       @isBound = false
       @bind() if autobind
 
-    bind: =>
+    bind: ->
       @isBound = true
       for method in METHODS when @[method]?
         $(@canvas).on method, @[method]
 
-    unbind: =>
+    unbind: ->
       @isBound = false
       for method in METHODS when @[method]?
         $(@canvas).off method, @[method]
 
-    toggleState: =>
+    toggleState: ->
       if @isBound then @unbind() else @bind()
 
     draw: ->
 
-    getPoint: (e) =>
+    getPoint: (e) ->
       new Point e.pageX - @canvas.offsetLeft, e.pageY - @canvas.offsetTop
 
-    getCell: (e) =>
+    getCell: (e) ->
       @visualizer.zoomer.toCellCoords @getPoint e
 
-    getHoveredIntersection: (cell) =>
+    getHoveredIntersection: (cell) ->
       intersections = @visualizer.world.intersections.all()
       for id, intersection of intersections
         return intersection if intersection.rect.containsRect cell

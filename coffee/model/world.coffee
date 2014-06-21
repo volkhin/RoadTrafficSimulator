@@ -15,24 +15,24 @@ module.exports =
       @set {}
 
     @property 'instantSpeed',
-      get: =>
+      get: ->
         speeds = _.map @cars.all(), (car) -> car.speed
         return 0 if speeds.length is 0
         return (_.reduce speeds, (a, b) -> a + b) / speeds.length
 
-    set: (obj) =>
+    set: (obj) ->
       obj ?= {}
       @intersections = new Pool Intersection, obj.intersections
       @roads = new Pool Road, obj.roads
       @cars = new Pool Car, obj.cars
       @carsNumber = 0
 
-    save: =>
+    save: ->
       data = _.extend {}, this
       delete data.cars
       localStorage.world = JSON.stringify data
 
-    load: =>
+    load: ->
       data = localStorage.world
       data = data and JSON.parse data
       return unless data?
@@ -46,7 +46,7 @@ module.exports =
         road.target = @getIntersection road.target
         @addRoad road
 
-    generateMap: (minX = -2, maxX = 2, minY = -2, maxY = 2) =>
+    generateMap: (minX = -2, maxX = 2, minY = -2, maxY = 2) ->
       @clear()
       intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0
       map = {}
@@ -81,7 +81,7 @@ module.exports =
       null
 
 
-    clear: =>
+    clear: ->
       @set {}
 
     onTick: (delta) =>
@@ -93,42 +93,42 @@ module.exports =
         car.move delta
         @removeCar car unless car.alive
 
-    refreshCars: =>
+    refreshCars: ->
       @carsNumber = 0 if @roads.length is 0
       @addRandomCar() if @cars.length < @carsNumber
       @removeRandomCar() if @cars.length > @carsNumber
 
-    addRoad: (road) =>
+    addRoad: (road) ->
       @roads.put road
       road.source.roads.push road
       road.target.inRoads.push road
       road.update()
 
-    getRoad: (id) =>
+    getRoad: (id) ->
       @roads.get id
 
-    addCar: (car) =>
+    addCar: (car) ->
       @cars.put car
 
-    getCar: (id) =>
+    getCar: (id) ->
       @cars.get(id)
 
-    removeCar: (car) =>
+    removeCar: (car) ->
       @cars.pop car
 
-    addIntersection: (intersection) =>
+    addIntersection: (intersection) ->
       @intersections.put intersection
 
-    getIntersection: (id) =>
+    getIntersection: (id) ->
       @intersections.get id
 
-    addRandomCar: =>
+    addRandomCar: ->
       road = _.sample @roads.all()
       if road?
         lane = _.sample road.lanes
         @addCar new Car lane if lane?
 
-    removeRandomCar: =>
+    removeRandomCar: ->
       car = _.sample @cars.all()
       if car?
         @removeCar car

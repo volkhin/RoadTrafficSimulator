@@ -17,17 +17,17 @@ module.exports =
       @center = new Point @canvas.width / 2, @canvas.height / 2
 
     @property 'scale',
-      get: => @_scale
-      set: (scale) => @zoom scale, @screenCenter
+      get: -> @_scale
+      set: (scale) -> @zoom scale, @screenCenter
 
-    toCellCoords: (point) =>
+    toCellCoords: (point) ->
       gridSize = settings.gridSize
       centerOffset = point.subtract(@center).divide(@scale)
       x = centerOffset.x // (@defaultZoom * gridSize) * gridSize
       y = centerOffset.y // (@defaultZoom * gridSize) * gridSize
       new Rect x, y, gridSize, gridSize
 
-    getBoundingBox: (cell1, cell2) =>
+    getBoundingBox: (cell1, cell2) ->
       cell1 ?= @toCellCoords new Point 0, 0
       cell2 ?= @toCellCoords new Point @canvas.width, @canvas.height
       x1 = cell1.x
@@ -40,18 +40,18 @@ module.exports =
       yMax = Math.max cell1.bottom(), cell2.bottom()
       new Rect xMin, yMin, xMax - xMin, yMax - yMin
 
-    transform: =>
+    transform: ->
       @ctx.translate @center.x, @center.y
       k = @scale * @defaultZoom
       @ctx.scale k, k
 
-    zoom: (k, zoomCenter) =>
+    zoom: (k, zoomCenter) ->
       k ?= 1
       offset = @center.subtract zoomCenter
       @center = zoomCenter.add offset.mult k / @_scale
       @_scale = k
 
-    moveCenter: (offset) =>
+    moveCenter: (offset) ->
       @center = @center.add offset
 
     mousewheel: (e) =>

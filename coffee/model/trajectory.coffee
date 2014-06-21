@@ -16,41 +16,41 @@ module.exports =
       @isChangingLanes = false
 
     @property 'lane',
-      get: => @temp.lane or @current.lane
+      get: -> @temp.lane or @current.lane
 
     @property 'absolutePosition',
-      get: => if @temp.lane? then @temp.position else @current.position
+      get: -> if @temp.lane? then @temp.position else @current.position
 
     @property 'relativePosition',
-      get: => @absolutePosition / @lane.length
+      get: -> @absolutePosition / @lane.length
 
     @property 'direction',
-      get: => @lane.getDirection @relativePosition
+      get: -> @lane.getDirection @relativePosition
 
     @property 'coords',
-      get: => @lane.getPoint @relativePosition
+      get: -> @lane.getPoint @relativePosition
 
     @property 'nextCarDistance',
-      get: =>
+      get: ->
         a = @current.nextCarDistance
         b = @next.nextCarDistance
         if a.distance < b.distance then a else b
 
     @property 'distanceToStopLine',
-      get: =>
+      get: ->
         if not @isChangingLanes and not @canEnterIntersection()
           return Math.max @getDistanceToIntersection(), 0
         return Infinity
 
     @property 'nextIntersection',
-      get: =>
+      get: ->
         @current.lane.road.target
 
     @property 'previousIntersection',
-      get: =>
+      get: ->
         @current.lane.road.source
 
-    isValidTurn: =>
+    isValidTurn: ->
       #TODO right turn is only allowed from the right lane
       nextLane = @car.nextLane
       sourceLane = @current.lane
@@ -63,7 +63,7 @@ module.exports =
         throw Error 'no right turns from this lane'
       return true
 
-    canEnterIntersection: =>
+    canEnterIntersection: ->
       nextLane = @car.nextLane
       sourceLane = @current.lane
       return true unless nextLane
@@ -72,13 +72,13 @@ module.exports =
       sideId = sourceLane.road.targetSideId
       intersection.controlSignals.state[sideId][turnNumber]
 
-    getDistanceToIntersection: =>
+    getDistanceToIntersection: ->
       @current.lane.length - @car.length / 2 - @current.position
 
-    timeToMakeTurn: (plannedStep = 0) =>
+    timeToMakeTurn: (plannedStep = 0) ->
       @getDistanceToIntersection() <= plannedStep and not @isChangingLanes
 
-    moveForward: (distance) =>
+    moveForward: (distance) ->
       distance = Math.max distance, 0
       @current.position += distance
       @next.position += distance
@@ -98,7 +98,7 @@ module.exports =
       if @current.lane and not @isChangingLanes and not @car.nextLane
         @car.pickNextLane()
 
-    changeLane: (nextLane) =>
+    changeLane: (nextLane) ->
       throw Error 'already changing lane' if @isChangingLanes
       throw Error 'no next lane' unless nextLane?
       throw Error 'next lane == current lane' if nextLane is @lane
@@ -109,7 +109,7 @@ module.exports =
 
     _getIntersectionLaneChangeCurve: ->
 
-    _getAdjacentLaneChangeCurve: =>
+    _getAdjacentLaneChangeCurve: ->
       p1 = @current.lane.getPoint @current.relativePosition
       p2 = @next.lane.getPoint @next.relativePosition
       distance = p2.subtract(p1).length
@@ -117,11 +117,11 @@ module.exports =
       control = p1.add direction.mult distance / 2
       curve = new Curve p1, p2, control
 
-    _getCurve: =>
+    _getCurve: ->
       # FIXME: race condition due to using relativePosition on intersections
       @_getAdjacentLaneChangeCurve()
 
-    _startChangingLanes: (nextLane, nextPosition) =>
+    _startChangingLanes: (nextLane, nextPosition) ->
       throw Error 'already changing lane' if @isChangingLanes
       throw Error 'no next lane' unless nextLane?
       @isChangingLanes = true
@@ -134,7 +134,7 @@ module.exports =
       @temp.position = 0 # @current.lane.length - @current.position
       @next.position -= @temp.lane.length
 
-    _finishChangingLanes: =>
+    _finishChangingLanes: ->
       throw Error 'no lane changing is going on' unless @isChangingLanes
       @isChangingLanes = false
       # TODO swap current and next
@@ -147,7 +147,7 @@ module.exports =
       @temp.position = NaN
       @current.lane
 
-    release: =>
+    release: ->
       @current?.release()
       @next?.release()
       @temp?.release()

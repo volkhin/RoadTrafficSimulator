@@ -22,22 +22,22 @@ module.exports =
       @preferedLane = null
 
     @property 'coords',
-      get: => @trajectory.coords
+      get: -> @trajectory.coords
 
     @property 'speed',
-      get: => @_speed
-      set: (speed) =>
+      get: -> @_speed
+      set: (speed) ->
         speed = 0 if speed < 0
         speed = @maxSpeed if speed > @maxSpeed
         @_speed = speed
 
     @property 'direction',
-      get: => @trajectory.direction
+      get: -> @trajectory.direction
 
-    release: =>
+    release: ->
       @trajectory.release()
 
-    getAcceleration: =>
+    getAcceleration: ->
       nextCarDistance = @trajectory.nextCarDistance
       distanceToNextCar = Math.max nextCarDistance.distance, 0
       a = @maxAcceleration
@@ -55,7 +55,7 @@ module.exports =
       coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
       return @maxAcceleration * coeff
 
-    move: (delta) =>
+    move: (delta) ->
       acceleration = @getAcceleration()
       @speed += acceleration * delta
 
@@ -77,7 +77,7 @@ module.exports =
         return @alive = false if not @nextLane?
       @trajectory.moveForward step
 
-    pickNextRoad: =>
+    pickNextRoad: ->
       intersection = @trajectory.nextIntersection
       currentLane = @trajectory.current.lane
       possibleRoads = intersection.roads.filter (x) ->
@@ -85,7 +85,7 @@ module.exports =
       return null if possibleRoads.length is 0
       nextRoad = _.sample possibleRoads
 
-    pickNextLane: =>
+    pickNextLane: ->
       throw Error 'next lane is already chosen' if @nextLane
       @nextLane = null
       nextRoad = @pickNextRoad()

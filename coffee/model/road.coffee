@@ -19,22 +19,22 @@ module.exports =
       result.lanes ?= []
       result
 
-    toJSON: =>
+    toJSON: ->
       obj =
         id: @id
         source: @source.id
         target: @target.id
 
     @property 'length',
-      get: => @targetSide.target.subtract(@sourceSide.source).length
+      get: -> @targetSide.target.subtract(@sourceSide.source).length
 
     @property 'leftmostLane',
-      get: => @lanes[@lanesNumber - 1]
+      get: -> @lanes[@lanesNumber - 1]
 
     @property 'rightmostLane',
-      get: => @lanes[0]
+      get: -> @lanes[0]
 
-    update: =>
+    update: ->
       throw Error 'incomplete road' unless @source and @target
       @sourceSideId = @source.rect.getSectorId @target.rect.center()
       @sourceSide = @source.rect.getSide(@sourceSideId).subsegment 0.5, 1.0

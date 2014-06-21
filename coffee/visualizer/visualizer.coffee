@@ -37,14 +37,14 @@ module.exports =
       @timeFactor = settings.defaultTimeFactor
       @debug = false
 
-    drawIntersection: (intersection, alpha) =>
+    drawIntersection: (intersection, alpha) ->
       color = intersection.color or settings.colors.intersection
       @graphics.drawRect intersection.rect
       @ctx.lineWidth = 0.4
       @graphics.stroke settings.colors.roadMarking
       @graphics.fillRect intersection.rect, color, alpha
 
-    drawSignals: (road) =>
+    drawSignals: (road) ->
       lightsColors = [settings.colors.redLight, settings.colors.greenLight]
       intersection = road.target
       segment = road.targetSide
@@ -79,7 +79,7 @@ module.exports =
         @graphics.fill settings.colors.greenLight
       @ctx.restore()
 
-    drawRoad: (road, alpha) =>
+    drawRoad: (road, alpha) ->
       throw Error 'invalid road' if not road.source? or not road.target?
       sourceSide = road.sourceSide
       targetSide = road.targetSide
@@ -110,7 +110,7 @@ module.exports =
         @graphics.stroke settings.colors.roadMarking
       @ctx.restore()
 
-    drawCar: (car) =>
+    drawCar: (car) ->
       angle = car.direction
       center = car.coords
       rect = new Rect 0, 0, 1.1 * car.length, 1.7 * car.width
@@ -133,7 +133,7 @@ module.exports =
         @ctx.fillText car.id, 0, 0
       @graphics.restore()
 
-    drawGrid: =>
+    drawGrid: ->
       gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
       return if box.area() >= 2000 * gridSize * gridSize
@@ -144,7 +144,7 @@ module.exports =
           rect = new Rect i - sz / 2, j - sz / 2, sz, sz
           @graphics.fillRect rect, settings.colors.gridPoint
 
-    updateCanvasSize: =>
+    updateCanvasSize: ->
       if @$canvas.attr('width') isnt $(window).width or
       @$canvas.attr('height') isnt $(window).height
         @$canvas.attr
@@ -174,14 +174,14 @@ module.exports =
       window.requestAnimationFrame @draw if @running
 
     @property 'running',
-      get: => @_running
-      set: (running) =>
+      get: -> @_running
+      set: (running) ->
         if running then @start() else @stop()
 
-    start: =>
+    start: ->
       unless @_running
         @_running = true
         @draw()
 
-    stop: =>
+    stop: ->
       @_running = false

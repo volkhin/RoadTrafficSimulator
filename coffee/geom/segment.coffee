@@ -7,29 +7,29 @@ module.exports =
     constructor: (@source, @target) ->
 
     @property 'vector',
-      get: =>
+      get: ->
         @target.subtract @source
 
     @property 'length',
-      get: =>
+      get: ->
         @vector.length
 
     @property 'direction',
-      get: =>
+      get: ->
         @vector.direction
 
     @property 'center',
-      get: =>
+      get: ->
         @getPoint 0.5
 
-    split: (n, reverse) =>
+    split: (n, reverse) ->
       order = if reverse then [n - 1 .. 0] else [0 .. n - 1]
       @subsegment k / n, (k + 1) / n for k in order
 
-    getPoint: (a) =>
+    getPoint: (a) ->
       @source.add (@vector.mult a)
 
-    subsegment: (a, b) =>
+    subsegment: (a, b) ->
       offset = @vector
       start = @source.add (offset.mult a)
       end = @source.add (offset.mult b)

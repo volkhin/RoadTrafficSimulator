@@ -14,58 +14,58 @@ module.exports =
       @carsPositions = {}
       @update()
 
-    toJSON: =>
+    toJSON: ->
       obj = _.extend {}, this
       delete obj.carsPositions
       obj
 
     @property 'sourceSideId',
-      get: => @road.sourceSideId
+      get: -> @road.sourceSideId
 
     @property 'targetSideId',
-      get: => @road.targetSideId
+      get: -> @road.targetSideId
 
     @property 'isRightmost',
-      get: => this is @.rightmostAdjacent
+      get: -> this is @.rightmostAdjacent
 
     @property 'isLeftmost',
-      get: => this is @.leftmostAdjacent
+      get: -> this is @.leftmostAdjacent
 
     @property 'leftBorder',
-      get: =>
+      get: ->
         new Segment @sourceSegment.source, @targetSegment.target
 
     @property 'rightBorder',
-      get: =>
+      get: ->
         new Segment @sourceSegment.target, @targetSegment.source
 
-    update: =>
+    update: ->
       @middleLine = new Segment @sourceSegment.center, @targetSegment.center
       @length = @middleLine.length
       @direction = @middleLine.direction
 
-    getTurnDirection: (other) =>
+    getTurnDirection: (other) ->
       throw Error 'invalid lanes' if @road.target isnt other.road.source
       side1 = @targetSideId
       side2 = other.sourceSideId
       # 0 - left, 1 - forward, 2 - right
       turnNumber = (side2 - side1 - 1 + 8) % 4
 
-    getDirection: =>
+    getDirection: ->
       @direction
 
-    getPoint: (a) =>
+    getPoint: (a) ->
       @middleLine.getPoint a
 
-    addCarPosition: (carPosition) =>
+    addCarPosition: (carPosition) ->
       throw Error 'car is already here' if carPosition.id of @carsPositions
       @carsPositions[carPosition.id] = carPosition
 
-    removeCar: (carPosition) =>
+    removeCar: (carPosition) ->
       throw Error 'removing unknown car' unless carPosition.id of @carsPositions
       delete @carsPositions[carPosition.id]
 
-    getNext: (carPosition) =>
+    getNext: (carPosition) ->
       throw Error 'car is on other lane' if carPosition.lane isnt this
       next = null
       bestDistance = Infinity

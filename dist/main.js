@@ -51,8 +51,7 @@ $(function() {
 
 },{"./helpers.coffee":6,"./model/world.coffee":15,"./settings.coffee":16,"./visualizer/visualizer.coffee":24,"dat-gui":26,"jquery":30,"underscore":31}],2:[function(require,module,exports){
 'use strict';
-var Curve, Segment,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Curve, Segment;
 
 require('../helpers.coffee');
 
@@ -63,8 +62,6 @@ module.exports = Curve = (function() {
     this.A = A;
     this.B = B;
     this.O = O;
-    this.getDirection = __bind(this.getDirection, this);
-    this.getPoint = __bind(this.getPoint, this);
     this.AB = new Segment(this.A, this.B);
     this.AO = new Segment(this.A, this.O);
     this.OB = new Segment(this.O, this.B);
@@ -72,10 +69,10 @@ module.exports = Curve = (function() {
 
   Curve.property('length', {
     get: function() {
-      if (Curve.O == null) {
-        Curve.AB.length;
+      if (this.O == null) {
+        this.AB.length;
       }
-      return Curve.AB.length;
+      return this.AB.length;
     }
   });
 
@@ -106,8 +103,7 @@ module.exports = Curve = (function() {
 
 },{"../helpers.coffee":6,"./segment.coffee":5}],3:[function(require,module,exports){
 'use strict';
-var Point,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Point;
 
 require('../helpers.coffee');
 
@@ -115,27 +111,23 @@ module.exports = Point = (function() {
   function Point(x, y) {
     this.x = x != null ? x : 0;
     this.y = y != null ? y : 0;
-    this.divide = __bind(this.divide, this);
-    this.mult = __bind(this.mult, this);
-    this.subtract = __bind(this.subtract, this);
-    this.add = __bind(this.add, this);
   }
 
   Point.property('length', {
     get: function() {
-      return Math.sqrt(Point.x * Point.x + Point.y * Point.y);
+      return Math.sqrt(this.x * this.x + this.y * this.y);
     }
   });
 
   Point.property('direction', {
     get: function() {
-      return Math.atan2(Point.y, Point.x);
+      return Math.atan2(this.y, this.x);
     }
   });
 
   Point.property('normalized', {
     get: function() {
-      return new Point(Point.x / Point.length, Point.y / Point.length);
+      return new Point(this.x / this.length, this.y / this.length);
     }
   });
 
@@ -290,8 +282,7 @@ module.exports = Rect = (function() {
 
 },{"../helpers.coffee":6,"./point.coffee":3,"./segment.coffee":5,"underscore":31}],5:[function(require,module,exports){
 'use strict';
-var Segment,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Segment;
 
 require('../helpers.coffee');
 
@@ -299,32 +290,29 @@ module.exports = Segment = (function() {
   function Segment(source, target) {
     this.source = source;
     this.target = target;
-    this.subsegment = __bind(this.subsegment, this);
-    this.getPoint = __bind(this.getPoint, this);
-    this.split = __bind(this.split, this);
   }
 
   Segment.property('vector', {
     get: function() {
-      return Segment.target.subtract(Segment.source);
+      return this.target.subtract(this.source);
     }
   });
 
   Segment.property('length', {
     get: function() {
-      return Segment.vector.length;
+      return this.vector.length;
     }
   });
 
   Segment.property('direction', {
     get: function() {
-      return Segment.vector.direction;
+      return this.vector.direction;
     }
   });
 
   Segment.property('center', {
     get: function() {
-      return Segment.getPoint(0.5);
+      return this.getPoint(0.5);
     }
   });
 
@@ -368,17 +356,14 @@ module.exports = Segment = (function() {
 'use strict';
 module.exports = {};
 
-Function.prototype.property = (function(_this) {
-  return function(prop, desc) {
-    return Object.defineProperty(_this.prototype, prop, desc);
-  };
-})(this);
+Function.prototype.property = function(prop, desc) {
+  return Object.defineProperty(this.prototype, prop, desc);
+};
 
 
 },{}],7:[function(require,module,exports){
 'use strict';
-var Car, Trajectory, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Car, Trajectory, _;
 
 require('../helpers.coffee');
 
@@ -388,11 +373,6 @@ Trajectory = require('./trajectory.coffee');
 
 module.exports = Car = (function() {
   function Car(lane, position) {
-    this.pickNextLane = __bind(this.pickNextLane, this);
-    this.pickNextRoad = __bind(this.pickNextRoad, this);
-    this.move = __bind(this.move, this);
-    this.getAcceleration = __bind(this.getAcceleration, this);
-    this.release = __bind(this.release, this);
     this.id = _.uniqueId('car');
     this.color = (300 + 240 * Math.random() | 0) % 360;
     this._speed = 0;
@@ -410,28 +390,28 @@ module.exports = Car = (function() {
 
   Car.property('coords', {
     get: function() {
-      return Car.trajectory.coords;
+      return this.trajectory.coords;
     }
   });
 
   Car.property('speed', {
     get: function() {
-      return Car._speed;
+      return this._speed;
     },
     set: function(speed) {
       if (speed < 0) {
         speed = 0;
       }
-      if (speed > Car.maxSpeed) {
-        speed = Car.maxSpeed;
+      if (speed > this.maxSpeed) {
+        speed = this.maxSpeed;
       }
-      return Car._speed = speed;
+      return this._speed = speed;
     }
   });
 
   Car.property('direction', {
     get: function() {
-      return Car.trajectory.direction;
+      return this.trajectory.direction;
     }
   });
 
@@ -541,7 +521,6 @@ module.exports = ControlSignals = (function() {
   function ControlSignals(intersection) {
     this.intersection = intersection;
     this.onTick = __bind(this.onTick, this);
-    this.flip = __bind(this.flip, this);
     this.time = 0;
     this.flipMultiplier = 1 + (Math.random() * 0.4 - 0.2);
     this.stateNum = 0;
@@ -558,7 +537,7 @@ module.exports = ControlSignals = (function() {
 
   ControlSignals.property('flipInterval', {
     get: function() {
-      return ControlSignals.flipMultiplier * settings.lightsFlipInterval;
+      return this.flipMultiplier * settings.lightsFlipInterval;
     }
   });
 
@@ -580,14 +559,14 @@ module.exports = ControlSignals = (function() {
   ControlSignals.property('state', {
     get: function() {
       var stringState, x, _i, _len, _results;
-      stringState = ControlSignals.states[ControlSignals.stateNum % ControlSignals.states.length];
-      if (ControlSignals.intersection.roads.length <= 2) {
+      stringState = this.states[this.stateNum % this.states.length];
+      if (this.intersection.roads.length <= 2) {
         stringState = ['LFR', 'LFR', 'LFR', 'LFR'];
       }
       _results = [];
       for (_i = 0, _len = stringState.length; _i < _len; _i++) {
         x = stringState[_i];
-        _results.push(ControlSignals._decode(x));
+        _results.push(this._decode(x));
       }
       return _results;
     }
@@ -673,8 +652,7 @@ module.exports = Intersection = (function() {
 
 },{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"underscore":31}],10:[function(require,module,exports){
 'use strict';
-var LanePosition, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var LanePosition, _;
 
 require('../helpers.coffee');
 
@@ -684,9 +662,6 @@ module.exports = LanePosition = (function() {
   function LanePosition(car, lane, position) {
     this.car = car;
     this.position = position;
-    this.getNext = __bind(this.getNext, this);
-    this.release = __bind(this.release, this);
-    this.acquire = __bind(this.acquire, this);
     this.id = _.uniqueId('laneposition');
     this.free = true;
     this.lane = lane;
@@ -694,17 +669,17 @@ module.exports = LanePosition = (function() {
 
   LanePosition.property('lane', {
     get: function() {
-      return LanePosition._lane;
+      return this._lane;
     },
     set: function(lane) {
-      LanePosition.release();
-      return LanePosition._lane = lane;
+      this.release();
+      return this._lane = lane;
     }
   });
 
   LanePosition.property('relativePosition', {
     get: function() {
-      return LanePosition.position / LanePosition.lane.length;
+      return this.position / this.lane.length;
     }
   });
 
@@ -733,10 +708,10 @@ module.exports = LanePosition = (function() {
   LanePosition.property('nextCarDistance', {
     get: function() {
       var frontPosition, next, rearPosition, result;
-      next = LanePosition.getNext();
+      next = this.getNext();
       if (next) {
         rearPosition = next.position - next.car.length / 2;
-        frontPosition = LanePosition.position + LanePosition.car.length / 2;
+        frontPosition = this.position + this.car.length / 2;
         return result = {
           car: next.car,
           distance: rearPosition - frontPosition
@@ -756,8 +731,7 @@ module.exports = LanePosition = (function() {
 
 },{"../helpers.coffee":6,"underscore":31}],11:[function(require,module,exports){
 'use strict';
-var Lane, Segment, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Lane, Segment, _;
 
 require('../helpers.coffee');
 
@@ -770,14 +744,6 @@ module.exports = Lane = (function() {
     this.sourceSegment = sourceSegment;
     this.targetSegment = targetSegment;
     this.road = road;
-    this.getNext = __bind(this.getNext, this);
-    this.removeCar = __bind(this.removeCar, this);
-    this.addCarPosition = __bind(this.addCarPosition, this);
-    this.getPoint = __bind(this.getPoint, this);
-    this.getDirection = __bind(this.getDirection, this);
-    this.getTurnDirection = __bind(this.getTurnDirection, this);
-    this.update = __bind(this.update, this);
-    this.toJSON = __bind(this.toJSON, this);
     this.leftAdjacent = null;
     this.rightAdjacent = null;
     this.leftmostAdjacent = null;
@@ -795,37 +761,37 @@ module.exports = Lane = (function() {
 
   Lane.property('sourceSideId', {
     get: function() {
-      return Lane.road.sourceSideId;
+      return this.road.sourceSideId;
     }
   });
 
   Lane.property('targetSideId', {
     get: function() {
-      return Lane.road.targetSideId;
+      return this.road.targetSideId;
     }
   });
 
   Lane.property('isRightmost', {
     get: function() {
-      return Lane === Lane.rightmostAdjacent;
+      return this === this.rightmostAdjacent;
     }
   });
 
   Lane.property('isLeftmost', {
     get: function() {
-      return Lane === Lane.leftmostAdjacent;
+      return this === this.leftmostAdjacent;
     }
   });
 
   Lane.property('leftBorder', {
     get: function() {
-      return new Segment(Lane.sourceSegment.source, Lane.targetSegment.target);
+      return new Segment(this.sourceSegment.source, this.targetSegment.target);
     }
   });
 
   Lane.property('rightBorder', {
     get: function() {
-      return new Segment(Lane.sourceSegment.target, Lane.targetSegment.source);
+      return new Segment(this.sourceSegment.target, this.targetSegment.source);
     }
   });
 
@@ -893,8 +859,7 @@ module.exports = Lane = (function() {
 
 },{"../geom/segment.coffee":5,"../helpers.coffee":6,"underscore":31}],12:[function(require,module,exports){
 'use strict';
-var Pool,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Pool;
 
 require('../helpers.coffee');
 
@@ -902,12 +867,6 @@ module.exports = Pool = (function() {
   function Pool(factory, pool) {
     var k, v, _ref;
     this.factory = factory;
-    this.clear = __bind(this.clear, this);
-    this.all = __bind(this.all, this);
-    this.pop = __bind(this.pop, this);
-    this.put = __bind(this.put, this);
-    this.get = __bind(this.get, this);
-    this.toJSON = __bind(this.toJSON, this);
     this.objects = {};
     if ((pool != null) && (pool.objects != null)) {
       _ref = pool.objects;
@@ -951,7 +910,7 @@ module.exports = Pool = (function() {
 
   Pool.property('length', {
     get: function() {
-      return Object.keys(Pool.objects).length;
+      return Object.keys(this.objects).length;
     }
   });
 
@@ -962,8 +921,7 @@ module.exports = Pool = (function() {
 
 },{"../helpers.coffee":6}],13:[function(require,module,exports){
 'use strict';
-var Lane, Road, settings, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Lane, Road, settings, _;
 
 require('../helpers.coffee');
 
@@ -977,8 +935,6 @@ module.exports = Road = (function() {
   function Road(source, target) {
     this.source = source;
     this.target = target;
-    this.update = __bind(this.update, this);
-    this.toJSON = __bind(this.toJSON, this);
     this.id = _.uniqueId('road');
     this.lanes = [];
     this.lanesNumber = null;
@@ -1006,19 +962,19 @@ module.exports = Road = (function() {
 
   Road.property('length', {
     get: function() {
-      return Road.targetSide.target.subtract(Road.sourceSide.source).length;
+      return this.targetSide.target.subtract(this.sourceSide.source).length;
     }
   });
 
   Road.property('leftmostLane', {
     get: function() {
-      return Road.lanes[Road.lanesNumber - 1];
+      return this.lanes[this.lanesNumber - 1];
     }
   });
 
   Road.property('rightmostLane', {
     get: function() {
-      return Road.lanes[0];
+      return this.lanes[0];
     }
   });
 
@@ -1065,8 +1021,7 @@ module.exports = Road = (function() {
 
 },{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"underscore":31}],14:[function(require,module,exports){
 'use strict';
-var Curve, LanePosition, Trajectory, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Curve, LanePosition, Trajectory, _;
 
 require('../helpers.coffee');
 
@@ -1079,17 +1034,6 @@ _ = require('underscore');
 module.exports = Trajectory = (function() {
   function Trajectory(car, lane, position) {
     this.car = car;
-    this.release = __bind(this.release, this);
-    this._finishChangingLanes = __bind(this._finishChangingLanes, this);
-    this._startChangingLanes = __bind(this._startChangingLanes, this);
-    this._getCurve = __bind(this._getCurve, this);
-    this._getAdjacentLaneChangeCurve = __bind(this._getAdjacentLaneChangeCurve, this);
-    this.changeLane = __bind(this.changeLane, this);
-    this.moveForward = __bind(this.moveForward, this);
-    this.timeToMakeTurn = __bind(this.timeToMakeTurn, this);
-    this.getDistanceToIntersection = __bind(this.getDistanceToIntersection, this);
-    this.canEnterIntersection = __bind(this.canEnterIntersection, this);
-    this.isValidTurn = __bind(this.isValidTurn, this);
     if (position == null) {
       position = 0;
     }
@@ -1102,43 +1046,43 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('lane', {
     get: function() {
-      return Trajectory.temp.lane || Trajectory.current.lane;
+      return this.temp.lane || this.current.lane;
     }
   });
 
   Trajectory.property('absolutePosition', {
     get: function() {
-      if (Trajectory.temp.lane != null) {
-        return Trajectory.temp.position;
+      if (this.temp.lane != null) {
+        return this.temp.position;
       } else {
-        return Trajectory.current.position;
+        return this.current.position;
       }
     }
   });
 
   Trajectory.property('relativePosition', {
     get: function() {
-      return Trajectory.absolutePosition / Trajectory.lane.length;
+      return this.absolutePosition / this.lane.length;
     }
   });
 
   Trajectory.property('direction', {
     get: function() {
-      return Trajectory.lane.getDirection(Trajectory.relativePosition);
+      return this.lane.getDirection(this.relativePosition);
     }
   });
 
   Trajectory.property('coords', {
     get: function() {
-      return Trajectory.lane.getPoint(Trajectory.relativePosition);
+      return this.lane.getPoint(this.relativePosition);
     }
   });
 
   Trajectory.property('nextCarDistance', {
     get: function() {
       var a, b;
-      a = Trajectory.current.nextCarDistance;
-      b = Trajectory.next.nextCarDistance;
+      a = this.current.nextCarDistance;
+      b = this.next.nextCarDistance;
       if (a.distance < b.distance) {
         return a;
       } else {
@@ -1149,8 +1093,8 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('distanceToStopLine', {
     get: function() {
-      if (!Trajectory.isChangingLanes && !Trajectory.canEnterIntersection()) {
-        return Math.max(Trajectory.getDistanceToIntersection(), 0);
+      if (!this.isChangingLanes && !this.canEnterIntersection()) {
+        return Math.max(this.getDistanceToIntersection(), 0);
       }
       return Infinity;
     }
@@ -1158,13 +1102,13 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('nextIntersection', {
     get: function() {
-      return Trajectory.current.lane.road.target;
+      return this.current.lane.road.target;
     }
   });
 
   Trajectory.property('previousIntersection', {
     get: function() {
-      return Trajectory.current.lane.road.source;
+      return this.current.lane.road.source;
     }
   });
 
@@ -1345,29 +1289,14 @@ settings = require('../settings.coffee');
 
 module.exports = World = (function() {
   function World() {
-    this.removeRandomCar = __bind(this.removeRandomCar, this);
-    this.addRandomCar = __bind(this.addRandomCar, this);
-    this.getIntersection = __bind(this.getIntersection, this);
-    this.addIntersection = __bind(this.addIntersection, this);
-    this.removeCar = __bind(this.removeCar, this);
-    this.getCar = __bind(this.getCar, this);
-    this.addCar = __bind(this.addCar, this);
-    this.getRoad = __bind(this.getRoad, this);
-    this.addRoad = __bind(this.addRoad, this);
-    this.refreshCars = __bind(this.refreshCars, this);
     this.onTick = __bind(this.onTick, this);
-    this.clear = __bind(this.clear, this);
-    this.generateMap = __bind(this.generateMap, this);
-    this.load = __bind(this.load, this);
-    this.save = __bind(this.save, this);
-    this.set = __bind(this.set, this);
     this.set({});
   }
 
   World.property('instantSpeed', {
     get: function() {
       var speeds;
-      speeds = _.map(World.cars.all(), function(car) {
+      speeds = _.map(this.cars.all(), function(car) {
         return car.speed;
       });
       if (speeds.length === 0) {
@@ -2046,8 +1975,7 @@ module.exports = ToolRoadBuilder = (function(_super) {
 
 },{"../helpers.coffee":6,"../model/road.coffee":13,"./tool.coffee":23}],23:[function(require,module,exports){
 'use strict';
-var $, METHODS, Point, Rect, Tool, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var $, METHODS, Point, Rect, Tool, _;
 
 require('../helpers.coffee');
 
@@ -2066,12 +1994,6 @@ METHODS = ['click', 'mousedown', 'mouseup', 'mousemove', 'mouseout', 'mousewheel
 module.exports = Tool = (function() {
   function Tool(visualizer, autobind) {
     this.visualizer = visualizer;
-    this.getHoveredIntersection = __bind(this.getHoveredIntersection, this);
-    this.getCell = __bind(this.getCell, this);
-    this.getPoint = __bind(this.getPoint, this);
-    this.toggleState = __bind(this.toggleState, this);
-    this.unbind = __bind(this.unbind, this);
-    this.bind = __bind(this.bind, this);
     this.ctx = this.visualizer.ctx;
     this.canvas = this.ctx.canvas;
     this.isBound = false;
@@ -2174,15 +2096,7 @@ settings = require('../settings.coffee');
 module.exports = Visualizer = (function() {
   function Visualizer(world) {
     this.world = world;
-    this.stop = __bind(this.stop, this);
-    this.start = __bind(this.start, this);
     this.draw = __bind(this.draw, this);
-    this.updateCanvasSize = __bind(this.updateCanvasSize, this);
-    this.drawGrid = __bind(this.drawGrid, this);
-    this.drawCar = __bind(this.drawCar, this);
-    this.drawRoad = __bind(this.drawRoad, this);
-    this.drawSignals = __bind(this.drawSignals, this);
-    this.drawIntersection = __bind(this.drawIntersection, this);
     this.$canvas = $('#canvas');
     this.canvas = this.$canvas[0];
     this.ctx = this.canvas.getContext('2d');
@@ -2372,13 +2286,13 @@ module.exports = Visualizer = (function() {
 
   Visualizer.property('running', {
     get: function() {
-      return Visualizer._running;
+      return this._running;
     },
     set: function(running) {
       if (running) {
-        return Visualizer.start();
+        return this.start();
       } else {
-        return Visualizer.stop();
+        return this.stop();
       }
     }
   });
@@ -2426,11 +2340,6 @@ module.exports = Zoomer = (function(_super) {
     this.defaultZoom = defaultZoom;
     this.visualizer = visualizer;
     this.mousewheel = __bind(this.mousewheel, this);
-    this.moveCenter = __bind(this.moveCenter, this);
-    this.zoom = __bind(this.zoom, this);
-    this.transform = __bind(this.transform, this);
-    this.getBoundingBox = __bind(this.getBoundingBox, this);
-    this.toCellCoords = __bind(this.toCellCoords, this);
     Zoomer.__super__.constructor.apply(this, [this.visualizer].concat(__slice.call(args)));
     this.ctx = this.visualizer.ctx;
     this.canvas = this.ctx.canvas;
@@ -2441,10 +2350,10 @@ module.exports = Zoomer = (function(_super) {
 
   Zoomer.property('scale', {
     get: function() {
-      return Zoomer._scale;
+      return this._scale;
     },
     set: function(scale) {
-      return Zoomer.zoom(scale, Zoomer.screenCenter);
+      return this.zoom(scale, this.screenCenter);
     }
   });
 

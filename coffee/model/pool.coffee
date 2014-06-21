@@ -10,27 +10,27 @@ module.exports =
         for k, v of pool.objects
           @objects[k] = @factory.copy(v)
 
-    toJSON: =>
+    toJSON: ->
       @objects
 
-    get: (id) =>
+    get: (id) ->
       @objects[id]
 
-    put: (obj) =>
+    put: (obj) ->
       @objects[obj.id] = obj
 
-    pop: (obj) =>
+    pop: (obj) ->
       id = obj.id ? obj
       result = @objects[id]
       result.release?()
       delete @objects[id]
       result
 
-    all: =>
+    all: ->
       @objects
 
-    clear: =>
+    clear: ->
       @objects = {}
 
     @property 'length',
-      get: => Object.keys(@objects).length
+      get: -> Object.keys(@objects).length
