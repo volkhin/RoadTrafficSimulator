@@ -6,10 +6,24 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
-    jshint:
-      files: sources
+    coffeelint:
+      app: 'coffee/**/*.coffee'
       options:
-        jshintrc: true
+        configFile: 'coffeelint.json'
+    browserify:
+      dist:
+        files:
+          'dist/main.js': ['coffee/app.coffee']
+        options:
+          transform: ['coffeeify']
+          bundleOptions:
+            debug: false
+    jasmine_node:
+      all: ['coffee/spec']
+      options:
+        coffee: true
+    uglify:
+      'dist/main.min.js': ['dist/main.js']
     watch:
       scripts:
         files: ['coffee/**/*.coffee', 'Gruntfile.coffee']
@@ -24,31 +38,6 @@ module.exports = (grunt) ->
         dest: 'js'
         src: ['**/*.coffee']
         ext: '.js'
-    coffeelint:
-      app: 'coffee/**/*.coffee'
-      options:
-        configFile:
-          'coffeelint.json'
-    browserify:
-      dist:
-        files:
-          'dist/main.js': ['coffee/app.coffee']
-        options:
-          transform: ['coffeeify']
-          bundleOptions:
-            debug: false
-    uglify:
-      'dist/main.min.js': ['dist/main.js']
-    # jasmine:
-      # coffeeTemplate:
-        # src: 'js/**/*.js'
-        # options:
-          # specs: 'js/spec/*.js'
-    jasmine_node:
-      all: ['coffee/spec']
-      options:
-        coffee: true
-        # forceExit: true
 
   grunt.registerTask 'default', [
     'coffeelint',
