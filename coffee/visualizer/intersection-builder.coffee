@@ -12,27 +12,27 @@ module.exports =
       @tempIntersection = null
       @mouseDownPos = null
 
-    mousedown: (e) ->
+    mousedown: (e) =>
       @mouseDownPos = @getCell e
       if e.shiftKey
         @tempIntersection = new Intersection @mouseDownPos
         e.stopImmediatePropagation()
 
-    mouseup: ->
+    mouseup: =>
       if @tempIntersection
         @visualizer.world.addIntersection @tempIntersection
         @tempIntersection = null
       @mouseDownPos = null
 
-    mousemove: (e) ->
+    mousemove: (e) =>
       if @tempIntersection
         rect = @visualizer.zoomer.getBoundingBox @mouseDownPos, @getCell e
         @tempIntersection.rect = rect
 
-    mouseout: ->
+    mouseout: =>
       @mouseDownPos = null
       @tempIntersection = null
 
-    draw: ->
+    draw: =>
       if @tempIntersection
         @visualizer.drawIntersection @tempIntersection, 0.4

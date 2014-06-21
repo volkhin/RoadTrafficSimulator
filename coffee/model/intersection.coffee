@@ -11,7 +11,7 @@ module.exports =
       @id = _.uniqueId 'intersection'
       @roads = []
       @inRoads = []
-      @controlSignals = new ControlSignals @
+      @controlSignals = new ControlSignals this
 
     @copy: (intersection) ->
       intersection.rect = Rect.copy intersection.rect

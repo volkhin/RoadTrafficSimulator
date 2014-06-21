@@ -11,18 +11,18 @@ module.exports =
       @OB = new Segment @O, @B
 
     @property 'length',
-      get: ->
+      get: =>
         @AB.length unless @O?
         # FIXME: it's not the real length
         @AB.length
 
-    getPoint: (a) ->
+    getPoint: (a) =>
       @AB.getPoint a unless @O?
       p0 = @AO.getPoint(a)
       p1 = @OB.getPoint(a)
       (new Segment p0, p1).getPoint a
 
-    getDirection: (a) ->
+    getDirection: (a) =>
       @AB.direction unless @O?
       p0 = @AO.getPoint(a)
       p1 = @OB.getPoint(a)

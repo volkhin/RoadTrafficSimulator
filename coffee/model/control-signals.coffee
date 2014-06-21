@@ -20,7 +20,7 @@ module.exports =
     @STATE = [RED: 0, GREEN: 1]
 
     @property 'flipInterval',
-      get: -> @flipMultiplier * settings.lightsFlipInterval
+      get: => @flipMultiplier * settings.lightsFlipInterval
 
     _decode: (str) ->
       state = [0, 0, 0]
@@ -30,16 +30,16 @@ module.exports =
       state
 
     @property 'state',
-      get: ->
+      get: =>
         stringState = @states[@stateNum % @states.length]
         if @intersection.roads.length <= 2
           stringState = ['LFR', 'LFR', 'LFR', 'LFR']
         (@_decode x for x in stringState)
 
-    flip: ->
-      @stateNum++
+    flip: =>
+      @stateNum += 1
 
-    onTick: (delta) ->
+    onTick: (delta) =>
       @time += delta
       if @time > @flipInterval
         @flip()

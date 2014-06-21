@@ -8,18 +8,18 @@ DAT = require 'dat-gui'
 World = require './model/world.coffee'
 settings = require './settings.coffee'
 
-$(document).ready ->
+$ ->
   canvas = $('<canvas />', {id: 'canvas'})
   $(document.body).append(canvas)
 
-  window.world = new World
+  window.world = new World()
   world.load()
   if world.intersections.length is 0
     world.generateMap()
     world.carsNumber = 100
   window.visualizer = new Visualizer world
   visualizer.start()
-  gui = new DAT.GUI
+  gui = new DAT.GUI()
   guiWorld = gui.addFolder 'world'
   guiWorld.open()
   guiWorld.add world, 'save'

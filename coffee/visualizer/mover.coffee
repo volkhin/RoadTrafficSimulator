@@ -12,18 +12,18 @@ module.exports =
     contextmenu: ->
       false
 
-    mousedown: (e) ->
+    mousedown: (e) =>
       @startPosition = @getPoint e
       e.stopImmediatePropagation()
 
-    mouseup: ->
+    mouseup: =>
       @startPosition = null
 
-    mousemove: (e) ->
+    mousemove: (e) =>
       if @startPosition
         offset = @getPoint(e).subtract(@startPosition)
         @visualizer.zoomer.moveCenter offset
         @startPosition = @getPoint e
 
-    mouseout: ->
+    mouseout: =>
       @startPosition = null

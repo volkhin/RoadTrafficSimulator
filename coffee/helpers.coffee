@@ -2,5 +2,5 @@
 
 module.exports = {}
 
-Function::property = (prop, desc) ->
+Function::property = (prop, desc) =>
   Object.defineProperty @prototype, prop, desc

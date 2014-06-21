@@ -6,7 +6,7 @@ World = require './model/world.coffee'
 settings = require './settings.coffee'
 
 measureAverageSpeed = ->
-  world = new World
+  world = new World()
   world.generateMap()
   world.carsNumber = 50
   results = []

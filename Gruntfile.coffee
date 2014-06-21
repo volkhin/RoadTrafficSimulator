@@ -26,6 +26,9 @@ module.exports = (grunt) ->
         ext: '.js'
     coffeelint:
       app: 'coffee/**/*.coffee'
+      options:
+        configFile:
+          'coffeelint.json'
     browserify:
       dist:
         files:

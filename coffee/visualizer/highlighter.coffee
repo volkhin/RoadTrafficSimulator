@@ -11,7 +11,7 @@ module.exports =
       super arguments...
       @hoveredCell = null
 
-    mousemove: (e) ->
+    mousemove: (e) =>
       cell = @getCell e
       hoveredIntersection = @getHoveredIntersection cell
       @hoveredCell = cell
@@ -20,10 +20,10 @@ module.exports =
       if hoveredIntersection?
         hoveredIntersection.color = settings.colors.hoveredIntersection
 
-    mouseout: ->
+    mouseout: =>
       @hoveredCell = null
 
-    draw: ->
+    draw: =>
       if @hoveredCell
         color = settings.colors.hoveredGrid
         @visualizer.graphics.fillRect @hoveredCell, color, 0.5

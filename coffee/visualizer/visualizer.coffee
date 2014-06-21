@@ -21,30 +21,30 @@ module.exports =
       @canvas = @$canvas[0]
       @ctx = @canvas.getContext('2d')
 
-      @carImage = new Image
+      @carImage = new Image()
       @carImage.src = 'images/car.png'
 
       @updateCanvasSize()
-      @zoomer = new Zoomer 4, @, true
+      @zoomer = new Zoomer 4, this, true
       @graphics = new Graphics @ctx
-      @toolRoadbuilder = new ToolRoadBuilder @, true
-      @toolIntersectionBuilder = new ToolIntersectionBuilder @, true
-      @toolHighlighter = new ToolHighlighter @, true
-      @toolIntersectionMover = new ToolIntersectionMover @, true
-      @toolMover = new ToolMover @, true
+      @toolRoadbuilder = new ToolRoadBuilder this, true
+      @toolIntersectionBuilder = new ToolIntersectionBuilder this, true
+      @toolHighlighter = new ToolHighlighter this, true
+      @toolIntersectionMover = new ToolIntersectionMover this, true
+      @toolMover = new ToolMover this, true
       @_running = false
       @previousTime = 0
       @timeFactor = settings.defaultTimeFactor
       @debug = false
 
-    drawIntersection: (intersection, alpha) ->
+    drawIntersection: (intersection, alpha) =>
       color = intersection.color or settings.colors.intersection
       @graphics.drawRect intersection.rect
       @ctx.lineWidth = 0.4
       @graphics.stroke settings.colors.roadMarking
       @graphics.fillRect intersection.rect, color, alpha
 
-    drawSignals: (road) ->
+    drawSignals: (road) =>
       lightsColors = [settings.colors.redLight, settings.colors.greenLight]
       intersection = road.target
       segment = road.targetSide
@@ -79,7 +79,7 @@ module.exports =
         @graphics.fill settings.colors.greenLight
       @ctx.restore()
 
-    drawRoad: (road, alpha) ->
+    drawRoad: (road, alpha) =>
       throw Error 'invalid road' if not road.source? or not road.target?
       sourceSide = road.sourceSide
       targetSide = road.targetSide
@@ -110,10 +110,10 @@ module.exports =
         @graphics.stroke settings.colors.roadMarking
       @ctx.restore()
 
-    drawCar: (car) ->
+    drawCar: (car) =>
       angle = car.direction
       center = car.coords
-      rect = new Rect 0, 0, 1.1*car.length, 1.7*car.width
+      rect = new Rect 0, 0, 1.1 * car.length, 1.7 * car.width
       rect.center new Point 0, 0
       boundRect = new Rect 0, 0, car.length, car.width
       boundRect.center new Point 0, 0
@@ -123,7 +123,7 @@ module.exports =
       @ctx.rotate angle
       h = car.color
       s = 80
-      l = 90 - 30 * car.speed/car.maxSpeed
+      l = 90 - 30 * car.speed / car.maxSpeed
       style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
       # @graphics.drawImage @carImage, rect
       @graphics.fillRect boundRect, style
@@ -133,7 +133,7 @@ module.exports =
         @ctx.fillText car.id, 0, 0
       @graphics.restore()
 
-    drawGrid: ->
+    drawGrid: =>
       gridSize = settings.gridSize
       box = @zoomer.getBoundingBox()
       return if box.area() >= 2000 * gridSize * gridSize
@@ -141,22 +141,22 @@ module.exports =
 
       for i in [box.left()..box.right()] by gridSize
         for j in [box.top()..box.bottom()] by gridSize
-          rect = new Rect i - sz/2, j-sz/2, sz, sz
+          rect = new Rect i - sz / 2, j - sz / 2, sz, sz
           @graphics.fillRect rect, settings.colors.gridPoint
 
-    updateCanvasSize: ->
+    updateCanvasSize: =>
       if @$canvas.attr('width') isnt $(window).width or
       @$canvas.attr('height') isnt $(window).height
         @$canvas.attr
           width: $(window).width()
           height: $(window).height()
 
-    draw: (time) ->
+    draw: (time) =>
       delta = (time - @previousTime) || 0
       if delta > 30
         delta = 100 if delta > 100
         @previousTime = time
-        @world.onTick @timeFactor*delta/1000
+        @world.onTick @timeFactor * delta / 1000
         @updateCanvasSize()
         @graphics.clear settings.colors.background
         @graphics.save()
@@ -171,17 +171,17 @@ module.exports =
         @toolRoadbuilder.draw()
         @toolHighlighter.draw()
         @graphics.restore()
-      window.requestAnimationFrame @draw.bind @ if @running
+      window.requestAnimationFrame @draw if @running
 
     @property 'running',
-      get: -> @_running
-      set: (running) ->
+      get: => @_running
+      set: (running) =>
         if running then @start() else @stop()
 
-    start: ->
+    start: =>
       unless @_running
         @_running = true
         @draw()
 
-    stop: ->
+    stop: =>
       @_running = false

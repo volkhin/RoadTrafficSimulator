@@ -13,7 +13,7 @@ module.exports =
       new Rect rect.x, rect.y, rect._width, rect._height
 
     toJSON: ->
-      _.extend {}, @
+      _.extend {}, this
 
     area: ->
       @width() * @height()

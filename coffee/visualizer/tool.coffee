@@ -8,12 +8,12 @@ Rect = require '../geom/rect.coffee'
 require('jquery-mousewheel') $
 
 METHODS = [
-  'click',
-  'mousedown',
-  'mouseup',
-  'mousemove',
-  'mouseout',
-  'mousewheel',
+  'click'
+  'mousedown'
+  'mouseup'
+  'mousemove'
+  'mouseout'
+  'mousewheel'
   'contextmenu'
 ]
 
@@ -22,33 +22,31 @@ module.exports =
     constructor: (@visualizer, autobind) ->
       @ctx = @visualizer.ctx
       @canvas = @ctx.canvas
-      for method in METHODS when @[method]?
-        @[method] = @[method].bind @
       @isBound = false
       @bind() if autobind
 
-    bind: ->
+    bind: =>
       @isBound = true
       for method in METHODS when @[method]?
         $(@canvas).on method, @[method]
 
-    unbind: ->
+    unbind: =>
       @isBound = false
       for method in METHODS when @[method]?
         $(@canvas).off method, @[method]
 
-    toggleState: ->
+    toggleState: =>
       if @isBound then @unbind() else @bind()
 
     draw: ->
 
-    getPoint: (e) ->
-      new Point e.pageX-@canvas.offsetLeft, e.pageY-@canvas.offsetTop
+    getPoint: (e) =>
+      new Point e.pageX - @canvas.offsetLeft, e.pageY - @canvas.offsetTop
 
-    getCell: (e) ->
+    getCell: (e) =>
       @visualizer.zoomer.toCellCoords @getPoint e
 
-    getHoveredIntersection: (cell) ->
+    getHoveredIntersection: (cell) =>
       intersections = @visualizer.world.intersections.all()
       for id, intersection of intersections
         return intersection if intersection.rect.containsRect cell

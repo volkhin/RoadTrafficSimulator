@@ -17,52 +17,58 @@ module.exports =
       @timeHeadway = 1.5
       @maxAcceleration = 1
       @maxDeceleration = 3
-      @trajectory = new Trajectory @, lane, position
+      @trajectory = new Trajectory this, lane, position
       @alive = true
       @preferedLane = null
-      @turnNumber = null
 
     @property 'coords',
-      get: -> @trajectory.coords
+      get: => @trajectory.coords
 
     @property 'speed',
-      get: -> @_speed
-      set: (speed) ->
+      get: => @_speed
+      set: (speed) =>
         speed = 0 if speed < 0
         speed = @maxSpeed if speed > @maxSpeed
         @_speed = speed
 
     @property 'direction',
-      get: -> @trajectory.direction
+      get: => @trajectory.direction
 
-    release: ->
+    release: =>
       @trajectory.release()
 
-    getAcceleration: ->
+    getAcceleration: =>
       nextCarDistance = @trajectory.nextCarDistance
       distanceToNextCar = Math.max nextCarDistance.distance, 0
       a = @maxAcceleration
       b = @maxDeceleration
       deltaSpeed = (@speed - nextCarDistance.car?.speed) || 0
-      freeRoadCoeff = (@speed/@maxSpeed) ** 4
+      freeRoadCoeff = (@speed / @maxSpeed) ** 4
       distanceGap = @s0
       timeGap = @speed * @timeHeadway
-      breakGap = @speed * deltaSpeed / (2 * Math.sqrt a*b)
+      breakGap = @speed * deltaSpeed / (2 * Math.sqrt a * b)
       safeDistance = distanceGap + timeGap + breakGap
-      busyRoadCoeff = (safeDistance/distanceToNextCar) ** 2
+      busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2
       safeIntersectionDistance = 1 + timeGap + @speed ** 2 / (2 * b)
       intersectionCoeff =
-      (safeIntersectionDistance/@trajectory.distanceToStopLine) ** 2
+      (safeIntersectionDistance / @trajectory.distanceToStopLine) ** 2
       coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
       return @maxAcceleration * coeff
 
-    move: (delta) ->
+    move: (delta) =>
       acceleration = @getAcceleration()
       @speed += acceleration * delta
 
-      if @preferedLane? and @preferedLane isnt @trajectory.current.lane and
-      not @trajectory.isChangingLanes
-        @trajectory.changeLane @preferedLane
+      if not @trajectory.isChangingLanes and @nextLane
+        currentLane = @trajectory.current.lane
+        turnNumber = currentLane.getTurnDirection @nextLane
+        preferedLane = switch turnNumber
+          when 0 then currentLane.leftmostAdjacent
+          when 2 then currentLane.rightmostAdjacent
+          else currentLane
+        if preferedLane isnt currentLane
+          @trajectory.changeLane preferedLane
+
       step = @speed * delta + 0.5 * acceleration * delta ** 2
       # TODO: hacks, should have changed speed
       console.log 'bad IDM' if @trajectory.nextCarDistance.distance < step
@@ -71,21 +77,21 @@ module.exports =
         return @alive = false if not @nextLane?
       @trajectory.moveForward step
 
-    pickNextLane: ->
-      throw Error 'next lane is already chosen' if @nextLane
-      @nextLane = null
+    pickNextRoad: =>
       intersection = @trajectory.nextIntersection
       currentLane = @trajectory.current.lane
       possibleRoads = intersection.roads.filter (x) ->
         x.target isnt currentLane.road.source
       return null if possibleRoads.length is 0
       nextRoad = _.sample possibleRoads
-      laneNumber = _.random 0, nextRoad.lanesNumber-1
+
+    pickNextLane: =>
+      throw Error 'next lane is already chosen' if @nextLane
+      @nextLane = null
+      nextRoad = @pickNextRoad()
+      return null if not nextRoad
+      # throw Error 'can not pick next road' if not nextRoad
+      laneNumber = _.random 0, nextRoad.lanesNumber - 1
       @nextLane = nextRoad.lanes[laneNumber]
       throw Error 'can not pick next lane' if not @nextLane
-      @turnNumber = currentLane.getTurnDirection @nextLane
-      @preferedLane = switch @turnNumber
-        when 0 then currentLane.leftmostAdjacent
-        when 2 then currentLane.rightmostAdjacent
-        else currentLane
-      @nextLane
+      return @nextLane

@@ -12,19 +12,19 @@ module.exports =
       @road = null
       @dualRoad = null
 
-    mousedown: (e) ->
+    mousedown: (e) =>
       cell = @getCell e
       hoveredIntersection = @getHoveredIntersection cell
       if e.shiftKey and hoveredIntersection?
         @sourceIntersection = hoveredIntersection
         e.stopImmediatePropagation()
 
-    mouseup: (e) ->
+    mouseup: (e) =>
       @visualizer.world.addRoad @road if @road?
       @visualizer.world.addRoad @dualRoad if @dualRoad?
       @road = @dualRoad = @sourceIntersection = null
 
-    mousemove: (e) ->
+    mousemove: (e) =>
       cell = @getCell e
       hoveredIntersection = @getHoveredIntersection cell
       if (@sourceIntersection and hoveredIntersection and
@@ -38,9 +38,9 @@ module.exports =
       else
         @road = @dualRoad = null
 
-    mouseout: (e) ->
+    mouseout: (e) =>
       @road = @dualRoad = @sourceIntersection = null
 
-    draw: ->
+    draw: =>
       @visualizer.drawRoad @road, 0.4 if @road?
       @visualizer.drawRoad @dualRoad, 0.4 if @dualRoad?
