@@ -1,7 +1,7 @@
 'use strict'
 
-require '../helpers.coffee'
-Segment = require './segment.coffee'
+require '../helpers'
+Segment = require './segment'
 
 module.exports =
   class Curve

@@ -1,13 +1,13 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-Car = require './car.coffee'
-Intersection = require './intersection.coffee'
-Road = require './road.coffee'
-Pool = require './pool.coffee'
-Rect = require '../geom/rect.coffee'
-settings = require '../settings.coffee'
+Car = require './car'
+Intersection = require './intersection'
+Road = require './road'
+Pool = require './pool'
+Rect = require '../geom/rect'
+settings = require '../settings'
 
 module.exports =
   class World

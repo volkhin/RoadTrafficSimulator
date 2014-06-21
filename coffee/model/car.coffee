@@ -1,8 +1,8 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-Trajectory = require './trajectory.coffee'
+Trajectory = require './trajectory'
 
 module.exports =
   class Car

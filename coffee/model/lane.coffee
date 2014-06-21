@@ -1,8 +1,8 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-Segment = require '../geom/segment.coffee'
+Segment = require '../geom/segment'
 
 module.exports =
   class Lane

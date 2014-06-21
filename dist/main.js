@@ -2,19 +2,19 @@
 'use strict';
 var $, DAT, Visualizer, World, settings, _;
 
-require('./helpers.coffee');
+require('./helpers');
 
 $ = require('jquery');
 
 _ = require('underscore');
 
-Visualizer = require('./visualizer/visualizer.coffee');
+Visualizer = require('./visualizer/visualizer');
 
 DAT = require('dat-gui');
 
-World = require('./model/world.coffee');
+World = require('./model/world');
 
-settings = require('./settings.coffee');
+settings = require('./settings');
 
 $(function() {
   var canvas, gui, guiVisualizer, guiWorld;
@@ -49,13 +49,13 @@ $(function() {
 });
 
 
-},{"./helpers.coffee":6,"./model/world.coffee":15,"./settings.coffee":16,"./visualizer/visualizer.coffee":24,"dat-gui":26,"jquery":30,"underscore":31}],2:[function(require,module,exports){
+},{"./helpers":6,"./model/world":15,"./settings":16,"./visualizer/visualizer":24,"dat-gui":26,"jquery":30,"underscore":31}],2:[function(require,module,exports){
 'use strict';
 var Curve, Segment;
 
-require('../helpers.coffee');
+require('../helpers');
 
-Segment = require('./segment.coffee');
+Segment = require('./segment');
 
 module.exports = Curve = (function() {
   function Curve(A, B, O) {
@@ -101,11 +101,11 @@ module.exports = Curve = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"./segment.coffee":5}],3:[function(require,module,exports){
+},{"../helpers":6,"./segment":5}],3:[function(require,module,exports){
 'use strict';
 var Point;
 
-require('../helpers.coffee');
+require('../helpers');
 
 module.exports = Point = (function() {
   function Point(x, y) {
@@ -152,17 +152,17 @@ module.exports = Point = (function() {
 })();
 
 
-},{"../helpers.coffee":6}],4:[function(require,module,exports){
+},{"../helpers":6}],4:[function(require,module,exports){
 'use strict';
 var Point, Rect, Segment, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-Point = require('./point.coffee');
+Point = require('./point');
 
-Segment = require('./segment.coffee');
+Segment = require('./segment');
 
 module.exports = Rect = (function() {
   function Rect(x, y, _width, _height) {
@@ -280,11 +280,11 @@ module.exports = Rect = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"./point.coffee":3,"./segment.coffee":5,"underscore":31}],5:[function(require,module,exports){
+},{"../helpers":6,"./point":3,"./segment":5,"underscore":31}],5:[function(require,module,exports){
 'use strict';
 var Segment;
 
-require('../helpers.coffee');
+require('../helpers');
 
 module.exports = Segment = (function() {
   function Segment(source, target) {
@@ -352,7 +352,7 @@ module.exports = Segment = (function() {
 })();
 
 
-},{"../helpers.coffee":6}],6:[function(require,module,exports){
+},{"../helpers":6}],6:[function(require,module,exports){
 'use strict';
 module.exports = {};
 
@@ -365,11 +365,11 @@ Function.prototype.property = function(prop, desc) {
 'use strict';
 var Car, Trajectory, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-Trajectory = require('./trajectory.coffee');
+Trajectory = require('./trajectory');
 
 module.exports = Car = (function() {
   function Car(lane, position) {
@@ -507,15 +507,15 @@ module.exports = Car = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"./trajectory.coffee":14,"underscore":31}],8:[function(require,module,exports){
+},{"../helpers":6,"./trajectory":14,"underscore":31}],8:[function(require,module,exports){
 'use strict';
 var ControlSignals, settings,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-require('../helpers.coffee');
+require('../helpers');
 
-settings = require('../settings.coffee');
+settings = require('../settings');
 
 module.exports = ControlSignals = (function() {
   function ControlSignals(intersection) {
@@ -589,17 +589,17 @@ module.exports = ControlSignals = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"../settings.coffee":16}],9:[function(require,module,exports){
+},{"../helpers":6,"../settings":16}],9:[function(require,module,exports){
 'use strict';
 var ControlSignals, Intersection, Rect, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-ControlSignals = require('./control-signals.coffee');
+ControlSignals = require('./control-signals');
 
-Rect = require('../geom/rect.coffee');
+Rect = require('../geom/rect');
 
 module.exports = Intersection = (function() {
   function Intersection(rect) {
@@ -650,11 +650,11 @@ module.exports = Intersection = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"./control-signals.coffee":8,"underscore":31}],10:[function(require,module,exports){
+},{"../geom/rect":4,"../helpers":6,"./control-signals":8,"underscore":31}],10:[function(require,module,exports){
 'use strict';
 var LanePosition, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
@@ -729,15 +729,15 @@ module.exports = LanePosition = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"underscore":31}],11:[function(require,module,exports){
+},{"../helpers":6,"underscore":31}],11:[function(require,module,exports){
 'use strict';
 var Lane, Segment, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-Segment = require('../geom/segment.coffee');
+Segment = require('../geom/segment');
 
 module.exports = Lane = (function() {
   function Lane(sourceSegment, targetSegment, road) {
@@ -857,11 +857,11 @@ module.exports = Lane = (function() {
 })();
 
 
-},{"../geom/segment.coffee":5,"../helpers.coffee":6,"underscore":31}],12:[function(require,module,exports){
+},{"../geom/segment":5,"../helpers":6,"underscore":31}],12:[function(require,module,exports){
 'use strict';
 var Pool;
 
-require('../helpers.coffee');
+require('../helpers');
 
 module.exports = Pool = (function() {
   function Pool(factory, pool) {
@@ -919,17 +919,17 @@ module.exports = Pool = (function() {
 })();
 
 
-},{"../helpers.coffee":6}],13:[function(require,module,exports){
+},{"../helpers":6}],13:[function(require,module,exports){
 'use strict';
 var Lane, Road, settings, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-Lane = require('./lane.coffee');
+Lane = require('./lane');
 
-settings = require('../settings.coffee');
+settings = require('../settings');
 
 module.exports = Road = (function() {
   function Road(source, target) {
@@ -1019,15 +1019,15 @@ module.exports = Road = (function() {
 })();
 
 
-},{"../helpers.coffee":6,"../settings.coffee":16,"./lane.coffee":11,"underscore":31}],14:[function(require,module,exports){
+},{"../helpers":6,"../settings":16,"./lane":11,"underscore":31}],14:[function(require,module,exports){
 'use strict';
 var Curve, LanePosition, Trajectory, _;
 
-require('../helpers.coffee');
+require('../helpers');
 
-LanePosition = require('./lane-position.coffee');
+LanePosition = require('./lane-position');
 
-Curve = require('../geom/curve.coffee');
+Curve = require('../geom/curve');
 
 _ = require('underscore');
 
@@ -1266,26 +1266,26 @@ module.exports = Trajectory = (function() {
 })();
 
 
-},{"../geom/curve.coffee":2,"../helpers.coffee":6,"./lane-position.coffee":10,"underscore":31}],15:[function(require,module,exports){
+},{"../geom/curve":2,"../helpers":6,"./lane-position":10,"underscore":31}],15:[function(require,module,exports){
 'use strict';
 var Car, Intersection, Pool, Rect, Road, World, settings, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-require('../helpers.coffee');
+require('../helpers');
 
 _ = require('underscore');
 
-Car = require('./car.coffee');
+Car = require('./car');
 
-Intersection = require('./intersection.coffee');
+Intersection = require('./intersection');
 
-Road = require('./road.coffee');
+Road = require('./road');
 
-Pool = require('./pool.coffee');
+Pool = require('./pool');
 
-Rect = require('../geom/rect.coffee');
+Rect = require('../geom/rect');
 
-settings = require('../settings.coffee');
+settings = require('../settings');
 
 module.exports = World = (function() {
   function World() {
@@ -1513,7 +1513,7 @@ module.exports = World = (function() {
 })();
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./car.coffee":7,"./intersection.coffee":9,"./pool.coffee":12,"./road.coffee":13,"underscore":31}],16:[function(require,module,exports){
+},{"../geom/rect":4,"../helpers":6,"../settings":16,"./car":7,"./intersection":9,"./pool":12,"./road":13,"underscore":31}],16:[function(require,module,exports){
 'use strict';
 module.exports = {
   colors: {
@@ -2067,31 +2067,31 @@ module.exports = Tool = (function() {
 var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-require('../helpers.coffee');
+require('../helpers');
 
 $ = require('jquery');
 
 _ = require('underscore');
 
-Point = require('../geom/point.coffee');
+Point = require('../geom/point');
 
-Rect = require('../geom/rect.coffee');
+Rect = require('../geom/rect');
 
-Graphics = require('./graphics.coffee');
+Graphics = require('./graphics');
 
-ToolMover = require('./mover.coffee');
+ToolMover = require('./mover');
 
-ToolIntersectionMover = require('./intersection-mover.coffee');
+ToolIntersectionMover = require('./intersection-mover');
 
-ToolIntersectionBuilder = require('./intersection-builder.coffee');
+ToolIntersectionBuilder = require('./intersection-builder');
 
-ToolRoadBuilder = require('./road-builder.coffee');
+ToolRoadBuilder = require('./road-builder');
 
-ToolHighlighter = require('./highlighter.coffee');
+ToolHighlighter = require('./highlighter');
 
-Zoomer = require('./zoomer.coffee');
+Zoomer = require('./zoomer');
 
-settings = require('../settings.coffee');
+settings = require('../settings');
 
 module.exports = Visualizer = (function() {
   function Visualizer(world) {
@@ -2313,7 +2313,7 @@ module.exports = Visualizer = (function() {
 })();
 
 
-},{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./graphics.coffee":17,"./highlighter.coffee":18,"./intersection-builder.coffee":19,"./intersection-mover.coffee":20,"./mover.coffee":21,"./road-builder.coffee":22,"./zoomer.coffee":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
+},{"../geom/point":3,"../geom/rect":4,"../helpers":6,"../settings":16,"./graphics":17,"./highlighter":18,"./intersection-builder":19,"./intersection-mover":20,"./mover":21,"./road-builder":22,"./zoomer":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
 var Point, Rect, Tool, Zoomer, settings,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },

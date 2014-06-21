@@ -1,9 +1,9 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-Point = require './point.coffee'
-Segment = require './segment.coffee'
+Point = require './point'
+Segment = require './segment'
 
 module.exports =
   class Rect
@@ -53,7 +53,7 @@ module.exports =
 
     containsRect: (rect) ->
       @left() <= rect.left() and rect.right() <= @right() and
-        @top() <= rect.top() and rect.bottom() <= @bottom()
+      @top() <= rect.top() and rect.bottom() <= @bottom()
 
     getVertices: ->
       [

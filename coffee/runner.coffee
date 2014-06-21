@@ -1,9 +1,9 @@
 #!/usr/bin/env coffee
 'use strict'
 
-require './helpers.coffee'
-World = require './model/world.coffee'
-settings = require './settings.coffee'
+require './helpers'
+World = require './model/world'
+settings = require './settings'
 
 measureAverageSpeed = ->
   world = new World()

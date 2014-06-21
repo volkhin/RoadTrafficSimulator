@@ -1,9 +1,9 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-ControlSignals = require './control-signals.coffee'
-Rect = require '../geom/rect.coffee'
+ControlSignals = require './control-signals'
+Rect = require '../geom/rect'
 
 module.exports =
   class Intersection

@@ -1,8 +1,8 @@
 'use strict'
 
-require '../helpers.coffee'
-LanePosition = require './lane-position.coffee'
-Curve = require '../geom/curve.coffee'
+require '../helpers'
+LanePosition = require './lane-position'
+Curve = require '../geom/curve'
 _ = require 'underscore'
 
 module.exports =

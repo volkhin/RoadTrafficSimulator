@@ -1,9 +1,9 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
-Lane = require './lane.coffee'
-settings = require '../settings.coffee'
+Lane = require './lane'
+settings = require '../settings'
 
 module.exports =
   class Road

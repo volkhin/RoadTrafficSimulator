@@ -1,7 +1,7 @@
 'use strict'
 
-require '../helpers.coffee'
-settings = require '../settings.coffee'
+require '../helpers'
+settings = require '../settings'
 
 module.exports =
   class ControlSignals

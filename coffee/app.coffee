@@ -1,12 +1,12 @@
 'use strict'
 
-require './helpers.coffee'
+require './helpers'
 $ = require 'jquery'
 _ = require 'underscore'
-Visualizer = require './visualizer/visualizer.coffee'
+Visualizer = require './visualizer/visualizer'
 DAT = require 'dat-gui'
-World = require './model/world.coffee'
-settings = require './settings.coffee'
+World = require './model/world'
+settings = require './settings'
 
 $ ->
   canvas = $('<canvas />', {id: 'canvas'})

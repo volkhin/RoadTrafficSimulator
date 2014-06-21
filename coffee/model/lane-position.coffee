@@ -1,6 +1,6 @@
 'use strict'
 
-require '../helpers.coffee'
+require '../helpers'
 _ = require 'underscore'
 
 module.exports =
