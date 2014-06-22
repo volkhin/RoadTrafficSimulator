@@ -1,3 +1,4 @@
+'use strict'
 #TODO add liverload/brosersync
 
 gulp = require 'gulp'

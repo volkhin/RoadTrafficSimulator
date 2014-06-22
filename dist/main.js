@@ -57,7 +57,7 @@ require('../helpers');
 
 Segment = require('./segment');
 
-module.exports = Curve = (function() {
+Curve = (function() {
   function Curve(A, B, O) {
     this.A = A;
     this.B = B;
@@ -100,6 +100,8 @@ module.exports = Curve = (function() {
 
 })();
 
+module.exports = Curve;
+
 
 },{"../helpers":6,"./segment":5}],3:[function(require,module,exports){
 'use strict';
@@ -107,7 +109,7 @@ var Point;
 
 require('../helpers');
 
-module.exports = Point = (function() {
+Point = (function() {
   function Point(x, y) {
     this.x = x != null ? x : 0;
     this.y = y != null ? y : 0;
@@ -151,6 +153,8 @@ module.exports = Point = (function() {
 
 })();
 
+module.exports = Point;
+
 
 },{"../helpers":6}],4:[function(require,module,exports){
 'use strict';
@@ -164,7 +168,7 @@ Point = require('./point');
 
 Segment = require('./segment');
 
-module.exports = Rect = (function() {
+Rect = (function() {
   function Rect(x, y, _width, _height) {
     this.x = x;
     this.y = y;
@@ -279,6 +283,8 @@ module.exports = Rect = (function() {
 
 })();
 
+module.exports = Rect;
+
 
 },{"../helpers":6,"./point":3,"./segment":5,"underscore":31}],5:[function(require,module,exports){
 'use strict';
@@ -286,7 +292,7 @@ var Segment;
 
 require('../helpers');
 
-module.exports = Segment = (function() {
+Segment = (function() {
   function Segment(source, target) {
     this.source = source;
     this.target = target;
@@ -351,6 +357,8 @@ module.exports = Segment = (function() {
 
 })();
 
+module.exports = Segment;
+
 
 },{"../helpers":6}],6:[function(require,module,exports){
 'use strict';
@@ -371,7 +379,7 @@ _ = require('underscore');
 
 Trajectory = require('./trajectory');
 
-module.exports = Car = (function() {
+Car = (function() {
   function Car(lane, position) {
     this.id = _.uniqueId('car');
     this.color = (300 + 240 * Math.random() | 0) % 360;
@@ -502,9 +510,19 @@ module.exports = Car = (function() {
     return this.nextLane;
   };
 
+  Car.prototype.popNextLane = function() {
+    var nextLane;
+    nextLane = this.nextLane;
+    this.nextLane = null;
+    this.preferedLane = null;
+    return nextLane;
+  };
+
   return Car;
 
 })();
+
+module.exports = Car;
 
 
 },{"../helpers":6,"./trajectory":14,"underscore":31}],8:[function(require,module,exports){
@@ -517,7 +535,7 @@ require('../helpers');
 
 settings = require('../settings');
 
-module.exports = ControlSignals = (function() {
+ControlSignals = (function() {
   function ControlSignals(intersection) {
     this.intersection = intersection;
     this.onTick = __bind(this.onTick, this);
@@ -588,6 +606,8 @@ module.exports = ControlSignals = (function() {
 
 })();
 
+module.exports = ControlSignals;
+
 
 },{"../helpers":6,"../settings":16}],9:[function(require,module,exports){
 'use strict';
@@ -601,7 +621,7 @@ ControlSignals = require('./control-signals');
 
 Rect = require('../geom/rect');
 
-module.exports = Intersection = (function() {
+Intersection = (function() {
   function Intersection(rect) {
     this.rect = rect;
     this.id = _.uniqueId('intersection');
@@ -649,6 +669,8 @@ module.exports = Intersection = (function() {
 
 })();
 
+module.exports = Intersection;
+
 
 },{"../geom/rect":4,"../helpers":6,"./control-signals":8,"underscore":31}],10:[function(require,module,exports){
 'use strict';
@@ -658,7 +680,7 @@ require('../helpers');
 
 _ = require('underscore');
 
-module.exports = LanePosition = (function() {
+LanePosition = (function() {
   function LanePosition(car, lane, position) {
     this.car = car;
     this.position = position;
@@ -728,6 +750,8 @@ module.exports = LanePosition = (function() {
 
 })();
 
+module.exports = LanePosition;
+
 
 },{"../helpers":6,"underscore":31}],11:[function(require,module,exports){
 'use strict';
@@ -739,7 +763,7 @@ _ = require('underscore');
 
 Segment = require('../geom/segment');
 
-module.exports = Lane = (function() {
+Lane = (function() {
   function Lane(sourceSegment, targetSegment, road) {
     this.sourceSegment = sourceSegment;
     this.targetSegment = targetSegment;
@@ -856,6 +880,8 @@ module.exports = Lane = (function() {
 
 })();
 
+module.exports = Lane;
+
 
 },{"../geom/segment":5,"../helpers":6,"underscore":31}],12:[function(require,module,exports){
 'use strict';
@@ -863,7 +889,7 @@ var Pool;
 
 require('../helpers');
 
-module.exports = Pool = (function() {
+Pool = (function() {
   function Pool(factory, pool) {
     var k, v, _ref;
     this.factory = factory;
@@ -918,6 +944,8 @@ module.exports = Pool = (function() {
 
 })();
 
+module.exports = Pool;
+
 
 },{"../helpers":6}],13:[function(require,module,exports){
 'use strict';
@@ -931,7 +959,7 @@ Lane = require('./lane');
 
 settings = require('../settings');
 
-module.exports = Road = (function() {
+Road = (function() {
   function Road(source, target) {
     this.source = source;
     this.target = target;
@@ -1018,6 +1046,8 @@ module.exports = Road = (function() {
 
 })();
 
+module.exports = Road;
+
 
 },{"../helpers":6,"../settings":16,"./lane":11,"underscore":31}],14:[function(require,module,exports){
 'use strict';
@@ -1031,7 +1061,7 @@ Curve = require('../geom/curve');
 
 _ = require('underscore');
 
-module.exports = Trajectory = (function() {
+Trajectory = (function() {
   function Trajectory(car, lane, position) {
     this.car = car;
     if (position == null) {
@@ -1093,8 +1123,8 @@ module.exports = Trajectory = (function() {
 
   Trajectory.property('distanceToStopLine', {
     get: function() {
-      if (!this.isChangingLanes && !this.canEnterIntersection()) {
-        return Math.max(this.getDistanceToIntersection(), 0);
+      if (!this.canEnterIntersection()) {
+        return this.getDistanceToIntersection();
       }
       return Infinity;
     }
@@ -1146,14 +1176,20 @@ module.exports = Trajectory = (function() {
   };
 
   Trajectory.prototype.getDistanceToIntersection = function() {
-    return this.current.lane.length - this.car.length / 2 - this.current.position;
+    var distance;
+    distance = this.current.lane.length - this.car.length / 2 - this.current.position;
+    if (!this.isChangingLanes) {
+      return Math.max(distance, 0);
+    } else {
+      return Infinity;
+    }
   };
 
   Trajectory.prototype.timeToMakeTurn = function(plannedStep) {
     if (plannedStep == null) {
       plannedStep = 0;
     }
-    return this.getDistanceToIntersection() <= plannedStep && !this.isChangingLanes;
+    return this.getDistanceToIntersection() <= plannedStep;
   };
 
   Trajectory.prototype.moveForward = function(distance) {
@@ -1163,10 +1199,7 @@ module.exports = Trajectory = (function() {
     this.next.position += distance;
     this.temp.position += distance;
     if (this.timeToMakeTurn() && this.canEnterIntersection() && this.isValidTurn()) {
-      this._startChangingLanes(this.car.nextLane, 0);
-      this.car.nextLane = null;
-      this.car.preferedLane = null;
-      this.car.turnNumber = null;
+      this._startChangingLanes(this.car.popNextLane(), 0);
     }
     tempRelativePosition = this.temp.position / ((_ref = this.temp.lane) != null ? _ref.length : void 0);
     if (this.isChangingLanes && tempRelativePosition >= 0.5 && this.next.free) {
@@ -1265,6 +1298,8 @@ module.exports = Trajectory = (function() {
 
 })();
 
+module.exports = Trajectory;
+
 
 },{"../geom/curve":2,"../helpers":6,"./lane-position":10,"underscore":31}],15:[function(require,module,exports){
 'use strict';
@@ -1287,7 +1322,7 @@ Rect = require('../geom/rect');
 
 settings = require('../settings');
 
-module.exports = World = (function() {
+World = (function() {
   function World() {
     this.onTick = __bind(this.onTick, this);
     this.set({});
@@ -1512,10 +1547,14 @@ module.exports = World = (function() {
 
 })();
 
+module.exports = World;
+
 
 },{"../geom/rect":4,"../helpers":6,"../settings":16,"./car":7,"./intersection":9,"./pool":12,"./road":13,"underscore":31}],16:[function(require,module,exports){
 'use strict';
-module.exports = {
+var settings;
+
+settings = {
   colors: {
     background: '#97a1a1',
     redLight: 'hsl(0, 100%, 50%)',
@@ -1536,6 +1575,8 @@ module.exports = {
   defaultTimeFactor: 5
 };
 
+module.exports = settings;
+
 
 },{}],17:[function(require,module,exports){
 'use strict';
@@ -1544,7 +1585,7 @@ var Graphics,
 
 require('../helpers.coffee');
 
-module.exports = Graphics = (function() {
+Graphics = (function() {
   function Graphics(ctx) {
     this.ctx = ctx;
   }
@@ -1653,6 +1694,8 @@ module.exports = Graphics = (function() {
 
 })();
 
+module.exports = Graphics;
+
 
 },{"../helpers.coffee":6}],18:[function(require,module,exports){
 'use strict';
@@ -1669,7 +1712,7 @@ Rect = require('../geom/rect.coffee');
 
 settings = require('../settings.coffee');
 
-module.exports = ToolHighlighter = (function(_super) {
+ToolHighlighter = (function(_super) {
   __extends(ToolHighlighter, _super);
 
   function ToolHighlighter() {
@@ -1711,6 +1754,8 @@ module.exports = ToolHighlighter = (function(_super) {
 
 })(Tool);
 
+module.exports = ToolHighlighter;
+
 
 },{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
 'use strict';
@@ -1727,7 +1772,7 @@ Intersection = require('../model/intersection.coffee');
 
 Rect = require('../geom/rect.coffee');
 
-module.exports = ToolIntersectionBuilder = (function(_super) {
+ToolIntersectionBuilder = (function(_super) {
   __extends(ToolIntersectionBuilder, _super);
 
   function ToolIntersectionBuilder() {
@@ -1780,6 +1825,8 @@ module.exports = ToolIntersectionBuilder = (function(_super) {
 
 })(Tool);
 
+module.exports = ToolIntersectionBuilder;
+
 
 },{"../geom/rect.coffee":4,"../helpers.coffee":6,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
 'use strict';
@@ -1792,7 +1839,7 @@ require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
-module.exports = ToolIntersectionMover = (function(_super) {
+ToolIntersectionMover = (function(_super) {
   __extends(ToolIntersectionMover, _super);
 
   function ToolIntersectionMover() {
@@ -1835,6 +1882,8 @@ module.exports = ToolIntersectionMover = (function(_super) {
 
 })(Tool);
 
+module.exports = ToolIntersectionMover;
+
 
 },{"../helpers.coffee":6,"./tool.coffee":23}],21:[function(require,module,exports){
 'use strict';
@@ -1847,7 +1896,7 @@ require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
 
-module.exports = Mover = (function(_super) {
+Mover = (function(_super) {
   __extends(Mover, _super);
 
   function Mover() {
@@ -1889,6 +1938,8 @@ module.exports = Mover = (function(_super) {
 
 })(Tool);
 
+module.exports = Mover;
+
 
 },{"../helpers.coffee":6,"./tool.coffee":23}],22:[function(require,module,exports){
 'use strict';
@@ -1903,7 +1954,7 @@ Tool = require('./tool.coffee');
 
 Road = require('../model/road.coffee');
 
-module.exports = ToolRoadBuilder = (function(_super) {
+ToolRoadBuilder = (function(_super) {
   __extends(ToolRoadBuilder, _super);
 
   function ToolRoadBuilder() {
@@ -1972,6 +2023,8 @@ module.exports = ToolRoadBuilder = (function(_super) {
 
 })(Tool);
 
+module.exports = ToolRoadBuilder;
+
 
 },{"../helpers.coffee":6,"../model/road.coffee":13,"./tool.coffee":23}],23:[function(require,module,exports){
 'use strict';
@@ -1991,7 +2044,7 @@ require('jquery-mousewheel')($);
 
 METHODS = ['click', 'mousedown', 'mouseup', 'mousemove', 'mouseout', 'mousewheel', 'contextmenu'];
 
-module.exports = Tool = (function() {
+Tool = (function() {
   function Tool(visualizer, autobind) {
     this.visualizer = visualizer;
     this.ctx = this.visualizer.ctx;
@@ -2061,6 +2114,8 @@ module.exports = Tool = (function() {
 
 })();
 
+module.exports = Tool;
+
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
@@ -2093,7 +2148,7 @@ Zoomer = require('./zoomer');
 
 settings = require('../settings');
 
-module.exports = Visualizer = (function() {
+Visualizer = (function() {
   function Visualizer(world) {
     this.world = world;
     this.draw = __bind(this.draw, this);
@@ -2312,6 +2367,8 @@ module.exports = Visualizer = (function() {
 
 })();
 
+module.exports = Visualizer;
+
 
 },{"../geom/point":3,"../geom/rect":4,"../helpers":6,"../settings":16,"./graphics":17,"./highlighter":18,"./intersection-builder":19,"./intersection-mover":20,"./mover":21,"./road-builder":22,"./zoomer":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
@@ -2331,7 +2388,7 @@ Tool = require('./tool.coffee');
 
 settings = require('../settings.coffee');
 
-module.exports = Zoomer = (function(_super) {
+Zoomer = (function(_super) {
   __extends(Zoomer, _super);
 
   function Zoomer() {
@@ -2417,6 +2474,8 @@ module.exports = Zoomer = (function(_super) {
   return Zoomer;
 
 })(Tool);
+
+module.exports = Zoomer;
 
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],26:[function(require,module,exports){

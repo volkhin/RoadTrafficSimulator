@@ -5,34 +5,35 @@ Tool = require './tool.coffee'
 Intersection = require '../model/intersection.coffee' # TODO: decouple
 Rect = require '../geom/rect.coffee'
 
-module.exports =
-  class ToolIntersectionBuilder extends Tool
-    constructor: ->
-      super arguments...
+class ToolIntersectionBuilder extends Tool
+  constructor: ->
+    super arguments...
+    @tempIntersection = null
+    @mouseDownPos = null
+
+  mousedown: (e) =>
+    @mouseDownPos = @getCell e
+    if e.shiftKey
+      @tempIntersection = new Intersection @mouseDownPos
+      e.stopImmediatePropagation()
+
+  mouseup: =>
+    if @tempIntersection
+      @visualizer.world.addIntersection @tempIntersection
       @tempIntersection = null
-      @mouseDownPos = null
+    @mouseDownPos = null
 
-    mousedown: (e) =>
-      @mouseDownPos = @getCell e
-      if e.shiftKey
-        @tempIntersection = new Intersection @mouseDownPos
-        e.stopImmediatePropagation()
+  mousemove: (e) =>
+    if @tempIntersection
+      rect = @visualizer.zoomer.getBoundingBox @mouseDownPos, @getCell e
+      @tempIntersection.rect = rect
 
-    mouseup: =>
-      if @tempIntersection
-        @visualizer.world.addIntersection @tempIntersection
-        @tempIntersection = null
-      @mouseDownPos = null
+  mouseout: =>
+    @mouseDownPos = null
+    @tempIntersection = null
 
-    mousemove: (e) =>
-      if @tempIntersection
-        rect = @visualizer.zoomer.getBoundingBox @mouseDownPos, @getCell e
-        @tempIntersection.rect = rect
+  draw: =>
+    if @tempIntersection
+      @visualizer.drawIntersection @tempIntersection, 0.4
 
-    mouseout: =>
-      @mouseDownPos = null
-      @tempIntersection = null
-
-    draw: =>
-      if @tempIntersection
-        @visualizer.drawIntersection @tempIntersection, 0.4
+module.exports = ToolIntersectionBuilder

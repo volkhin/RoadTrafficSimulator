@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports =
+settings =
   colors:
     background: '#97a1a1'
     redLight: 'hsl(0, 100%, 50%)'
@@ -18,3 +18,5 @@ module.exports =
   lightsFlipInterval: 20
   gridSize: 14
   defaultTimeFactor: 5
+
+module.exports = settings
