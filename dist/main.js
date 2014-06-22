@@ -1661,6 +1661,18 @@ Graphics = (function() {
     return this.drawLine(segment.source, segment.target);
   };
 
+  Graphics.prototype.drawCurve = function(curve) {
+    var i, point, pointsNumber, _i, _results;
+    pointsNumber = 10;
+    this.moveTo(curve.getPoint(0));
+    _results = [];
+    for (i = _i = 0; 0 <= pointsNumber ? _i <= pointsNumber : _i >= pointsNumber; i = 0 <= pointsNumber ? ++_i : --_i) {
+      point = curve.getPoint(i / pointsNumber);
+      _results.push(this.lineTo(point));
+    }
+    return _results;
+  };
+
   Graphics.prototype.drawTriangle = function(p1, p2, p3) {
     this.ctx.beginPath();
     this.moveTo(p1);
@@ -2255,7 +2267,7 @@ Visualizer = (function() {
   };
 
   Visualizer.prototype.drawCar = function(car) {
-    var angle, boundRect, center, h, l, rect, s, style;
+    var angle, boundRect, center, curve, h, l, rect, s, style, _ref;
     angle = car.direction;
     center = car.coords;
     rect = new Rect(0, 0, 1.1 * car.length, 1.7 * car.width);
@@ -2270,12 +2282,19 @@ Visualizer = (function() {
     l = 90 - 30 * car.speed / car.maxSpeed;
     style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     this.graphics.fillRect(boundRect, style);
+    this.graphics.restore();
     if (this.debug) {
+      this.ctx.save();
       this.ctx.fillStyle = "black";
       this.ctx.font = "1px Arial";
-      this.ctx.fillText(car.id, 0, 0);
+      this.ctx.fillText(car.id, center.x, center.y);
+      this.ctx.lineWidth = 0.1;
+      if ((curve = (_ref = car.trajectory.temp) != null ? _ref.lane : void 0) != null) {
+        this.graphics.drawCurve(curve);
+        this.graphics.stroke('red');
+      }
+      return this.ctx.restore();
     }
-    return this.graphics.restore();
   };
 
   Visualizer.prototype.drawGrid = function() {

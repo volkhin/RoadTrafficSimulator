@@ -41,6 +41,13 @@ class Graphics
   drawSegment: (segment) ->
     @drawLine segment.source, segment.target
 
+  drawCurve: (curve) ->
+    pointsNumber = 10
+    @moveTo curve.getPoint 0
+    for i in [0..pointsNumber]
+      point = curve.getPoint i / pointsNumber
+      @lineTo point
+
   drawTriangle: (p1, p2, p3) ->
     @ctx.beginPath()
     @moveTo p1

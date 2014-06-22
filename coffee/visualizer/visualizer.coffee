@@ -127,11 +127,18 @@ class Visualizer
     style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
     # @graphics.drawImage @carImage, rect
     @graphics.fillRect boundRect, style
+    @graphics.restore()
     if @debug
+      @ctx.save()
       @ctx.fillStyle = "black"
       @ctx.font = "1px Arial"
-      @ctx.fillText car.id, 0, 0
-    @graphics.restore()
+      @ctx.fillText car.id, center.x, center.y
+
+      @ctx.lineWidth = 0.1
+      if (curve = car.trajectory.temp?.lane)?
+        @graphics.drawCurve curve
+        @graphics.stroke 'red'
+      @ctx.restore()
 
   drawGrid: ->
     gridSize = settings.gridSize
