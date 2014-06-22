@@ -36,13 +36,12 @@ gulp.task 'uglify', ['build'], ->
 
 
 gulp.task 'test', ->
-  testRunner = mocha
-    ui: 'bdd'
-    reporter: 'spec'
-    compilers:
-      coffee: 'coffee-script/register'
   gulp.src './coffee/spec/**/*.coffee', read: false
-    .pipe testRunner
+    .pipe mocha
+      ui: 'bdd'
+      reporter: 'spec'
+      compilers:
+        coffee: 'coffee-script/register'
 
 gulp.task 'default', ['lint', 'build', 'test', 'uglify']
 
