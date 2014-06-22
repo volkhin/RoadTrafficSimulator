@@ -1,5 +1,6 @@
 'use strict'
 
+{min, max} = Math
 require '../helpers'
 LanePosition = require './lane-position'
 Curve = require '../geom/curve'
@@ -70,13 +71,13 @@ class Trajectory
 
   getDistanceToIntersection: ->
     distance = @current.lane.length - @car.length / 2 - @current.position
-    if not @isChangingLanes then Math.max distance, 0 else Infinity
+    if not @isChangingLanes then max distance, 0 else Infinity
 
   timeToMakeTurn: (plannedStep = 0) ->
     @getDistanceToIntersection() <= plannedStep
 
   moveForward: (distance) ->
-    distance = Math.max distance, 0
+    distance = max distance, 0
     @current.position += distance
     @next.position += distance
     @temp.position += distance

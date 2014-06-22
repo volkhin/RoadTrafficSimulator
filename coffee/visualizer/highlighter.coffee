@@ -2,7 +2,6 @@
 
 require '../helpers.coffee'
 Tool = require './tool.coffee'
-Rect = require '../geom/rect.coffee'
 settings = require '../settings.coffee'
 
 class ToolHighlighter extends Tool

@@ -1,5 +1,6 @@
 'use strict'
 
+{sqrt, atan2} = Math
 require '../helpers'
 
 class Point
@@ -7,11 +8,11 @@ class Point
 
   @property 'length',
     get: ->
-      Math.sqrt @x * @x + @y * @y
+      sqrt @x * @x + @y * @y
 
   @property 'direction',
     get: ->
-      Math.atan2 @y, @x
+      atan2 @y, @x
 
   @property 'normalized',
     get: ->

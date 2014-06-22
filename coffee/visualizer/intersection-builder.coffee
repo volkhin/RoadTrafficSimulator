@@ -3,7 +3,6 @@
 require '../helpers.coffee'
 Tool = require './tool.coffee'
 Intersection = require '../model/intersection.coffee' # TODO: decouple
-Rect = require '../geom/rect.coffee'
 
 class ToolIntersectionBuilder extends Tool
   constructor: ->

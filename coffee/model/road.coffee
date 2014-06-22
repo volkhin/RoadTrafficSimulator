@@ -1,5 +1,6 @@
 'use strict'
 
+{min, max} = Math
 require '../helpers'
 _ = require 'underscore'
 Lane = require './lane'
@@ -39,8 +40,8 @@ class Road
     @sourceSide = @source.rect.getSide(@sourceSideId).subsegment 0.5, 1.0
     @targetSideId = @target.rect.getSectorId @source.rect.center()
     @targetSide = @target.rect.getSide(@targetSideId).subsegment 0, 0.5
-    @lanesNumber = Math.min(@sourceSide.length, @targetSide.length) | 0
-    @lanesNumber = Math.max 2, @lanesNumber / settings.gridSize | 0
+    @lanesNumber = min(@sourceSide.length, @targetSide.length) | 0
+    @lanesNumber = max 2, @lanesNumber / settings.gridSize | 0
     sourceSplits = @sourceSide.split @lanesNumber, true
     targetSplits = @targetSide.split @lanesNumber
     if not @lanes? or @lanes.length < @lanesNumber

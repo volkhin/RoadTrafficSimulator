@@ -1,5 +1,6 @@
 'use strict'
 
+{PI} = Math
 require '../helpers'
 $ = require 'jquery'
 _ = require 'underscore'
@@ -52,7 +53,7 @@ class Visualizer
 
     @ctx.save()
     @ctx.translate segment.center.x, segment.center.y
-    @ctx.rotate (sideId + 1) * Math.PI / 2
+    @ctx.rotate (sideId + 1) * PI / 2
     @ctx.scale 1 * segment.length, 1 * segment.length
     # map lane ending to [(0, -0.5), (0, 0.5)]
     if lights[0]

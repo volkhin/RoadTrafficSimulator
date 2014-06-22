@@ -105,7 +105,9 @@ module.exports = Curve;
 
 },{"../helpers":6,"./segment":5}],3:[function(require,module,exports){
 'use strict';
-var Point;
+var Point, atan2, sqrt;
+
+sqrt = Math.sqrt, atan2 = Math.atan2;
 
 require('../helpers');
 
@@ -117,13 +119,13 @@ Point = (function() {
 
   Point.property('length', {
     get: function() {
-      return Math.sqrt(this.x * this.x + this.y * this.y);
+      return sqrt(this.x * this.x + this.y * this.y);
     }
   });
 
   Point.property('direction', {
     get: function() {
-      return Math.atan2(this.y, this.x);
+      return atan2(this.y, this.x);
     }
   });
 
@@ -158,7 +160,9 @@ module.exports = Point;
 
 },{"../helpers":6}],4:[function(require,module,exports){
 'use strict';
-var Point, Rect, Segment, _;
+var Point, Rect, Segment, abs, _;
+
+abs = Math.abs;
 
 require('../helpers');
 
@@ -260,16 +264,16 @@ Rect = (function() {
   Rect.prototype.getSectorId = function(point) {
     var offset;
     offset = point.subtract(this.center());
-    if (offset.y <= 0 && Math.abs(offset.x) <= Math.abs(offset.y)) {
+    if (offset.y <= 0 && abs(offset.x) <= abs(offset.y)) {
       return 0;
     }
-    if (offset.x >= 0 && Math.abs(offset.x) >= Math.abs(offset.y)) {
+    if (offset.x >= 0 && abs(offset.x) >= abs(offset.y)) {
       return 1;
     }
-    if (offset.y >= 0 && Math.abs(offset.x) <= Math.abs(offset.y)) {
+    if (offset.y >= 0 && abs(offset.x) <= abs(offset.y)) {
       return 2;
     }
-    if (offset.x <= 0 && Math.abs(offset.x) >= Math.abs(offset.y)) {
+    if (offset.x <= 0 && abs(offset.x) >= abs(offset.y)) {
       return 3;
     }
     throw Error('algorithm error');
@@ -371,7 +375,9 @@ Function.prototype.property = function(prop, desc) {
 
 },{}],7:[function(require,module,exports){
 'use strict';
-var Car, Trajectory, _;
+var Car, Trajectory, max, min, random, sqrt, _;
+
+max = Math.max, min = Math.min, random = Math.random, sqrt = Math.sqrt;
 
 require('../helpers');
 
@@ -382,10 +388,10 @@ Trajectory = require('./trajectory');
 Car = (function() {
   function Car(lane, position) {
     this.id = _.uniqueId('car');
-    this.color = (300 + 240 * Math.random() | 0) % 360;
+    this.color = (300 + 240 * random() | 0) % 360;
     this._speed = 0;
     this.width = 1.7;
-    this.length = 3 + 2 * Math.random();
+    this.length = 3 + 2 * random();
     this.maxSpeed = 30;
     this.s0 = 2;
     this.timeHeadway = 1.5;
@@ -430,14 +436,14 @@ Car = (function() {
   Car.prototype.getAcceleration = function() {
     var a, b, breakGap, busyRoadCoeff, coeff, deltaSpeed, distanceGap, distanceToNextCar, freeRoadCoeff, intersectionCoeff, nextCarDistance, safeDistance, safeIntersectionDistance, timeGap, _ref;
     nextCarDistance = this.trajectory.nextCarDistance;
-    distanceToNextCar = Math.max(nextCarDistance.distance, 0);
+    distanceToNextCar = max(nextCarDistance.distance, 0);
     a = this.maxAcceleration;
     b = this.maxDeceleration;
     deltaSpeed = (this.speed - ((_ref = nextCarDistance.car) != null ? _ref.speed : void 0)) || 0;
     freeRoadCoeff = Math.pow(this.speed / this.maxSpeed, 4);
     distanceGap = this.s0;
     timeGap = this.speed * this.timeHeadway;
-    breakGap = this.speed * deltaSpeed / (2 * Math.sqrt(a * b));
+    breakGap = this.speed * deltaSpeed / (2 * sqrt(a * b));
     safeDistance = distanceGap + timeGap + breakGap;
     busyRoadCoeff = Math.pow(safeDistance / distanceToNextCar, 2);
     safeIntersectionDistance = 1 + timeGap + Math.pow(this.speed, 2) / (2 * b);
@@ -527,9 +533,11 @@ module.exports = Car;
 
 },{"../helpers":6,"./trajectory":14,"underscore":31}],8:[function(require,module,exports){
 'use strict';
-var ControlSignals, settings,
+var ControlSignals, random, settings,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+random = Math.random;
 
 require('../helpers');
 
@@ -540,7 +548,7 @@ ControlSignals = (function() {
     this.intersection = intersection;
     this.onTick = __bind(this.onTick, this);
     this.time = 0;
-    this.flipMultiplier = 1 + (Math.random() * 0.4 - 0.2);
+    this.flipMultiplier = 1 + (random() * 0.4 - 0.2);
     this.stateNum = 0;
   }
 
@@ -949,7 +957,9 @@ module.exports = Pool;
 
 },{"../helpers":6}],13:[function(require,module,exports){
 'use strict';
-var Lane, Road, settings, _;
+var Lane, Road, max, min, settings, _;
+
+min = Math.min, max = Math.max;
 
 require('../helpers');
 
@@ -1015,8 +1025,8 @@ Road = (function() {
     this.sourceSide = this.source.rect.getSide(this.sourceSideId).subsegment(0.5, 1.0);
     this.targetSideId = this.target.rect.getSectorId(this.source.rect.center());
     this.targetSide = this.target.rect.getSide(this.targetSideId).subsegment(0, 0.5);
-    this.lanesNumber = Math.min(this.sourceSide.length, this.targetSide.length) | 0;
-    this.lanesNumber = Math.max(2, this.lanesNumber / settings.gridSize | 0);
+    this.lanesNumber = min(this.sourceSide.length, this.targetSide.length) | 0;
+    this.lanesNumber = max(2, this.lanesNumber / settings.gridSize | 0);
     sourceSplits = this.sourceSide.split(this.lanesNumber, true);
     targetSplits = this.targetSide.split(this.lanesNumber);
     if ((this.lanes == null) || this.lanes.length < this.lanesNumber) {
@@ -1051,7 +1061,9 @@ module.exports = Road;
 
 },{"../helpers":6,"../settings":16,"./lane":11,"underscore":31}],14:[function(require,module,exports){
 'use strict';
-var Curve, LanePosition, Trajectory, _;
+var Curve, LanePosition, Trajectory, max, min, _;
+
+min = Math.min, max = Math.max;
 
 require('../helpers');
 
@@ -1179,7 +1191,7 @@ Trajectory = (function() {
     var distance;
     distance = this.current.lane.length - this.car.length / 2 - this.current.position;
     if (!this.isChangingLanes) {
-      return Math.max(distance, 0);
+      return max(distance, 0);
     } else {
       return Infinity;
     }
@@ -1194,7 +1206,7 @@ Trajectory = (function() {
 
   Trajectory.prototype.moveForward = function(distance) {
     var gap, tempRelativePosition, _ref, _ref1;
-    distance = Math.max(distance, 0);
+    distance = max(distance, 0);
     this.current.position += distance;
     this.next.position += distance;
     this.temp.position += distance;
@@ -1306,8 +1318,10 @@ module.exports = Trajectory;
 
 },{"../geom/curve":2,"../helpers":6,"./lane-position":10,"underscore":31}],15:[function(require,module,exports){
 'use strict';
-var Car, Intersection, Pool, Rect, Road, World, settings, _,
+var Car, Intersection, Pool, Rect, Road, World, random, settings, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+random = Math.random;
 
 require('../helpers');
 
@@ -1423,7 +1437,7 @@ World = (function() {
       for (y = _j = minY; minY <= maxY ? _j <= maxY : _j >= maxY; y = minY <= maxY ? ++_j : --_j) {
         intersection = map[[x, y]];
         if (intersection != null) {
-          if (Math.random() < 0.9) {
+          if (random() < 0.9) {
             if (previous != null) {
               this.addRoad(new Road(intersection, previous));
             }
@@ -1440,7 +1454,7 @@ World = (function() {
       for (x = _l = minX; minX <= maxX ? _l <= maxX : _l >= maxX; x = minX <= maxX ? ++_l : --_l) {
         intersection = map[[x, y]];
         if (intersection != null) {
-          if (Math.random() < 0.9) {
+          if (random() < 0.9) {
             if (previous != null) {
               this.addRoad(new Road(intersection, previous));
             }
@@ -1702,7 +1716,7 @@ module.exports = Graphics;
 
 },{"../helpers.coffee":6}],18:[function(require,module,exports){
 'use strict';
-var Rect, Tool, ToolHighlighter, settings,
+var Tool, ToolHighlighter, settings,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1710,8 +1724,6 @@ var Rect, Tool, ToolHighlighter, settings,
 require('../helpers.coffee');
 
 Tool = require('./tool.coffee');
-
-Rect = require('../geom/rect.coffee');
 
 settings = require('../settings.coffee');
 
@@ -1760,9 +1772,9 @@ ToolHighlighter = (function(_super) {
 module.exports = ToolHighlighter;
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
+},{"../helpers.coffee":6,"../settings.coffee":16,"./tool.coffee":23}],19:[function(require,module,exports){
 'use strict';
-var Intersection, Rect, Tool, ToolIntersectionBuilder,
+var Intersection, Tool, ToolIntersectionBuilder,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1772,8 +1784,6 @@ require('../helpers.coffee');
 Tool = require('./tool.coffee');
 
 Intersection = require('../model/intersection.coffee');
-
-Rect = require('../geom/rect.coffee');
 
 ToolIntersectionBuilder = (function(_super) {
   __extends(ToolIntersectionBuilder, _super);
@@ -1831,7 +1841,7 @@ ToolIntersectionBuilder = (function(_super) {
 module.exports = ToolIntersectionBuilder;
 
 
-},{"../geom/rect.coffee":4,"../helpers.coffee":6,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
+},{"../helpers.coffee":6,"../model/intersection.coffee":9,"./tool.coffee":23}],20:[function(require,module,exports){
 'use strict';
 var Tool, ToolIntersectionMover,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -2122,8 +2132,10 @@ module.exports = Tool;
 
 },{"../geom/point.coffee":3,"../geom/rect.coffee":4,"../helpers.coffee":6,"jquery":30,"jquery-mousewheel":29,"underscore":31}],24:[function(require,module,exports){
 'use strict';
-var $, Graphics, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _,
+var $, Graphics, PI, Point, Rect, ToolHighlighter, ToolIntersectionBuilder, ToolIntersectionMover, ToolMover, ToolRoadBuilder, Visualizer, Zoomer, settings, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+PI = Math.PI;
 
 require('../helpers');
 
@@ -2192,7 +2204,7 @@ Visualizer = (function() {
     lights = intersection.controlSignals.state[sideId];
     this.ctx.save();
     this.ctx.translate(segment.center.x, segment.center.y);
-    this.ctx.rotate((sideId + 1) * Math.PI / 2);
+    this.ctx.rotate((sideId + 1) * PI / 2);
     this.ctx.scale(1 * segment.length, 1 * segment.length);
     if (lights[0]) {
       this.graphics.drawTriangle(new Point(0.1, -0.2), new Point(0.2, -0.4), new Point(0.3, -0.2));
@@ -2375,11 +2387,13 @@ module.exports = Visualizer;
 
 },{"../geom/point":3,"../geom/rect":4,"../helpers":6,"../settings":16,"./graphics":17,"./highlighter":18,"./intersection-builder":19,"./intersection-mover":20,"./mover":21,"./road-builder":22,"./zoomer":25,"jquery":30,"underscore":31}],25:[function(require,module,exports){
 'use strict';
-var Point, Rect, Tool, Zoomer, settings,
+var Point, Rect, Tool, Zoomer, max, min, settings,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
+
+min = Math.min, max = Math.max;
 
 require('../helpers.coffee');
 
@@ -2438,10 +2452,10 @@ Zoomer = (function(_super) {
     y1 = cell1.y;
     x2 = cell2.x;
     y2 = cell2.y;
-    xMin = Math.min(cell1.left(), cell2.left());
-    xMax = Math.max(cell1.right(), cell2.right());
-    yMin = Math.min(cell1.top(), cell2.top());
-    yMax = Math.max(cell1.bottom(), cell2.bottom());
+    xMin = min(cell1.left(), cell2.left());
+    xMax = max(cell1.right(), cell2.right());
+    yMin = min(cell1.top(), cell2.top());
+    yMax = max(cell1.bottom(), cell2.bottom());
     return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
   };
 

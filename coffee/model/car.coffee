@@ -1,5 +1,6 @@
 'use strict'
 
+{max, min, random, sqrt} = Math
 require '../helpers'
 _ = require 'underscore'
 Trajectory = require './trajectory'
@@ -7,10 +8,10 @@ Trajectory = require './trajectory'
 class Car
   constructor: (lane, position) ->
     @id = _.uniqueId 'car'
-    @color = (300 + 240 * Math.random() | 0) % 360
+    @color = (300 + 240 * random() | 0) % 360
     @_speed = 0
     @width = 1.7
-    @length = 3 + 2 * Math.random()
+    @length = 3 + 2 * random()
     @maxSpeed = 30
     @s0 = 2
     @timeHeadway = 1.5
@@ -38,14 +39,14 @@ class Car
 
   getAcceleration: ->
     nextCarDistance = @trajectory.nextCarDistance
-    distanceToNextCar = Math.max nextCarDistance.distance, 0
+    distanceToNextCar = max nextCarDistance.distance, 0
     a = @maxAcceleration
     b = @maxDeceleration
     deltaSpeed = (@speed - nextCarDistance.car?.speed) || 0
     freeRoadCoeff = (@speed / @maxSpeed) ** 4
     distanceGap = @s0
     timeGap = @speed * @timeHeadway
-    breakGap = @speed * deltaSpeed / (2 * Math.sqrt a * b)
+    breakGap = @speed * deltaSpeed / (2 * sqrt a * b)
     safeDistance = distanceGap + timeGap + breakGap
     busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2
     safeIntersectionDistance = 1 + timeGap + @speed ** 2 / (2 * b)

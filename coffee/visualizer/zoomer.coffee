@@ -1,5 +1,6 @@
 'use strict'
 
+{min, max} = Math
 require '../helpers.coffee'
 Point = require '../geom/point.coffee'
 Rect = require '../geom/rect.coffee'
@@ -33,10 +34,10 @@ class Zoomer extends Tool
     y1 = cell1.y
     x2 = cell2.x
     y2 = cell2.y
-    xMin = Math.min cell1.left(), cell2.left()
-    xMax = Math.max cell1.right(), cell2.right()
-    yMin = Math.min cell1.top(), cell2.top()
-    yMax = Math.max cell1.bottom(), cell2.bottom()
+    xMin = min cell1.left(), cell2.left()
+    xMax = max cell1.right(), cell2.right()
+    yMin = min cell1.top(), cell2.top()
+    yMax = max cell1.bottom(), cell2.bottom()
     new Rect xMin, yMin, xMax - xMin, yMax - yMin
 
   transform: ->

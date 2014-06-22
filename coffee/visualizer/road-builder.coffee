@@ -2,7 +2,7 @@
 
 require '../helpers.coffee'
 Tool = require './tool.coffee'
-Road = require '../model/road.coffee'
+Road = require '../model/road.coffee' #TODO decouple
 
 class ToolRoadBuilder extends Tool
   constructor: ->

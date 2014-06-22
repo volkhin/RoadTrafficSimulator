@@ -1,5 +1,6 @@
 'use strict'
 
+{abs} = Math
 require '../helpers'
 _ = require 'underscore'
 Point = require './point'
@@ -68,10 +69,10 @@ class Rect
 
   getSectorId: (point) ->
     offset = point.subtract @center()
-    return 0 if offset.y <= 0 and Math.abs(offset.x) <= Math.abs(offset.y)
-    return 1 if offset.x >= 0 and Math.abs(offset.x) >= Math.abs(offset.y)
-    return 2 if offset.y >= 0 and Math.abs(offset.x) <= Math.abs(offset.y)
-    return 3 if offset.x <= 0 and Math.abs(offset.x) >= Math.abs(offset.y)
+    return 0 if offset.y <= 0 and abs(offset.x) <= abs(offset.y)
+    return 1 if offset.x >= 0 and abs(offset.x) >= abs(offset.y)
+    return 2 if offset.y >= 0 and abs(offset.x) <= abs(offset.y)
+    return 3 if offset.x <= 0 and abs(offset.x) >= abs(offset.y)
     throw Error 'algorithm error'
 
   getSector: (point) ->

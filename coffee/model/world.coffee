@@ -1,5 +1,6 @@
 'use strict'
 
+{random} = Math
 require '../helpers'
 _ = require 'underscore'
 Car = require './car'
@@ -64,7 +65,7 @@ class World
       for y in [minY..maxY]
         intersection = map[[x, y]]
         if intersection?
-          if Math.random() < 0.9
+          if random() < 0.9
             @addRoad new Road intersection, previous if previous?
             @addRoad new Road previous, intersection if previous?
           previous = intersection
@@ -73,7 +74,7 @@ class World
       for x in [minX..maxX]
         intersection = map[[x, y]]
         if intersection?
-          if Math.random() < 0.9
+          if random() < 0.9
             @addRoad new Road intersection, previous if previous?
             @addRoad new Road previous, intersection if previous?
           previous = intersection

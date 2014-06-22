@@ -1,12 +1,13 @@
 'use strict'
 
+{random} = Math
 require '../helpers'
 settings = require '../settings'
 
 class ControlSignals
   constructor: (@intersection) ->
     @time = 0
-    @flipMultiplier = 1 + (Math.random() * 0.4 - 0.2) # 0.8 - 1.2
+    @flipMultiplier = 1 + (random() * 0.4 - 0.2) # 0.8 - 1.2
     @stateNum = 0
 
   states: [
