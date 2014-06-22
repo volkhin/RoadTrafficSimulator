@@ -83,8 +83,11 @@ class Trajectory
     if @timeToMakeTurn() and @canEnterIntersection() and @isValidTurn()
       @_startChangingLanes @car.popNextLane(), 0
     tempRelativePosition = @temp.position / @temp.lane?.length
-    if @isChangingLanes and tempRelativePosition >= 0.5 and @next.free
+    gap = 2 * @car.length
+    if @isChangingLanes and @temp.position > gap and not @current.free
       @current.release()
+    if @isChangingLanes and @next.free and
+    @temp.position + gap > @temp.lane?.length
       @next.acquire()
     if @isChangingLanes and tempRelativePosition >= 1
       @_finishChangingLanes()
@@ -96,7 +99,7 @@ class Trajectory
     throw Error 'no next lane' unless nextLane?
     throw Error 'next lane == current lane' if nextLane is @lane
     throw Error 'not neighbouring lanes' unless @lane.road is nextLane.road
-    nextPosition = @current.position + 5 * @car.length
+    nextPosition = @current.position + 3 * @car.length
     throw Error 'too late to change lane' unless nextPosition < @lane.length
     @_startChangingLanes nextLane, nextPosition
 

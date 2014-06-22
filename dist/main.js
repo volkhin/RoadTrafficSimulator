@@ -1193,7 +1193,7 @@ Trajectory = (function() {
   };
 
   Trajectory.prototype.moveForward = function(distance) {
-    var tempRelativePosition, _ref;
+    var gap, tempRelativePosition, _ref, _ref1;
     distance = Math.max(distance, 0);
     this.current.position += distance;
     this.next.position += distance;
@@ -1202,8 +1202,11 @@ Trajectory = (function() {
       this._startChangingLanes(this.car.popNextLane(), 0);
     }
     tempRelativePosition = this.temp.position / ((_ref = this.temp.lane) != null ? _ref.length : void 0);
-    if (this.isChangingLanes && tempRelativePosition >= 0.5 && this.next.free) {
+    gap = 2 * this.car.length;
+    if (this.isChangingLanes && this.temp.position > gap && !this.current.free) {
       this.current.release();
+    }
+    if (this.isChangingLanes && this.next.free && this.temp.position + gap > ((_ref1 = this.temp.lane) != null ? _ref1.length : void 0)) {
       this.next.acquire();
     }
     if (this.isChangingLanes && tempRelativePosition >= 1) {
@@ -1228,7 +1231,7 @@ Trajectory = (function() {
     if (this.lane.road !== nextLane.road) {
       throw Error('not neighbouring lanes');
     }
-    nextPosition = this.current.position + 5 * this.car.length;
+    nextPosition = this.current.position + 3 * this.car.length;
     if (!(nextPosition < this.lane.length)) {
       throw Error('too late to change lane');
     }
