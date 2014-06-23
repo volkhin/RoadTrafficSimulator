@@ -110,9 +110,11 @@ class Trajectory
     p1 = @current.lane.getPoint @current.relativePosition
     p2 = @next.lane.getPoint @next.relativePosition
     distance = p2.subtract(p1).length
-    direction = @current.lane.middleLine.vector.normalized
-    control = p1.add direction.mult distance / 2
-    curve = new Curve p1, p2, control
+    direction1 = @current.lane.middleLine.vector.normalized.mult distance * 0.3
+    control1 = p1.add direction1
+    direction2 = @next.lane.middleLine.vector.normalized.mult distance * 0.3
+    control2 = p2.subtract direction2
+    curve = new Curve p1, p2, control1, control2
 
   _getCurve: ->
     # FIXME: race condition due to using relativePosition on intersections

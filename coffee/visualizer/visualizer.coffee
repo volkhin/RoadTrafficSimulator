@@ -134,10 +134,8 @@ class Visualizer
       @ctx.font = "1px Arial"
       @ctx.fillText car.id, center.x, center.y
 
-      @ctx.lineWidth = 0.1
       if (curve = car.trajectory.temp?.lane)?
-        @graphics.drawCurve curve
-        @graphics.stroke 'red'
+        @graphics.drawCurve curve, 0.1, 'red'
       @ctx.restore()
 
   drawGrid: ->

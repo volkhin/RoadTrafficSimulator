@@ -34,6 +34,13 @@ class Road
   @property 'rightmostLane',
     get: -> @lanes[0]
 
+  getTurnDirection: (other) ->
+    throw Error 'invalid roads' if @target isnt other.source
+    side1 = @targetSideId
+    side2 = other.sourceSideId
+    # 0 - left, 1 - forward, 2 - right
+    turnNumber = (side2 - side1 - 1 + 8) % 4
+
   update: ->
     throw Error 'incomplete road' unless @source and @target
     @sourceSideId = @source.rect.getSectorId @target.rect.center()

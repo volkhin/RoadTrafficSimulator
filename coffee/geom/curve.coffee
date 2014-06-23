@@ -4,27 +4,41 @@ require '../helpers'
 Segment = require './segment'
 
 class Curve
-  constructor: (@A, @B, @O) ->
+  constructor: (@A, @B, @O, @Q) ->
     @AB = new Segment @A, @B
     @AO = new Segment @A, @O
-    @OB = new Segment @O, @B
+    @OQ = new Segment @O, @Q
+    @QB = new Segment @Q, @B
+    @_length = null
 
   @property 'length',
     get: ->
-      @AB.length unless @O?
-      # FIXME: it's not the real length
-      @AB.length
+      if not @_length?
+        pointsNumber = 10
+        prevoiusPoint = null
+        @_length = 0
+        for i in [0..pointsNumber]
+          point = @getPoint i / pointsNumber
+          @_length += point.subtract(prevoiusPoint).length if prevoiusPoint
+          prevoiusPoint = point
+      return @_length
 
   getPoint: (a) ->
-    @AB.getPoint a unless @O?
+    # OPTIMIZE avoid points and segments
     p0 = @AO.getPoint(a)
-    p1 = @OB.getPoint(a)
-    (new Segment p0, p1).getPoint a
+    p1 = @OQ.getPoint(a)
+    p2 = @QB.getPoint(a)
+    r0 = (new Segment p0, p1).getPoint a
+    r1 = (new Segment p1, p2).getPoint a
+    (new Segment r0, r1).getPoint a
 
   getDirection: (a) ->
-    @AB.direction unless @O?
+    # OPTIMIZE avoid points and segments
     p0 = @AO.getPoint(a)
-    p1 = @OB.getPoint(a)
-    (new Segment p0, p1).direction
+    p1 = @OQ.getPoint(a)
+    p2 = @QB.getPoint(a)
+    r0 = (new Segment p0, p1).getPoint a
+    r1 = (new Segment p1, p2).getPoint a
+    (new Segment r0, r1).direction
 
 module.exports = Curve

@@ -44,11 +44,7 @@ class Lane
     @direction = @middleLine.direction
 
   getTurnDirection: (other) ->
-    throw Error 'invalid lanes' if @road.target isnt other.road.source
-    side1 = @targetSideId
-    side2 = other.sourceSideId
-    # 0 - left, 1 - forward, 2 - right
-    turnNumber = (side2 - side1 - 1 + 8) % 4
+    return @road.getTurnDirection other.road
 
   getDirection: ->
     @direction

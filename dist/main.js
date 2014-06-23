@@ -58,42 +58,55 @@ require('../helpers');
 Segment = require('./segment');
 
 Curve = (function() {
-  function Curve(A, B, O) {
+  function Curve(A, B, O, Q) {
     this.A = A;
     this.B = B;
     this.O = O;
+    this.Q = Q;
     this.AB = new Segment(this.A, this.B);
     this.AO = new Segment(this.A, this.O);
-    this.OB = new Segment(this.O, this.B);
+    this.OQ = new Segment(this.O, this.Q);
+    this.QB = new Segment(this.Q, this.B);
+    this._length = null;
   }
 
   Curve.property('length', {
     get: function() {
-      if (this.O == null) {
-        this.AB.length;
+      var i, point, pointsNumber, prevoiusPoint, _i;
+      if (this._length == null) {
+        pointsNumber = 10;
+        prevoiusPoint = null;
+        this._length = 0;
+        for (i = _i = 0; 0 <= pointsNumber ? _i <= pointsNumber : _i >= pointsNumber; i = 0 <= pointsNumber ? ++_i : --_i) {
+          point = this.getPoint(i / pointsNumber);
+          if (prevoiusPoint) {
+            this._length += point.subtract(prevoiusPoint).length;
+          }
+          prevoiusPoint = point;
+        }
       }
-      return this.AB.length;
+      return this._length;
     }
   });
 
   Curve.prototype.getPoint = function(a) {
-    var p0, p1;
-    if (this.O == null) {
-      this.AB.getPoint(a);
-    }
+    var p0, p1, p2, r0, r1;
     p0 = this.AO.getPoint(a);
-    p1 = this.OB.getPoint(a);
-    return (new Segment(p0, p1)).getPoint(a);
+    p1 = this.OQ.getPoint(a);
+    p2 = this.QB.getPoint(a);
+    r0 = (new Segment(p0, p1)).getPoint(a);
+    r1 = (new Segment(p1, p2)).getPoint(a);
+    return (new Segment(r0, r1)).getPoint(a);
   };
 
   Curve.prototype.getDirection = function(a) {
-    var p0, p1;
-    if (this.O == null) {
-      this.AB.direction;
-    }
+    var p0, p1, p2, r0, r1;
     p0 = this.AO.getPoint(a);
-    p1 = this.OB.getPoint(a);
-    return (new Segment(p0, p1)).direction;
+    p1 = this.OQ.getPoint(a);
+    p2 = this.QB.getPoint(a);
+    r0 = (new Segment(p0, p1)).getPoint(a);
+    r1 = (new Segment(p1, p2)).getPoint(a);
+    return (new Segment(r0, r1)).direction;
   };
 
   return Curve;
@@ -499,7 +512,7 @@ Car = (function() {
   };
 
   Car.prototype.pickNextLane = function() {
-    var laneNumber, nextRoad;
+    var laneNumber, nextRoad, turnNumber;
     if (this.nextLane) {
       throw Error('next lane is already chosen');
     }
@@ -508,7 +521,17 @@ Car = (function() {
     if (!nextRoad) {
       return null;
     }
-    laneNumber = _.random(0, nextRoad.lanesNumber - 1);
+    turnNumber = this.trajectory.current.lane.road.getTurnDirection(nextRoad);
+    laneNumber = (function() {
+      switch (turnNumber) {
+        case 0:
+          return nextRoad.lanesNumber - 1;
+        case 1:
+          return _.random(0, nextRoad.lanesNumber - 1);
+        case 2:
+          return 0;
+      }
+    })();
     this.nextLane = nextRoad.lanes[laneNumber];
     if (!this.nextLane) {
       throw Error('can not pick next lane');
@@ -834,13 +857,7 @@ Lane = (function() {
   };
 
   Lane.prototype.getTurnDirection = function(other) {
-    var side1, side2, turnNumber;
-    if (this.road.target !== other.road.source) {
-      throw Error('invalid lanes');
-    }
-    side1 = this.targetSideId;
-    side2 = other.sourceSideId;
-    return turnNumber = (side2 - side1 - 1 + 8) % 4;
+    return this.road.getTurnDirection(other.road);
   };
 
   Lane.prototype.getDirection = function() {
@@ -1015,6 +1032,16 @@ Road = (function() {
       return this.lanes[0];
     }
   });
+
+  Road.prototype.getTurnDirection = function(other) {
+    var side1, side2, turnNumber;
+    if (this.target !== other.source) {
+      throw Error('invalid roads');
+    }
+    side1 = this.targetSideId;
+    side2 = other.sourceSideId;
+    return turnNumber = (side2 - side1 - 1 + 8) % 4;
+  };
 
   Road.prototype.update = function() {
     var i, sourceSplits, targetSplits, _base, _i, _j, _ref, _ref1, _results;
@@ -1253,13 +1280,15 @@ Trajectory = (function() {
   Trajectory.prototype._getIntersectionLaneChangeCurve = function() {};
 
   Trajectory.prototype._getAdjacentLaneChangeCurve = function() {
-    var control, curve, direction, distance, p1, p2;
+    var control1, control2, curve, direction1, direction2, distance, p1, p2;
     p1 = this.current.lane.getPoint(this.current.relativePosition);
     p2 = this.next.lane.getPoint(this.next.relativePosition);
     distance = p2.subtract(p1).length;
-    direction = this.current.lane.middleLine.vector.normalized;
-    control = p1.add(direction.mult(distance / 2));
-    return curve = new Curve(p1, p2, control);
+    direction1 = this.current.lane.middleLine.vector.normalized.mult(distance * 0.3);
+    control1 = p1.add(direction1);
+    direction2 = this.next.lane.middleLine.vector.normalized.mult(distance * 0.3);
+    control2 = p2.subtract(direction2);
+    return curve = new Curve(p1, p2, control1, control2);
   };
 
   Trajectory.prototype._getCurve = function() {
@@ -1597,8 +1626,10 @@ module.exports = settings;
 
 },{}],17:[function(require,module,exports){
 'use strict';
-var Graphics,
+var Graphics, PI,
   __slice = [].slice;
+
+PI = Math.PI;
 
 require('../helpers.coffee');
 
@@ -1661,16 +1692,27 @@ Graphics = (function() {
     return this.drawLine(segment.source, segment.target);
   };
 
-  Graphics.prototype.drawCurve = function(curve) {
-    var i, point, pointsNumber, _i, _results;
+  Graphics.prototype.drawCurve = function(curve, width, color) {
+    var i, point, pointsNumber, _i;
     pointsNumber = 10;
+    this.ctx.lineWidth = width;
+    this.ctx.beginPath();
     this.moveTo(curve.getPoint(0));
-    _results = [];
     for (i = _i = 0; 0 <= pointsNumber ? _i <= pointsNumber : _i >= pointsNumber; i = 0 <= pointsNumber ? ++_i : --_i) {
       point = curve.getPoint(i / pointsNumber);
-      _results.push(this.lineTo(point));
+      this.lineTo(point);
     }
-    return _results;
+    if (curve.O) {
+      this.moveTo(curve.O);
+      this.ctx.arc(curve.O.x, curve.O.y, width, 0, 2 * PI);
+    }
+    if (curve.Q) {
+      this.moveTo(curve.Q);
+      this.ctx.arc(curve.Q.x, curve.Q.y, width, 0, 2 * PI);
+    }
+    if (color) {
+      return this.stroke(color);
+    }
   };
 
   Graphics.prototype.drawTriangle = function(p1, p2, p3) {
@@ -2288,10 +2330,8 @@ Visualizer = (function() {
       this.ctx.fillStyle = "black";
       this.ctx.font = "1px Arial";
       this.ctx.fillText(car.id, center.x, center.y);
-      this.ctx.lineWidth = 0.1;
       if ((curve = (_ref = car.trajectory.temp) != null ? _ref.lane : void 0) != null) {
-        this.graphics.drawCurve(curve);
-        this.graphics.stroke('red');
+        this.graphics.drawCurve(curve, 0.1, 'red');
       }
       return this.ctx.restore();
     }

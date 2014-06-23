@@ -1,5 +1,6 @@
 'use strict'
 
+{PI} = Math
 require '../helpers.coffee'
 
 class Graphics
@@ -41,12 +42,21 @@ class Graphics
   drawSegment: (segment) ->
     @drawLine segment.source, segment.target
 
-  drawCurve: (curve) ->
+  drawCurve: (curve, width, color) ->
     pointsNumber = 10
+    @ctx.lineWidth = width
+    @ctx.beginPath()
     @moveTo curve.getPoint 0
     for i in [0..pointsNumber]
       point = curve.getPoint i / pointsNumber
       @lineTo point
+    if curve.O
+      @moveTo curve.O
+      @ctx.arc curve.O.x, curve.O.y, width, 0, 2 * PI
+    if curve.Q
+      @moveTo curve.Q
+      @ctx.arc curve.Q.x, curve.Q.y, width, 0, 2 * PI
+    @stroke color if color
 
   drawTriangle: (p1, p2, p3) ->
     @ctx.beginPath()

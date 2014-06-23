@@ -91,7 +91,11 @@ class Car
     nextRoad = @pickNextRoad()
     return null if not nextRoad
     # throw Error 'can not pick next road' if not nextRoad
-    laneNumber = _.random 0, nextRoad.lanesNumber - 1
+    turnNumber = @trajectory.current.lane.road.getTurnDirection nextRoad
+    laneNumber = switch turnNumber
+      when 0 then nextRoad.lanesNumber - 1
+      when 1 then _.random 0, nextRoad.lanesNumber - 1
+      when 2 then 0
     @nextLane = nextRoad.lanes[laneNumber]
     throw Error 'can not pick next lane' if not @nextLane
     return @nextLane
