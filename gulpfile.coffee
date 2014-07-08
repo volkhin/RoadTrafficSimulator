@@ -48,12 +48,21 @@ gulp.task 'uglify', ['build'], ->
     .pipe uglify()
     .pipe gulp.dest './dist/'
 
-
 gulp.task 'test', ->
   gulp.src './coffee/spec/**/*.coffee', read: false
     .pipe mocha
       ui: 'bdd'
       reporter: 'spec'
+      compilers:
+        coffee: 'coffee-script/register'
+    .on 'error', notify.onError 'test error'
+    .on 'error', errorHandler
+
+gulp.task 'coverage', ->
+  gulp.src './coffee/spec/**/*.coffee', read: false
+    .pipe mocha
+      ui: 'bdd'
+      reporter: 'html-cov'
       compilers:
         coffee: 'coffee-script/register'
     .on 'error', notify.onError 'test error'
