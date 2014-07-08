@@ -1,5 +1,7 @@
 'use strict'
 
+require("blanket")({})
+
 require '../helpers'
 World = require '../model/world'
 

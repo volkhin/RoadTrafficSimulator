@@ -1,5 +1,7 @@
 'use strict'
 
+require("blanket")({})
+
 require '../helpers'
 Point = require '../geom/point'
 Rect = require '../geom/rect'
