@@ -52,6 +52,7 @@ class World
     map = {}
     gridSize = settings.gridSize
     step = 5 * gridSize
+    @carsNumber = 100
     while intersectionsNumber > 0
       x = _.random minX, maxX
       y = _.random minY, maxY
@@ -94,7 +95,6 @@ class World
       @removeCar car unless car.alive
 
   refreshCars: ->
-    @carsNumber = 0 if @roads.length is 0
     @addRandomCar() if @cars.length < @carsNumber
     @removeRandomCar() if @cars.length > @carsNumber
 
