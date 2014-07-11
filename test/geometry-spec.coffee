@@ -2,10 +2,10 @@
 
 require("blanket")({})
 
-require '../helpers'
-Point = require '../geom/point'
-Rect = require '../geom/rect'
-Segment = require '../geom/segment'
+require '../coffee/helpers'
+Point = require '../coffee/geom/point'
+Rect = require '../coffee/geom/rect'
+Segment = require '../coffee/geom/segment'
 {expect} = require 'chai'
 
 describe 'Geometry', ->

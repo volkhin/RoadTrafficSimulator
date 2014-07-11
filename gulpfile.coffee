@@ -49,7 +49,7 @@ gulp.task 'uglify', ['build'], ->
     .pipe gulp.dest './dist/'
 
 gulp.task 'test', ->
-  gulp.src './coffee/spec/**/*.coffee', read: false
+  gulp.src './test/**/*-spec.coffee', read: false
     .pipe mocha
       ui: 'bdd'
       reporter: 'spec'
@@ -59,7 +59,7 @@ gulp.task 'test', ->
     .on 'error', errorHandler
 
 gulp.task 'coverage', ->
-  gulp.src './coffee/spec/**/*.coffee', read: false
+  gulp.src './test/coverage-test.coffee', read: false
     .pipe mocha
       ui: 'bdd'
       reporter: 'html-cov'

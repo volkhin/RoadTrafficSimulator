@@ -1451,6 +1451,7 @@ World = (function() {
     map = {};
     gridSize = settings.gridSize;
     step = 5 * gridSize;
+    this.carsNumber = 100;
     while (intersectionsNumber > 0) {
       x = _.random(minX, maxX);
       y = _.random(minY, maxY);
@@ -1528,9 +1529,6 @@ World = (function() {
   };
 
   World.prototype.refreshCars = function() {
-    if (this.roads.length === 0) {
-      this.carsNumber = 0;
-    }
     if (this.cars.length < this.carsNumber) {
       this.addRandomCar();
     }
