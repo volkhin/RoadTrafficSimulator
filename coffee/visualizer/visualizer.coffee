@@ -4,6 +4,7 @@
 require '../helpers'
 $ = require 'jquery'
 _ = require 'underscore'
+chroma = require 'chroma-js'
 Point = require '../geom/point'
 Rect = require '../geom/rect'
 Graphics = require './graphics'
@@ -121,10 +122,8 @@ class Visualizer
     @graphics.save()
     @ctx.translate center.x, center.y
     @ctx.rotate angle
-    h = car.color
-    s = 80
-    l = 90 - 30 * car.speed / car.maxSpeed
-    style = 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
+    l = 0.90 - 0.30 * car.speed / car.maxSpeed
+    style = chroma(car.color, 0.8, l, 'hsl').hex()
     # @graphics.drawImage @carImage, rect
     @graphics.fillRect boundRect, style
     @graphics.restore()

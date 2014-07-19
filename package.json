@@ -26,8 +26,10 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "blanket": "~1.1",
     "browserify": "~4.1",
     "chai": "~1.9",
+    "chroma-js": "^0.5.7",
     "coffee-script": "~1.7",
     "coffeeify": "~0.6",
     "dat-gui": "~0.5",
@@ -44,7 +46,6 @@
     "jquery": "~2.1",
     "jquery-mousewheel": "~3.1",
     "underscore": "~1.6",
-    "vinyl-source-stream": "~0.1",
-    "blanket": "~1.1"
+    "vinyl-source-stream": "~0.1"
   }
 }
