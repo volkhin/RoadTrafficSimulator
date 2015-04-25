@@ -34,4 +34,4 @@ $ ->
   guiVisualizer.add(visualizer, 'timeFactor', 0.1, 10).listen()
   guiWorld.add(world, 'carsNumber').min(0).max(200).step(1).listen()
   guiWorld.add(world, 'instantSpeed').step(0.00001).listen()
-  gui.add(settings, 'lightsFlipInterval', 0, 50, 0.01).listen()
+  gui.add(settings, 'lightsFlipInterval', 0, 400, 0.01).listen()

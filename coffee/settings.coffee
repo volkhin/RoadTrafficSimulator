@@ -15,7 +15,7 @@ settings =
     grid2: 'rgba(220, 220, 220, 0.5)'
     hoveredGrid: '#f4e8e1'
   fps: 30
-  lightsFlipInterval: 20
+  lightsFlipInterval: 160
   gridSize: 14
   defaultTimeFactor: 5
 

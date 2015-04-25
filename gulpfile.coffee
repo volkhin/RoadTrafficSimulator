@@ -68,7 +68,8 @@ gulp.task 'coverage', ->
     .on 'error', notify.onError 'test error'
     .on 'error', errorHandler
 
-gulp.task 'default', ['lint', 'build', 'test', 'uglify']
+gulp.task 'default', ['build']
+gulp.task 'full', ['lint', 'build', 'test', 'uglify']
 
 gulp.task 'watch', ->
   gulp.watch './coffee/**/*.coffee', ['default']

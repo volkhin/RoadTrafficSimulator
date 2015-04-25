@@ -79,6 +79,15 @@ class Visualizer
       )
       @graphics.fill settings.colors.greenLight
     @ctx.restore()
+    if @debug
+      @ctx.save()
+      @ctx.fillStyle = "black"
+      @ctx.font = "1px Arial"
+      center = intersection.rect.center()
+      flipInterval = Math.round(intersection.controlSignals.flipInterval * 100) / 100
+      phaseOffset = Math.round(intersection.controlSignals.phaseOffset * 100) / 100
+      @ctx.fillText flipInterval + ' ' + phaseOffset, center.x, center.y
+      @ctx.restore()
 
   drawRoad: (road, alpha) ->
     throw Error 'invalid road' if not road.source? or not road.target?

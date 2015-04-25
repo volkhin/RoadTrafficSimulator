@@ -26,6 +26,7 @@ class World
     @roads = new Pool Road, obj.roads
     @cars = new Pool Car, obj.cars
     @carsNumber = 0
+    @time = 0
 
   save: ->
     data = _.extend {}, this
@@ -87,6 +88,7 @@ class World
 
   onTick: (delta) =>
     throw Error 'delta > 1' if delta > 1
+    @time += delta
     @refreshCars()
     for id, intersection of @intersections.all()
       intersection.controlSignals.onTick delta
