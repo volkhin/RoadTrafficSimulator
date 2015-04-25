@@ -11,6 +11,21 @@ class ControlSignals
     @time = @phaseOffset
     @stateNum = 0
 
+  @copy: (controlSignals, intersection) ->
+    if !controlSignals?
+      return new ControlSignals intersection
+    result = Object.create ControlSignals::
+    result.flipMultiplier = controlSignals.flipMultiplier
+    result.time = result.phaseOffset = controlSignals.phaseOffset
+    result.stateNum = 0
+    result.intersection = intersection
+    result
+
+  toJSON: ->
+    obj =
+      flipMultiplier: @flipMultiplier
+      phaseOffset: @phaseOffset
+
   states: [
     ['L', '', 'L', ''],
     ['FR', '', 'FR', ''],

@@ -576,6 +576,27 @@ ControlSignals = (function() {
     this.stateNum = 0;
   }
 
+  ControlSignals.copy = function(controlSignals, intersection) {
+    var result;
+    if (controlSignals == null) {
+      return new ControlSignals(intersection);
+    }
+    result = Object.create(ControlSignals.prototype);
+    result.flipMultiplier = controlSignals.flipMultiplier;
+    result.time = result.phaseOffset = controlSignals.phaseOffset;
+    result.stateNum = 0;
+    result.intersection = intersection;
+    return result;
+  };
+
+  ControlSignals.prototype.toJSON = function() {
+    var obj;
+    return obj = {
+      flipMultiplier: this.flipMultiplier,
+      phaseOffset: this.phaseOffset
+    };
+  };
+
   ControlSignals.prototype.states = [['L', '', 'L', ''], ['FR', '', 'FR', ''], ['', 'L', '', 'L'], ['', 'FR', '', 'FR']];
 
   ControlSignals.STATE = [
@@ -669,7 +690,7 @@ Intersection = (function() {
     _.extend(result, intersection);
     result.roads = [];
     result.inRoads = [];
-    result.controlSignals = new ControlSignals(result);
+    result.controlSignals = ControlSignals.copy(result.controlSignals, result);
     return result;
   };
 
@@ -677,7 +698,8 @@ Intersection = (function() {
     var obj;
     return obj = {
       id: this.id,
-      rect: this.rect
+      rect: this.rect,
+      controlSignals: this.controlSignals
     };
   };
 

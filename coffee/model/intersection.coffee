@@ -18,13 +18,14 @@ class Intersection
     _.extend result, intersection
     result.roads = []
     result.inRoads = []
-    result.controlSignals = new ControlSignals result
+    result.controlSignals = ControlSignals.copy result.controlSignals, result
     result
 
   toJSON: ->
     obj =
       id: @id
       rect: @rect
+      controlSignals: @controlSignals
 
   update: ->
     road.update() for road in @roads
