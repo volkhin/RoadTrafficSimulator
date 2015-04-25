@@ -1,0 +1,258 @@
+{
+    "carsNumber": 51,
+    "intersections": {
+        "intersection205": {
+            "controlSignals": {
+                "flipMultiplier": 0.3586561616975814,
+                "phaseOffset": 56.17325536441058
+            },
+            "id": "intersection205",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": -140,
+                "y": -140
+            }
+        },
+        "intersection206": {
+            "controlSignals": {
+                "flipMultiplier": 0.9427517151925713,
+                "phaseOffset": 91.94333299528807
+            },
+            "id": "intersection206",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": -140,
+                "y": 28
+            }
+        },
+        "intersection207": {
+            "controlSignals": {
+                "flipMultiplier": 0.37194781098514795,
+                "phaseOffset": 20.4648393439129
+            },
+            "id": "intersection207",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 98,
+                "y": 28
+            }
+        },
+        "intersection208": {
+            "controlSignals": {
+                "flipMultiplier": 0.6825677102897316,
+                "phaseOffset": 54.371747095137835
+            },
+            "id": "intersection208",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 98,
+                "y": -140
+            }
+        },
+        "intersection225": {
+            "controlSignals": {
+                "flipMultiplier": 0.39503228454850614,
+                "phaseOffset": 35.17415614333004
+            },
+            "id": "intersection225",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 280,
+                "y": -140
+            }
+        },
+        "intersection226": {
+            "controlSignals": {
+                "flipMultiplier": 0.8068325931672007,
+                "phaseOffset": 12.863103952258825
+            },
+            "id": "intersection226",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 280,
+                "y": 28
+            }
+        },
+        "intersection235": {
+            "controlSignals": {
+                "flipMultiplier": 0.17445796635001898,
+                "phaseOffset": 43.62397517543286
+            },
+            "id": "intersection235",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 280,
+                "y": -238
+            }
+        },
+        "intersection240": {
+            "controlSignals": {
+                "flipMultiplier": 0.3383670481853187,
+                "phaseOffset": 81.65818282868713
+            },
+            "id": "intersection240",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": -140,
+                "y": 154
+            }
+        },
+        "intersection243": {
+            "controlSignals": {
+                "flipMultiplier": 0.9240458155982196,
+                "phaseOffset": 69.73594785667956
+            },
+            "id": "intersection243",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 98,
+                "y": 140
+            }
+        },
+        "intersection250": {
+            "controlSignals": {
+                "flipMultiplier": 0.604135254630819,
+                "phaseOffset": 58.322132169269025
+            },
+            "id": "intersection250",
+            "rect": {
+                "_height": 14,
+                "_width": 14,
+                "x": 266,
+                "y": 140
+            }
+        }
+    },
+    "roads": {
+        "road213": {
+            "id": "road213",
+            "source": "intersection205",
+            "target": "intersection208"
+        },
+        "road214": {
+            "id": "road214",
+            "source": "intersection208",
+            "target": "intersection205"
+        },
+        "road217": {
+            "id": "road217",
+            "source": "intersection207",
+            "target": "intersection208"
+        },
+        "road218": {
+            "id": "road218",
+            "source": "intersection208",
+            "target": "intersection207"
+        },
+        "road221": {
+            "id": "road221",
+            "source": "intersection206",
+            "target": "intersection207"
+        },
+        "road222": {
+            "id": "road222",
+            "source": "intersection207",
+            "target": "intersection206"
+        },
+        "road223": {
+            "id": "road223",
+            "source": "intersection206",
+            "target": "intersection205"
+        },
+        "road224": {
+            "id": "road224",
+            "source": "intersection205",
+            "target": "intersection206"
+        },
+        "road227": {
+            "id": "road227",
+            "source": "intersection207",
+            "target": "intersection226"
+        },
+        "road228": {
+            "id": "road228",
+            "source": "intersection226",
+            "target": "intersection207"
+        },
+        "road229": {
+            "id": "road229",
+            "source": "intersection226",
+            "target": "intersection225"
+        },
+        "road230": {
+            "id": "road230",
+            "source": "intersection225",
+            "target": "intersection226"
+        },
+        "road233": {
+            "id": "road233",
+            "source": "intersection225",
+            "target": "intersection208"
+        },
+        "road234": {
+            "id": "road234",
+            "source": "intersection208",
+            "target": "intersection225"
+        },
+        "road238": {
+            "id": "road238",
+            "source": "intersection225",
+            "target": "intersection235"
+        },
+        "road239": {
+            "id": "road239",
+            "source": "intersection235",
+            "target": "intersection225"
+        },
+        "road241": {
+            "id": "road241",
+            "source": "intersection240",
+            "target": "intersection206"
+        },
+        "road242": {
+            "id": "road242",
+            "source": "intersection206",
+            "target": "intersection240"
+        },
+        "road244": {
+            "id": "road244",
+            "source": "intersection240",
+            "target": "intersection243"
+        },
+        "road245": {
+            "id": "road245",
+            "source": "intersection243",
+            "target": "intersection240"
+        },
+        "road248": {
+            "id": "road248",
+            "source": "intersection243",
+            "target": "intersection207"
+        },
+        "road249": {
+            "id": "road249",
+            "source": "intersection207",
+            "target": "intersection243"
+        },
+        "road251": {
+            "id": "road251",
+            "source": "intersection243",
+            "target": "intersection250"
+        },
+        "road252": {
+            "id": "road252",
+            "source": "intersection250",
+            "target": "intersection243"
+        }
+    },
+    "time": 412.85618499998236
+}

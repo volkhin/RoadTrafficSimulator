@@ -33,8 +33,8 @@ class World
     delete data.cars
     localStorage.world = JSON.stringify data
 
-  load: ->
-    data = localStorage.world
+  load: (data) ->
+    data = data or localStorage.world
     data = data and JSON.parse data
     return unless data?
     @clear()

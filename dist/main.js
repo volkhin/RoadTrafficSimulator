@@ -1430,9 +1430,9 @@ World = (function() {
     return localStorage.world = JSON.stringify(data);
   };
 
-  World.prototype.load = function() {
-    var data, id, intersection, road, _ref, _ref1, _results;
-    data = localStorage.world;
+  World.prototype.load = function(data) {
+    var id, intersection, road, _ref, _ref1, _results;
+    data = data || localStorage.world;
     data = data && JSON.parse(data);
     if (data == null) {
       return;

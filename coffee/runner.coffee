@@ -9,10 +9,12 @@ fs = require 'fs'
 
 measureAverageSpeed = (setupCallback) ->
   world = new World()
-  world.generateMap()
-  world.carsNumber = 200
-  if setupCallback?
-    setupCallback world
+  map = fs.readFileSync './experiments/map.json', {encoding: 'utf8'}
+  console.log map
+  # world.generateMap()
+  world.load map
+  world.carsNumber = 50
+  setupCallback?(world)
   results = []
   for i in [0..10000]
     world.onTick 0.2
@@ -53,10 +55,10 @@ experiment3 = () ->
   for it in [0..10]
     result = measureAverageSpeed (world) ->
       i.controlSignals.flipMultiplier = 1 for id, i of world.intersections.all()
-      i.controlSignals.phaseOffset = Math.random() * 100
+      i.controlSignals.phaseOffset = 0
       getParams world
     out.write(it + ' ' +  result + '\n')
 
 # experiment1()
 # experiment2()
-experiment3()
+# experiment3()
