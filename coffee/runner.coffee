@@ -10,7 +10,7 @@ fs = require 'fs'
 measureAverageSpeed = (setupCallback) ->
   world = new World()
   world.generateMap()
-  world.carsNumber = 50
+  world.carsNumber = 200
   if setupCallback?
     setupCallback world
   results = []
@@ -50,7 +50,7 @@ experiment2 = () ->
 experiment3 = () ->
   out = fs.createWriteStream './experiments/3.data'
   out.write 'it avg_speed\n'
-  for it in [0..9]
+  for it in [0..10]
     result = measureAverageSpeed (world) ->
       i.controlSignals.flipMultiplier = 1 for id, i of world.intersections.all()
       i.controlSignals.phaseOffset = Math.random() * 100
